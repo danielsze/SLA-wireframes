@@ -1,29 +1,83 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SLA Wireframes</title>
-    <link rel="stylesheet" href="assets/css/site.css">
-  </head>
-  <body>
-    <main class="page">
-      <section class="intro">
-        <p class="eyebrow">Salt Light Archery</p>
-        <h1>Wireframe Review</h1>
-        <p class="lede">Static HTML drafts for member portal redesign review.</p>
-      </section>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLA Wireframes</title>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<style>
+  body{
+    font-family:var(--font-primary, system-ui, sans-serif);
+    background:var(--color-surface-lowest, #faf7f2);
+    color:var(--color-text-primary, #1c1611);
+    margin:0;
+    padding:48px 32px 80px;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+  .eyebrow{
+    margin:0 0 6px;
+    color:var(--color-text-secondary, #5c4f3d);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+  }
+  h1{margin:0 0 8px;font-size:34px;letter-spacing:-.3px;}
+  .lede{
+    max-width:660px;
+    margin:0 0 32px;
+    color:var(--color-text-secondary, #5c4f3d);
+    font-size:15px;
+    line-height:1.6;
+  }
+  .draft-link{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    max-width:620px;
+    padding:20px 22px;
+    border:1px solid var(--color-border-subtle, #e2d9cc);
+    border-radius:var(--radius-md, 12px);
+    background:var(--color-surface, #fffdf7);
+    box-shadow:var(--shadow-1, 0 1px 2px rgba(0,0,0,.1));
+    color:inherit;
+    text-decoration:none;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .draft-link:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-2, 0 2px 6px rgba(0,0,0,.12));
+  }
+  .draft-link strong{display:block;font-size:18px;}
+  .draft-link small{
+    display:block;
+    margin-top:4px;
+    color:var(--color-text-secondary, #5c4f3d);
+    font-size:13px;
+    line-height:1.5;
+  }
+  .action{
+    flex-shrink:0;
+    color:var(--color-primary, #8b5e15);
+    font-size:13px;
+    font-weight:800;
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="eyebrow">Salt Light Archery</p>
+    <h1>Wireframe Review</h1>
+    <p class="lede">Current static HTML draft for the Phase 2 member portal redesign. The draft opens in Client view by default and includes the Client / Dev notes toggle on each screen.</p>
 
-      <section class="draft-list" aria-labelledby="drafts-title">
-        <h2 id="drafts-title">Drafts</h2>
-        <a class="draft-link" href="member-portal/draft-01/member-home-v3.html">
-          <span>
-            <strong>Member Portal Draft 01</strong>
-            <small>Member Home v3 — all tabs wireframed</small>
-          </span>
-          <span aria-hidden="true">View</span>
-        </a>
-      </section>
-    </main>
-  </body>
+    <a class="draft-link" href="member-portal/draft-01/">
+      <span>
+        <strong>Member Portal — Current Draft</strong>
+        <small>Seven screens: Login, Home, Booking, Wallet, Shop, Sign-in / Sign-out, and Me.</small>
+      </span>
+      <span class="action" aria-hidden="true">Open</span>
+    </a>
+  </main>
+</body>
 </html>
