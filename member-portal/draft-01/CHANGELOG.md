@@ -3,7 +3,7 @@
 Design review session: 2026-06-06  
 Reviewer: Daniel + partner  
 Implemented in: `phase2-designs/v2/`  
-Last updated: 2026-06-13
+Last updated: 2026-06-14
 
 ---
 
@@ -114,7 +114,7 @@ Additional improvements made during implementation, beyond the original review s
 | 77 | Book / Booking detail sheet | Dev note — cancellation window | Added: "Decide: fixed hours before session (e.g. 12 hrs) or end of previous day? Should cutoff differ by activity type?" | ✅ Done |
 | 78 | Book / Booking detail sheet | Dev note — past booking info | Added: "Consider: which fields matter for past sessions (sign-in time, credit deducted, instructor, access code)? Receipt link or feedback prompt?" | ✅ Done |
 | 79 | Shop / Purchases tab | Review | Month pill filter bar (Jan–Jun). History rows: 1 per category (locker, pass, activity, credits, combo). Tapping a row opens a read-only receipt sheet with per-type fields + Payment + Reference. | ✅ Done |
-| 80 | Shop / Paid Activities | Purchase + booking journey | Review full flow: purchasing a paid activity (booking session details, HitPay) and the downstream booking experience. Receipt fields and scenarios (pre-payment, post-sign-out payment) tracked separately — see `paid-activity-receipt` TODO. | 🔲 Pending |
+| 80 | Shop / Paid Activities | Purchase + booking journey | Review full flow: purchasing a paid activity (booking session details, HitPay) and the downstream booking experience. Receipt fields and scenarios (pre-payment, post-sign-out payment) tracked separately — see `paid-activity-receipt` TODO. Wireframed end-to-end in new file `04a Paid Activity.html` — see #108. | ✅ Done |
 
 ---
 
@@ -156,6 +156,43 @@ Additional improvements made during implementation, beyond the original review s
 | 105 | Shop / Catalog | Paid Activities — replaced mock products | Replaced placeholder activities (Trial Lesson, Holiday Beginner Course, Private Coaching) with `Basic Archery Course Plus (Recurve)` ($260), `Basic Archery Course Refresher (Recurve)` ($80), `Basic Archery Course Test (Recurve)` ($60). Prices and sub-text are placeholders pending real product catalogue. | ✅ Done |
 | 106 | Wireframe-skin | New `.client-note` component | Introduced `.client-note` block in `wireframe-skin.css` (label: `NOTE`, blue solid border, light-blue background). Always visible in both Client and Dev modes. Use when a note describes product-facing behaviour the client should also see during review. Distinct from `.dev-note` (yellow dashed, dev-only). | ✅ Done |
 | 107 | Wallet / Range Passes | Expired pass visibility note | Converted "Expired pass visibility" note from `.dev-note` → `.client-note` so it appears in client review (the behaviour rule is product-visible, not a dev-only consideration). | ✅ Done |
+| 108 | Shop / Paid Activities | New file `04a Paid Activity.html` (closes #80) | Wireframed the full purchase journey as a **single scrollable page** (detail · description · location · date · time · order summary · promo · payment method · sticky `Proceed to pay` CTA) plus four switchable views inside the same file: **HitPay** stub (Card / PayNow tabs, masked form / QR placeholder, dev-mode simulator to jump to terminal states), **Success** (booking code + summary card + `View in Book tab` CTA), **Failure** (`Try again` / `Cancel and return to Shop`), **Pending** (spinner + `.client-note` re webhook delay). Catalog rows in `04 Shop.html` (`openCheckout('a1'|'a2'|'a3')`) now redirect to `04a Paid Activity.html?act=<basic-plus\|basic-refresher\|basic-test>`. Mock promo `WELCOME10` = 10% off. Linked from v2 index. Out of scope (per plan): multi-session / multi-pax, slot-hold timer, real HitPay webhook plumbing. | ✅ Done |
+| 109 | Shop / Paid Activities | Multi-session course purchase | Not applicable for current paid-activity wireframe scope. | ➖ Deferred |
+| 110 | Shop / Paid Activities | Multi-pax purchase | Not applicable for current paid-activity wireframe scope. | ➖ Deferred |
+| 111 | Shop / Paid Activities | Slot hold / payment timeout | Dev note added to wireframe: slot-hold logic (e.g. 10-minute reservation while on this screen) is a backend concern and is out of scope for this wireframe. | ✅ Done |
+| 112 | Shop / Paid Activities | HitPay pending / webhook recovery | Dev note added to Pending view listing open questions (polling vs push, app-close behaviour, rollback timeout, where resolved booking surfaces). Full resolution deferred to BE design spec. | ✅ Done |
+| 113 | Shop / Paid Activities | Cancellation / refund policy | Not applicable for current paid-activity wireframe scope. | ➖ Deferred |
+| 114 | Shop / Paid Activities | Eligibility + prerequisites | Not applicable for current paid-activity wireframe scope. | ➖ Deferred |
+| 115 | Shop / Paid Activities | Success → booking follow-through | Superseded by #119. Paid-activity success should not branch into multiple follow-through actions; use a single **Back to Home** CTA. | ➖ Deferred |
+| 116 | Shop / Paid Activities | Receipt / booking linkage | Not a valid discussion point for current paid-activity wireframe scope. | ➖ Deferred |
+| 117 | Shop / Paid Activities | Timeslot selector | Aligned paid-activity timeslot rows with the booking lesson design: time range on the left, `N spots` (or `Full`) on the right, square checkbox ring far right. Slot data now uses a `rem` count; rows with `rem <= 2` get the `lbl-low` warning colour, `rem === 0` blocks selection. | ✅ Done |
+| 118 | Shop / Paid Activities | Payment page | Replaced the custom card/PayNow form with a **HitPay drop-in placeholder** card: amount + merchant ref block, dashed placeholder tile explaining HitPay handles all payment methods, "Secured by HitPay" footer, dev simulator panel (success / failure / pending), and a dev-note that production uses HitPay's hosted page or embedded drop-in widget. Dropped the unused hp-tabs / hp-field / hp-row2 / hp-qr / hp-actions CSS and the `switchHpTab` JS. | ✅ Done |
+| 119 | Shop / Paid Activities | Booking success page controls | Success view now hides the top-left back button and the top-right X close button (via `setView` visibility toggle). Replaced "View in Book tab" + "Back to Shop" with a single **Back to Home** primary CTA linking to `01 Nav + Home.html`. | ✅ Done |
+| 120 | Shop / Paid Activities | Email receipt discussion | Discussion deferred to a `dev-note` placed under the Payment section in `04a Paid Activity.html`. Working hypothesis: HitPay's payment receipt is automatic, so SLA backend sends a separate branded booking confirmation (activity / date / time / location / booking code) — to be locked before backend wiring. | ✅ Done |
+| 121 | Shop / Paid Activities | Hero price line | Removed the `$260 · per session` price row under the activity title in `04a Paid Activity.html`. Total still appears in the Order Summary, which is the right place for it. Dropped the `actPrice` JS write in `initAct` to avoid a null-ref. | ✅ Done |
+
+---
+
+## Session additions (2026-06-14)
+
+| # | Screen | Element | Change | Status |
+|---|--------|---------|--------|--------|
+| 122 | Home / Alerts | JY credits expiry alert | Removed the "JY credits expire in 5 days" warning. Alerts list now: MC balance error + Island pass expiring. | ✅ Done |
+| 123 | Home / Announcements | Section position | Moved Announcements out of `.gc-right` into a new `.gc-top` wrapper directly under `.alerts`. On desktop it spans full-width (`grid-column:1/-1`) above the two-column Sign-in + Range busyness layout; on mobile it stacks right under the alerts. Order: Greeting → Alerts → Announcements → Sign-in/Bookings → Busyness. | ✅ Done |
+| 124 | Home / Alerts | Dev note — alert variants | Added a `.dev-note` listing the four personal-alert variants (credit expiry, credits low / negative, pass expiry, locker expiry) with ordering rule (errors first, then warnings; soonest-due first) and a cap of ~3 visible with a "+N more" overflow (TBD). | ✅ Done |
+| 125 | Home / Greeting | Attention count | "3 things need your attention" → "2 things need your attention" (reflects the alert count after #122). | ✅ Done |
+| 126 | Shop / Paid Activities | Timeslot label | Slot count terminology: `N spots` → `N slots`; the disabled `Full` chip → `0 slots` (keeps red `lbl-full` colour). Aligns with the `slots` noun used elsewhere in the booking flow. | ✅ Done |
+| 127 | Shop / Paid Activities | Header — close button | Removed the top-right `×` close button from `.step-hdr` entirely. JS reference to `.step-close` in `setView` dropped to avoid null-deref. Back chevron remains. | ✅ Done |
+| 128 | Shop / Paid Activities | Slot row ring (`.s-ring`) | Single-select: changed the slot ring from a square checkbox to a **circular radio** — `border-radius:50%`, selected state shows an inner filled dot (`::after`) rather than a tick SVG. Tick SVG removed from `renderSlots`. Matches the `.pay-ring` radio elsewhere on the page. | ✅ Done |
+| 129 | Shop / Paid Activities | HitPay view — match real guest portal flow | Rebuilt `#viewHitpay` as a two-layer screen matching the actual guest portal (`guest/lib/guest/presentation/5_process_payment/`): an SLA "Redirecting to Payment Gateway" pending card behind (logo, body copy, reload-link, **Back** / **Payment Confirmed** buttons) and the **HitPay drop-in modal** overlay on top (X10 Solution brand, amount, CARD method row, card-number field with Autofill chip, `Pay $X` CTA, "Powered by HitPay" footer, dimmed backdrop). Replaces the standalone HitPay placeholder card. Drop-in modal mirrors `window.HitPay.toggle(...)` behaviour. | ✅ Done |
+| 130 | Shop / Paid Activities | Header titles | `HEADER_TITLES` rewired so `name` is always `Shop` and `eyebrow` describes the step: `Select Location & Time` (form), `Payment` (hitpay), `Confirmed` (success), `Payment Failed` (failure), `Confirming…` (pending). Static initial markup updated to match. | ✅ Done |
+| 131 | Shop / Paid Activities | HitPay drop-in CLOSE | Tapping `CLOSE` on the drop-in modal now dismisses just the overlay (`.hp-wrap.no-modal` toggles `.hp-dropin` and `.hp-backdrop` to `display:none`) — revealing the SLA pending card behind. Re-entering the HitPay view restores the modal. | ✅ Done |
+| 132 | Shop / Paid Activities | Header — title centring | Added a 38×38 `.step-spacer` to the right of `.step-title-area` to balance the back-chevron's width on the left, so the centred title sits at the true visual centre regardless of which buttons are visible. | ✅ Done |
+| 133 | Shop / Paid Activities | Timeslot duration | Timeslots changed from 1.5-hour to **2-hour** blocks: 9–11 AM · 11 AM – 1 PM · 1–3 PM · 3–5 PM · 5–7 PM. Activity description updated to "2 hour block". Success card mock time updated to `1:00 – 3:00 PM`. | ✅ Done |
+| 134 | Shop / Checkout + Paid Activities | Voucher terminology | Renamed all user-visible "Promo code" copy to **Voucher code** in `04 Shop.html` and `04a Paid Activity.html` (section heading, input placeholder, success / error messages). CSS class names, JS function names, and DOM IDs (`promo-*`, `applyPromo`, `promoIn`, `promoMsg`) left as-is — internal-only. | ✅ Done |
+| 135 | Shop / Paid Activities | Voucher chips — multi-add + remove | Replaced single-voucher state (`state.voucher` / `state.voucherAmt`) with `state.vouchers: []`. Applied vouchers render as removable chips under the input (`#voucherChips`); tapping × removes a chip. Order Summary collapses all applied vouchers into a single **Voucher discount** row (sum of all amounts) — no per-voucher listing. Success card mirrors the same single-row summary. Mock catalog: `WELCOME10` (5%), `SLA20` ($20), `ARCHER5` ($5); duplicates blocked with "Voucher already added." | ✅ Done |
+| 136 | Shop / Paid Activities | Voucher chip label | Chip amount label respects the voucher type: percentage vouchers show `−N%` (e.g. `WELCOME10 −5%`); fixed-dollar vouchers show `−$N` (e.g. `SLA20 −$20`). Order Summary `Voucher discount` row always shows the summed dollar amount. | ✅ Done |
+| 137 | Shop / Paid Activities | Voucher success message | Removed the "Voucher applied — X off." success message under the input — chips appear silently. Error messages ("Voucher code not recognised.", "Voucher already added.") still render. | ✅ Done |
 
 ---
 
@@ -167,5 +204,5 @@ Additional improvements made during implementation, beyond the original review s
 - 📝 Note only: #9, 17, 19, 21, 28, 30 — 6 items
 - ➖ Deferred: #6 — 1 item
 
-**Session additions (all done):** #34–78, #81–93, #95–107 — 71 items
-**Session additions (pending):** #80 — 1 item (Paid Activity purchase + booking journey)
+**Session additions (all done):** #34–78, #80–93, #95–108, #117–137 — 94 items
+**Session additions (pending):** none

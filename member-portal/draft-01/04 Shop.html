@@ -608,7 +608,12 @@ function calcValidity(days){
   return `${fmt(from)} – ${fmt(till)}`;
 }
 
+const ACT_ROUTE = { a1: 'basic-plus', a2: 'basic-refresher', a3: 'basic-test' };
 function openCheckout(id){
+  if(ACT_ROUTE[id]){
+    location.href = '04a Paid Activity.html?act=' + ACT_ROUTE[id];
+    return;
+  }
   coItem = ITEM_MAP[id];
   coVenue = 'West Coast';
   coTime = 'Morning';
@@ -676,7 +681,7 @@ function renderCheckout(){
     </div>
     ${detailsHTML}
     <div class="co-promo-row">
-      <input class="co-promo-input" type="text" placeholder="Promo code" id="promoInput" />
+      <input class="co-promo-input" type="text" placeholder="Voucher code" id="promoInput" />
       <button class="co-promo-btn" onclick="applyPromo()">Apply</button>
     </div>
     <div class="co-total" style="margin-top:4px;">
@@ -722,7 +727,7 @@ function renderActivityCheckout(it){
       </div>
     </div>
     <div class="co-promo-row">
-      <input class="co-promo-input" type="text" placeholder="Promo code" id="promoInput" />
+      <input class="co-promo-input" type="text" placeholder="Voucher code" id="promoInput" />
       <button class="co-promo-btn" onclick="applyPromo()">Apply</button>
     </div>
     <div class="co-total" style="margin-top:4px;">
@@ -951,6 +956,7 @@ renderHistory();
   });
   update();
   document.body.appendChild(btn);
+(function(){setForm(localStorage.getItem('wf-form')||'phone');})();
 })();
 </script>
 <script>
