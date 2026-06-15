@@ -6,7 +6,7 @@
 <title>x10s Member — Wallet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/css/tokens.css">
+<link rel="stylesheet" href="../tokens.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
@@ -196,7 +196,7 @@ svg{display:block;}
   .wlt-feed{max-width:640px;margin:0 auto;padding:32px 40px 48px;}
 }
 </style>
-<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+<link rel="stylesheet" href="../wireframe-skin.css">
 </head>
 <body>
 <div class="stage">
@@ -386,7 +386,7 @@ svg{display:block;}
             <span><div class="rb-name">x10s</div><div class="rb-sub">Salt Light Archery</div></span>
           </div>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ni-label">Home</span></button>
-          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Book</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Booking</span></button>
           <button class="nav-item on"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Wallet</span></button>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Shop</span></button>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></button>
@@ -424,7 +424,7 @@ svg{display:block;}
         <p class="sheet-sub" id="tuSub"></p>
         <div class="sheet-scroll"><div class="pkg-list" id="pkgList"></div></div>
         <div class="sheet-btn-wrap">
-          <button class="btn btn-primary" id="tuBtn" disabled onclick="closeAll()">Proceed to checkout</button>
+          <button class="btn btn-primary" id="tuBtn" disabled onclick="closeAll()">Proceed to Checkout</button>
         </div>
       </div>
 
@@ -587,7 +587,7 @@ function openTopup(wallet){
   document.getElementById('tuSub').textContent=PS[wallet];
   document.getElementById('pkgList').innerHTML=PKGS[wallet].map((p,i)=>'<button class="pkg-item" onclick="pickPkg('+i+')"><div class="pkg-ring" id="pkgRing'+i+'"></div><div class="pkg-info"><div class="pkg-credits">'+p.c+'</div><div class="pkg-price">'+p.p+' · '+p.d+'</div></div></button>').join('');
   document.getElementById('tuBtn').disabled=true;
-  document.getElementById('tuBtn').textContent='Proceed to checkout';
+  document.getElementById('tuBtn').textContent='Proceed to Checkout';
   openSheet('sheetTopup');
 }
 function pickPkg(i){
@@ -598,28 +598,12 @@ function pickPkg(i){
 }
 </script>
 <script>
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  var mode=localStorage.getItem(KEY)||'client';
-  if(mode==='dev'){document.body.classList.add(DEV);}else{document.body.classList.add(LOFI);}
-  var btn=document.createElement('button');
-  btn.id='wf-lofi-toggle';
-  function update(){btn.textContent=document.body.classList.contains(DEV)?'⚙ Dev notes':'● Client view';}
-  btn.addEventListener('click',function(){
-    var isDev=document.body.classList.contains(DEV);
-    if(isDev){document.body.classList.remove(DEV);document.body.classList.add(LOFI);localStorage.setItem(KEY,'client');}
-    else{document.body.classList.remove(LOFI);document.body.classList.add(DEV);localStorage.setItem(KEY,'dev');}
-    update();
-  });
-  update();
-  document.body.appendChild(btn);
-})();
+document.body.classList.add('lofi');
+setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 <script>
 /* wf-nav */
-(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Book":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
 </script>
 </body>
 </html>

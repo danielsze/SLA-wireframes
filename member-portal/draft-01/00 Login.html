@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/css/tokens.css">
+<link rel="stylesheet" href="../tokens.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
@@ -45,7 +45,7 @@ svg{display:block;}
 .frame.desktop .statusbar{display:none;}
 
 /* ── Login root — full bleed photo ── */
-.login-root{width:100%;height:100%;display:flex;flex-direction:column;overflow-y:auto;background:url('../../assets/images/wc2.jpg') center 30%/cover no-repeat;position:relative;}
+.login-root{width:100%;height:100%;display:flex;flex-direction:column;overflow-y:auto;background:url('../assets/images/wc2.jpg') center 30%/cover no-repeat;position:relative;}
 .login-root::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.52);pointer-events:none;z-index:0;}
 body.lofi .login-root{background:#c8c4bf;}
 body.lofi .login-root::before{display:none;}
@@ -135,7 +135,7 @@ body.lofi .login-inner{background:#f5f3f0;border:1px solid #ccc;}
   .login-logo{width:240px;}
 }
 </style>
-<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+<link rel="stylesheet" href="../wireframe-skin.css">
 </head>
 <body>
 <div class="stage">
@@ -196,7 +196,7 @@ body.lofi .login-inner{background:#f5f3f0;border:1px solid #ccc;}
         <div class="login-wrap" id="loginPanel">
           <div class="login-inner">
             <div class="login-head">
-              <img src="../../assets/images/sla_logo_transparent.png" alt="Salt & Light Archery" class="login-logo">
+              <img src="../assets/images/sla_logo_transparent.png" alt="Salt & Light Archery" class="login-logo">
               <h1 class="lh-title">Members Login</h1>
               <p class="lh-sub">Welcome back. Enter your details to continue.</p>
             </div>
@@ -403,22 +403,8 @@ function setForm(m) {
 }
 </script>
 <script>
-(function(){
-  var KEY='wf-mode';var DEV='devmode';var LOFI='lofi';
-  var mode=localStorage.getItem(KEY)||'client';
-  if(mode==='dev'){document.body.classList.add(DEV);}else{document.body.classList.add(LOFI);}
-  var btn=document.createElement('button');
-  btn.id='wf-lofi-toggle';
-  function update(){btn.textContent=document.body.classList.contains(DEV)?'⚙ Dev notes':'● Client view';}
-  btn.addEventListener('click',function(){
-    var isDev=document.body.classList.contains(DEV);
-    if(isDev){document.body.classList.remove(DEV);document.body.classList.add(LOFI);localStorage.setItem(KEY,'client');}
-    else{document.body.classList.remove(LOFI);document.body.classList.add(DEV);localStorage.setItem(KEY,'dev');}
-    update();
-  });
-  update();
-  document.body.appendChild(btn);
-})();
+document.body.classList.add('lofi');
+setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 </body>
 </html>

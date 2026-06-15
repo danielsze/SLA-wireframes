@@ -474,7 +474,7 @@ body.devmode .dev-note {
   position: relative;
 }
 .client-note::before {
-  content: "NOTE";
+  content: "CLIENT NOTE";
   display: block;
   font-size: 8.5px;
   font-weight: 800;
@@ -492,4 +492,202 @@ body.devmode .dev-note {
 }
 .client-note strong {
   font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------------
+   13. V3 COLOUR LEAK FIXES  — classes used in v3 screens not yet neutralised
+   Added 2026-06-14. All rules scoped under body.lofi.
+   --------------------------------------------------------------------------- */
+
+/* Wallet card tinted states (.wlt-card.wc-warn / .wlt-card.wc-err)
+   The skin already dashes their borders; these override the warm-tinted bg. */
+body.lofi .wlt-card.wc-warn,
+body.lofi .wlt-card.wc-err {
+  background: #F0F0F0 !important;
+  border-color: #9A9A9A !important;
+}
+body.lofi .wlt-card.wc-warn:hover,
+body.lofi .wlt-card.wc-err:hover {
+  border-color: #6E6E6E !important;
+}
+
+/* Pass card warning tint background (border-color already covered by skin) */
+body.lofi .pass-card.pc-warn {
+  background: #F0F0F0 !important;
+}
+
+/* Wallet badge: bd-ok (green) — bd-warn/bd-err already in skin */
+body.lofi .bd-ok {
+  background: #E4E4E4 !important;
+  color: #3A3A3A !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Booking confirmation banner (green tinted, Home + Sign-in screens) */
+body.lofi .bk-tile,
+body.lofi .booking-banner {
+  background: #EFEFEF !important;
+  border-color: #9A9A9A !important;
+}
+body.lofi .bkt-ico,
+body.lofi .bb-ico {
+  background: #E0E0E0 !important;
+  color: #4A4A4A !important;
+}
+
+/* No-booking / warning banners (amber tinted, Home + Sign-in screens) */
+body.lofi .nb-note,
+body.lofi .nb-warn {
+  background: #EFEFEF !important;
+  border-color: #9A9A9A !important;
+}
+body.lofi .nbn-ico,
+body.lofi .nb-ico {
+  background: #E0E0E0 !important;
+  color: #4A4A4A !important;
+}
+
+/* Success / info / error outcome icons (Login, Me, Booking, Sign-in screens) */
+body.lofi .suc-ico,
+body.lofi .success-ico,
+body.lofi .out-ico,
+body.lofi .out-ico.success,
+body.lofi .out-ico.info,
+body.lofi .out-ico.error,
+body.lofi .term-ico.ok,
+body.lofi .ci-ico {
+  background: #E0E0E0 !important;
+  color: #4A4A4A !important;
+}
+
+/* Session coverage rows tint (Sign-in screen) */
+body.lofi .scc-row.covered,
+body.lofi .scc-row.overdue {
+  background: #F4F4F4 !important;
+}
+
+/* Voucher applied chip (Paid Activity screen — green tint) */
+body.lofi .voucher-chip {
+  background: #E4E4E4 !important;
+  color: #3A3A3A !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Selected payment option tint (Paid Activity + Sign-in screens) */
+body.lofi .pay-opt.sel {
+  background: #EBEBEB !important;
+  border-color: #6E6E6E !important;
+}
+body.lofi .pay-opt.sel .pay-ico {
+  background: #9A9A9A !important;
+  color: #FFFFFF !important;
+}
+
+/* Credit type selector selected + error states (Booking + Sign-in screens) */
+body.lofi .cred-type-btn.sel,
+body.lofi .cred-type-btn.sel.err {
+  background: #EBEBEB !important;
+  border-color: #6E6E6E !important;
+  color: #3A3A3A !important;
+}
+
+/* Status pill: st-upcoming (Shop screen — missing from skin, same style as st-active) */
+body.lofi .st-upcoming {
+  background: #E4E4E4 !important;
+  color: #3A3A3A !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Expired pass chip (Wallet screen — faded but still has rgba(0,0,0,.07) which is fine,
+   but override to be consistent with all other chips) */
+body.lofi .chip-expired {
+  background: #E8E8E8 !important;
+  color: #6E6E6E !important;
+}
+
+/* Promo/voucher input focus ring (Paid Activity — .promo-input not in skin's input list) */
+body.lofi .promo-input:focus {
+  border-color: #6E6E6E !important;
+  box-shadow: 0 0 0 2px rgba(110,110,110,.25) !important;
+}
+
+/* Dev simulator panel (Paid Activity — hidden in client view anyway via display:none,
+   but neutralise the brand amber bg in case it becomes visible) */
+body.lofi .dev-sim {
+  background: #F0F0F0 !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Scenario switcher pill (Sign-in screen — .scen-btn.on brand colour) */
+body.lofi .scen-btn {
+  color: #CFCFCF !important;
+}
+body.lofi .scen-btn.on {
+  background: #FFFFFF !important;
+  color: #1A1A1A !important;
+}
+body.lofi .scen-seg {
+  background: rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+/* HitPay drop-in widget mock (Paid Activity screen)
+   This is a 3rd-party payment UI mockup with hard-coded blues/greens/darks.
+   Flatten entirely to greyscale in Client view. */
+body.lofi .hp-dropin {
+  background: #F5F5F5 !important;
+  color: #2A2A2A !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15) !important;
+}
+body.lofi .hp-dropin-head,
+body.lofi .hp-dropin-method {
+  border-color: #CFCFCF !important;
+}
+body.lofi .hp-dropin-brand,
+body.lofi .hp-dropin-amt-val,
+body.lofi .hp-dropin-method-name {
+  color: #1A1A1A !important;
+}
+body.lofi .hp-dropin-amt-lbl,
+body.lofi .hp-dropin-close,
+body.lofi .hp-dropin-foot {
+  color: #6E6E6E !important;
+}
+body.lofi .hp-dropin-foot strong {
+  color: #3A3A3A !important;
+}
+body.lofi .hp-dropin-method-ico {
+  background: #8A8A8A !important;
+  color: #FFFFFF !important;
+}
+body.lofi .hp-dropin-field input {
+  border-color: #BDBDBD !important;
+  background: #FFFFFF !important;
+  color: #1A1A1A !important;
+}
+body.lofi .hp-dropin-autofill {
+  background: #6E6E6E !important;
+  color: #FFFFFF !important;
+}
+body.lofi .hp-dropin-pay {
+  background: #4A4A4A !important;
+  color: #FFFFFF !important;
+}
+body.lofi .hp-bg-logo-mark {
+  background: #8A8A8A !important;
+}
+body.lofi .hp-backdrop {
+  background: rgba(20,20,20,.35) !important;
+}
+
+/* SVG fill colours inside the credit-card icon in HitPay mock */
+body.lofi .hp-dropin-method-ico svg rect[fill="#3a8df0"],
+body.lofi .hp-dropin-method-ico svg rect[fill="#3a8df0"] {
+  fill: #8A8A8A !important;
+}
+
+/* Warning container background (bill-total-row.due, nb-warn, etc.) — warm amber tint not in token remap */
+body.lofi {
+  --color-warning-container: #F0F0F0;
+  --color-on-warning-container: #3A3A3A;
 }

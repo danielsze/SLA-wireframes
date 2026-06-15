@@ -6,7 +6,7 @@
 <title>x10s Member — Make a Booking</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/css/tokens.css">
+<link rel="stylesheet" href="../tokens.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
@@ -109,6 +109,7 @@ svg{display:block;}
 .bk-info{flex:1;min-width:0;}
 .bk-title{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .bk-meta{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+.chev{ color:var(--color-text-secondary); display:flex; align-items:center; margin-left:auto; flex-shrink:0; }
 .month-bar{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px 0 8px;-webkit-overflow-scrolling:touch;}
 .month-bar::-webkit-scrollbar{display:none;}
 .month-pill{font-family:inherit;font-size:13px;font-weight:700;padding:7px 16px;border-radius:var(--radius-full);border:none;cursor:pointer;white-space:nowrap;background:var(--color-surface-variant);color:var(--color-text-secondary);transition:all var(--duration-fast) ease;flex-shrink:0;}
@@ -308,7 +309,7 @@ svg{display:block;}
 .det-actions{margin-top:var(--space-md);display:flex;flex-direction:column;gap:8px;}
 .cutoff-note{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-top:4px;}
 </style>
-<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+<link rel="stylesheet" href="../wireframe-skin.css">
 </head>
 <body>
 <div class="stage">
@@ -361,7 +362,7 @@ svg{display:block;}
               <h1>Bookings</h1>
               <button class="new-btn" onclick="openBooking()">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-                New booking
+                New Booking
               </button>
             </div>
             <div class="seg-tabs">
@@ -373,24 +374,28 @@ svg{display:block;}
                 <div class="bk-inner">
                   <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">6</div></div>
                   <div class="bk-info"><div class="bk-title">Range Practice <span class="tag tag-practice">Practice</span></div><div class="bk-meta">Range 3 · West Coast · 9:00 – 11:00 AM</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
               <div class="bk-card" onclick="openDetail('b2')">
                 <div class="bk-inner">
                   <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">9</div></div>
                   <div class="bk-info"><div class="bk-title">Private Coaching <span class="tag tag-private">Private</span></div><div class="bk-meta">Range 1 · Chai Chee · 4:00 – 5:00 PM · Recurve</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
               <div class="bk-card" onclick="openDetail('b5')">
                 <div class="bk-inner">
                   <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">14</div></div>
                   <div class="bk-info"><div class="bk-title">Basic Archery Course <span class="tag tag-course">Course</span></div><div class="bk-meta">Range 1 · West Coast · 4:00 – 6:00 PM · Traditional</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
               <div class="bk-card" onclick="openDetail('b6')">
                 <div class="bk-inner">
                   <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">21</div></div>
                   <div class="bk-info"><div class="bk-title">Master Class <span class="tag tag-lesson">Lesson</span></div><div class="bk-meta">Range 2 · West Coast · 1:00 – 3:00 PM · Compound</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
             </div><!-- /listUp -->
@@ -406,6 +411,7 @@ svg{display:block;}
                     <div class="bk-meta">Range 1 · West Coast · 10:00 – 11:00 AM · Recurve</div>
                     <span class="att-chip att-yes"><span class="att-dot"></span>Attended</span>
                   </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
               <div class="bk-card" data-month="2026-05" onclick="openDetail('b8')">
@@ -416,6 +422,7 @@ svg{display:block;}
                     <div class="bk-meta">Range 2 · West Coast · 1:00 – 3:00 PM · Compound</div>
                     <span class="att-chip att-no"><span class="att-dot"></span>No sign-in recorded</span>
                   </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
               <div class="bk-card" data-month="2026-05" onclick="openDetail('b3')">
@@ -426,6 +433,7 @@ svg{display:block;}
                     <div class="bk-meta">Range 1 · West Coast · 10:00 AM – 12:00 PM</div>
                     <span class="att-chip att-yes"><span class="att-dot"></span>Attended</span>
                   </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
               <div class="bk-card" data-month="2026-05" onclick="openDetail('b7')">
@@ -436,6 +444,7 @@ svg{display:block;}
                     <div class="bk-meta">Range 1 · Chai Chee · 2:00 – 5:00 PM · Compound</div>
                     <span class="att-chip att-no"><span class="att-dot"></span>No sign-in recorded</span>
                   </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
                 </div>
               </div>
             </div>
@@ -494,6 +503,10 @@ svg{display:block;}
                   <div style="padding-top:var(--space-md)">
                     <div id="slotErrWrap"></div>
                     <div class="slot-list" id="slotList"></div>
+                    <div class="dev-note">
+                      <strong>Mixed walk-in / booked selection — needs product decision.</strong>
+                      When an archer selects multiple consecutive hours where some slots are full (walk-in) and others are available (proper booking), decide whether to split into separate bookings or find a cleaner way to handle the mixed state.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -509,7 +522,7 @@ svg{display:block;}
                 <div class="review-card">
                   <div class="rv-row"><span class="rv-lbl">Activity</span><span class="rv-val" id="rvAct">Range Practice</span></div>
 
-                  <div class="rv-row"><span class="rv-lbl">Venue</span><span class="rv-val" id="rvVenue">Range 1 · West Coast</span></div>
+                  <div class="rv-row"><span class="rv-lbl">Location / Range</span><span class="rv-val" id="rvVenue">Range 1 · West Coast</span></div>
                   <div class="rv-row"><span class="rv-lbl">Date</span><span class="rv-val" id="rvDate">Sun, 7 Jun 2026</span></div>
                   <div class="rv-row"><span class="rv-lbl">Time</span><span class="rv-val" id="rvTime">9:00 – 11:00 AM</span></div>
                   <div class="rv-row"><span class="rv-lbl">Equipment</span><span class="rv-val" id="rvGear">None</span></div>
@@ -558,7 +571,7 @@ svg{display:block;}
               <p class="suc-ref" id="sucRef">Reference BK-20260607-042 · 4 RP deducted</p>
               <div class="suc-card">
                 <div class="suc-row"><span class="suc-lbl">Activity</span><span class="suc-val" id="sucAct">Range Practice</span></div>
-                <div class="suc-row"><span class="suc-lbl">Venue</span><span class="suc-val" id="sucVenue">Range 3 · West Coast</span></div>
+                <div class="suc-row"><span class="suc-lbl">Location / Range</span><span class="suc-val" id="sucVenue">Range 3 · West Coast</span></div>
                 <div class="suc-row"><span class="suc-lbl">Date &amp; time</span><span class="suc-val" id="sucTime">Sun 7 Jun · 9:00–11:00 AM</span></div>
                 <div class="suc-row"><span class="suc-lbl" id="sucCreditLbl">Credit</span><span class="suc-val" style="color:var(--color-error)" id="sucCredit">−4.0 · Balance: −2.0</span></div>
               </div>
@@ -572,7 +585,7 @@ svg{display:block;}
         <nav class="nav">
           <div class="rail-brand"><span class="rl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span><span><div class="rb-name">x10s</div><div class="rb-sub">Salt Light Archery</div></span></div>
           <button class="nav-item" onclick="goHome()"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ni-label">Home</span></button>
-          <button class="nav-item on" id="navBook"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4M8 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Book</span></button>
+          <button class="nav-item on" id="navBook"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4M8 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Booking</span></button>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Wallet</span></button>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Shop</span></button>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></button>
@@ -615,14 +628,13 @@ svg{display:block;}
         <div class="sheet-title" id="detTitle">Range Practice</div>
         <div class="det-rows">
           <div class="det-row"><span class="det-lbl">Date</span><span class="det-val" id="detDate">–</span></div>
-          <div class="det-row"><span class="det-lbl">Venue</span><span class="det-val" id="detVenue">–</span></div>
+          <div class="det-row"><span class="det-lbl">Location / Range</span><span class="det-val" id="detVenue">–</span></div>
           <div class="det-row"><span class="det-lbl">Time</span><span class="det-val" id="detTime">–</span></div>
-          <div class="det-row" id="detBowRow"><span class="det-lbl">Bow style</span><span class="det-val" id="detBow">–</span></div>
           <div class="det-row" id="detCodeRow"><span class="det-lbl">Access code</span><span class="det-val" id="detCode">–</span></div>
           <div class="det-row" id="detAttRow"><span class="det-lbl">Signed in at</span><span id="detAtt">–</span></div>
         </div>
-        <div class="dev-note" style="margin:12px 0 4px">💡 <strong>Cancellation window</strong> — Decide: fixed hours before session (e.g. 12 hrs) or end of previous day? Should the cutoff differ by activity type (practice vs lesson)?</div>
-        <div class="dev-note" style="margin:4px 0 8px">💡 <strong>Past booking — info to display</strong> — Consider: which fields matter for past sessions (sign-in time, credit deducted, instructor, access code)? Should there be a receipt link or feedback prompt?</div>
+        <div class="client-note" style="margin:12px 0 4px">💡 <strong>Cancellation window</strong> — Decide: fixed hours before session (e.g. 12 hrs) or end of previous day? Should the cutoff differ by activity type (practice vs lesson)?</div>
+        <div class="client-note" style="margin:4px 0 8px">💡 <strong>Past booking — info to display</strong> — Consider: which fields matter for past sessions (sign-in time, credit deducted, instructor, access code)? Should there be a receipt link or feedback prompt?</div>
         <div class="det-actions" id="detActions"></div>
       </div>
 
@@ -682,8 +694,6 @@ function openDetail(id){
       ?`<span class="det-val">${b.signInTime}</span>`
       :'<span class="det-val" style="color:var(--color-text-disabled)">— Not recorded</span>';
   } else { attRow.style.display='none'; }
-  const bowRow=document.getElementById('detBowRow');
-  if(b.bow){bowRow.style.display='flex';document.getElementById('detBow').textContent=b.bow;}else{bowRow.style.display='none';}
   const a=document.getElementById('detActions');
   if(b.canCancel){
     a.innerHTML='<button class="btn btn-danger" style="width:100%" onclick="closeDetail()">Cancel booking</button>';
@@ -983,7 +993,7 @@ function renderSlots(){
   if(S.slotErr==='consecutive')banner=`<div class="slot-err err-cons"><span class="slot-err-icon">${warn}</span><div><strong>Slots must be consecutive.</strong></div></div>`;
   else if(S.slotErr==='max')banner=`<div class="slot-err err-max"><span class="slot-err-icon">${warn}</span><div><strong>Maximum 4 hourly slots</strong> per booking. Deselect a slot first.</div></div>`;
   else if(S.slotErr==='full')banner=`<div class="slot-err err-full"><span class="slot-err-icon">${warn}</span><div><strong>No spaces left</strong> for this slot — it's fully booked. Try an adjacent hour.</div></div>`;
-  if(walkinSelected)banner+=`<div class="slot-note note-walkin"><span class="slot-err-icon">${warn}</span><div><strong>Walk-in — spot not guaranteed.</strong> This session is fully booked, but you can still shoot today as a walk-in. Archers with confirmed bookings get priority, and the range warden may ask you to leave if every lane is taken.</div></div>`;
+  if(walkinSelected)banner+=`<div class="slot-note note-walkin"><span class="slot-err-icon">${warn}</span><div><div><strong>Walk-in only.</strong></div><div>You may be asked to leave if the range fills up — confirmed bookings get priority.</div></div></div>`;
   w.innerHTML=banner;
 
   updateNext();
@@ -1061,7 +1071,7 @@ function renderReview(){
   const slotData=act.type==='lesson'?SLOTS_L:SLOTS_P;
   const hasWalkin=S.selDay===NOW_DAY&&ss.some(h=>slotData.some(s=>s.h===h&&s.rem===0));
   const warnIco='<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  document.getElementById('rvWalkin').innerHTML=hasWalkin?`<div class="slot-note note-walkin" style="margin-bottom:12px"><span class="slot-err-icon">${warnIco}</span><div><strong>Walk-in — spot not guaranteed.</strong> You're booking a session that's fully booked. Members with confirmed bookings get priority, and the range warden may ask you to leave if every lane is taken.</div></div>`:'';
+  document.getElementById('rvWalkin').innerHTML=hasWalkin?`<div class="slot-note note-walkin" style="margin-bottom:12px"><span class="slot-err-icon">${warnIco}</span><div><div><strong>Walk-in only.</strong></div><div>You may be asked to leave if the range fills up — confirmed bookings get priority.</div></div></div>`:'';
   document.getElementById('rvAct').textContent=act.name;
   document.getElementById('rvVenue').textContent=vloc?`${vname} · ${vloc}`:vname;
   document.getElementById('rvDate').textContent=`Sun, ${S.selDay} Jun 2026`;
@@ -1127,7 +1137,7 @@ function confirm(){
   const signinLoc=vloc||'West Coast';
   document.getElementById('sucBtns').innerHTML=inSigninWindow
     ?`<button class="btn btn-ghost" style="flex:1" onclick="closeBooking()">Done</button>
-      <button class="btn btn-primary" style="flex:1" onclick="goToSignin('${signinLoc}')">${arrowIco}Sign in to Range now</button>`
+      <button class="btn btn-primary" style="flex:1" onclick="goToSignin('${signinLoc}')">${arrowIco}Sign In to Range Now</button>`
     :`<button class="btn btn-primary" style="flex:1" onclick="closeBooking()">Done</button>`;
   document.getElementById('vStepper').style.display='none';
   document.getElementById('vSuccess').style.display='block';
@@ -1140,31 +1150,18 @@ function confirm(){
   document.getElementById('vStepper').style.display='none';
   document.getElementById('vSuccess').style.display='none';
   document.getElementById('main').style.overflow='auto';
+  const wantsNew=new URLSearchParams(location.search).get('new')==='1'||localStorage.getItem('wf-open-booking')==='1';
+  localStorage.removeItem('wf-open-booking');
+  if(wantsNew) openBooking();
 })();
 </script>
 <script>
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  var mode=localStorage.getItem(KEY)||'client';
-  if(mode==='dev'){document.body.classList.add(DEV);}else{document.body.classList.add(LOFI);}
-  var btn=document.createElement('button');
-  btn.id='wf-lofi-toggle';
-  function update(){btn.textContent=document.body.classList.contains(DEV)?'⚙ Dev notes':'● Client view';}
-  btn.addEventListener('click',function(){
-    var isDev=document.body.classList.contains(DEV);
-    if(isDev){document.body.classList.remove(DEV);document.body.classList.add(LOFI);localStorage.setItem(KEY,'client');}
-    else{document.body.classList.remove(LOFI);document.body.classList.add(DEV);localStorage.setItem(KEY,'dev');}
-    update();
-  });
-  update();
-  document.body.appendChild(btn);
-})();
+document.body.classList.add('lofi');
+setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 <script>
 /* wf-nav */
-(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Book":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
 </script>
 </body>
 </html>
