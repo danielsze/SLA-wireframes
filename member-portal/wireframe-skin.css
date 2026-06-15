@@ -1,0 +1,693 @@
+/* ============================================================================
+   wireframe-skin.css
+   ----------------------------------------------------------------------------
+   Client-view greyscale "wireframe skin" for the x10s Member Dev notes screens.
+
+   PURPOSE
+     Strip visual polish (brand colour, elevation, rounded corners, tints) so a
+     client reviews STRUCTURE & FLOW — not aesthetics. Layout, spacing, labels,
+     buttons and routes are all preserved; only the visual finish is neutralised.
+
+   HOW IT WORKS (new toggle mechanism)
+     All rules are scoped under `body.lofi`. Numbered v2 screens default to Client
+     view, which adds the `lofi` class and hides dev notes. Dev notes view removes
+     `lofi`, adds `devmode`, and restores the annotated hi-fi surface.
+
+     Each screen ships a small fixed toggle button (bottom-left) that adds/removes
+     the `lofi` class on <body> and persists the choice to localStorage (key
+     "wf-mode"), so the setting carries across all 7 screens.
+
+   FILE LOADING ORDER (in each screen's <head>)
+     1. <link rel="stylesheet" href="tokens.css">          ← shared token values
+     2. <style>…</style>                                    ← screen structural CSS
+   3. <link rel="stylesheet" href="wireframe-skin.css">  ← Client view skin (last)
+
+   See wireframe-skin-inventory.md for the full token/class catalog this targets.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. TOKEN OVERRIDES  — reaches everything that uses var(--token).
+   Custom properties set on body cascade to all descendants.
+   --------------------------------------------------------------------------- */
+body.lofi {
+  /* neutral wireframe font stack — readable, no web-font load */
+  --font-primary: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* brand / action → greys */
+  --color-primary:        #6E6E6E;
+  --color-primary-hover:  #555555;
+  --color-on-primary:     #FFFFFF;
+  --color-secondary:      #7A7A7A;
+  --color-on-secondary:   #FFFFFF;
+
+  /* surfaces → neutral greys */
+  --color-surface-lowest:  #F4F4F4;
+  --color-surface:         #FFFFFF;
+  --color-surface-variant: #ECECEC;
+  --color-surface-highest: #DEDEDE;
+
+  /* text → greyscale */
+  --color-text-primary:   #1A1A1A;
+  --color-text-secondary: #555555;
+  --color-text-disabled:  #999999;
+  --color-text-on-primary:#FFFFFF;
+
+  /* borders → mid grey (rendered dashed via rules below) */
+  --color-border-subtle:   #BDBDBD;
+  --color-border-emphasis: #9A9A9A;
+
+  /* status → distinct greys (error darkest = most urgent, info lightest) */
+  --color-success:    #5A5A5A;
+  --color-on-success: #FFFFFF;
+  --color-warning:    #707070;
+  --color-on-warning: #FFFFFF;
+  --color-error:      #3A3A3A;
+  --color-on-error:   #FFFFFF;
+  --color-info:       #808080;
+  --color-on-info:    #FFFFFF;
+
+  /* radius → near-square sketch feel (pills/avatars kept slightly soft at 4px) */
+  --radius-none: 0px;
+  --radius-xs:   2px;
+  --radius-sm:   3px;
+  --radius-md:   3px;
+  --radius-lg:   4px;
+  --radius-xl:   4px;
+  --radius-full: 4px;
+
+  /* elevation → flat */
+  --shadow-1: none;
+  --shadow-2: none;
+  --shadow-3: none;
+  --shadow-4: none;
+  --shadow-5: none;
+
+  /* spacing, border widths and durations are intentionally NOT overridden,
+     so layout, rhythm and structure are preserved exactly. */
+}
+
+/* ---------------------------------------------------------------------------
+   2. GLOBAL FLATTENING  — catch hardcoded shadows / radius / fonts everywhere
+   --------------------------------------------------------------------------- */
+body.lofi *,
+body.lofi *::before,
+body.lofi *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  font-family: var(--font-primary) !important;
+  /* clamp any inline / hardcoded radius down to a sketch corner */
+  border-radius: 3px !important;
+  /* neutralise transitions/animation so the static skin doesn't shimmer */
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Dashed, slightly hand-drawn borders for anything that draws a solid one.
+   Applied broadly but only changes STYLE (dashed) + COLOR (grey); widths kept. */
+body.lofi .card, body.lofi .bk-card, body.lofi .wlt-card, body.lofi .pass-card,
+body.lofi .prod-list, body.lofi .review-card, body.lofi .suc-card,
+body.lofi .scard, body.lofi .me-hero, body.lofi .confirm-card,
+body.lofi .cal-wrap, body.lofi .slot-ctx, body.lofi .act-item,
+body.lofi .venue-card, body.lofi .gear-item, body.lofi .range-opt,
+body.lofi .pkg-item, body.lofi .loc-chip, body.lofi .date-chip,
+body.lofi .sc-timer-wrap, body.lofi .sc-coverage, body.lofi .stepper-wrap,
+body.lofi .paynow-box, body.lofi .demo-card, body.lofi .surface-stack,
+body.lofi .book-list, body.lofi .ann-list {
+  border-style: dashed !important;
+  border-color: var(--color-border-emphasis) !important;
+}
+
+/* inputs / fields read as outlined sketch boxes */
+body.lofi input, body.lofi textarea, body.lofi select,
+body.lofi .f-input, body.lofi .finput, body.lofi .code-input,
+body.lofi .fld input, body.lofi .demo-input {
+  border: 1.5px dashed var(--color-border-emphasis) !important;
+  background: var(--color-surface-variant) !important;
+  color: var(--color-text-primary) !important;
+  box-shadow: none !important;
+}
+body.lofi input:focus, body.lofi textarea:focus, body.lofi select:focus,
+body.lofi .f-input:focus, body.lofi .finput:focus,
+body.lofi .code-input:focus, body.lofi .fld input:focus {
+  border-color: #6E6E6E !important;
+  box-shadow: 0 0 0 2px rgba(110,110,110,.25) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   3. STAGE CHROME  — the dark backdrop + device frame around the screen
+   Keep a neutral dark grey "stage" so the device still reads as a mockup,
+   but strip the warm tint and the heavy drop shadow.
+   --------------------------------------------------------------------------- */
+body.lofi {
+  background: #2A2A2A !important;
+  background-image: radial-gradient(circle at 30% 0%, #383838 0%, #2A2A2A 60%) !important;
+}
+body.lofi .stage-bar { color: #DEDEDE !important; }
+body.lofi .crumb { color: #AAAAAA !important; }
+body.lofi .seg {
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+body.lofi .seg button { color: #CFCFCF !important; }
+body.lofi .seg button.on {
+  background: #FFFFFF !important;
+  color: #1A1A1A !important;
+}
+body.lofi .frame, body.lofi .notch { background: #161616 !important; }
+body.lofi .frame {
+  box-shadow: 0 24px 48px -24px rgba(0,0,0,.5) !important;
+  border-radius: 28px !important;   /* device keeps a phone-ish corner */
+}
+body.lofi .frame.desktop { border-radius: 8px !important; }
+body.lofi .screen { border-radius: 22px !important; }
+body.lofi .frame.desktop .screen { border-radius: 6px !important; }
+
+/* brand logo marks → flat grey tile */
+body.lofi .logo, body.lofi .rail-brand .logo,
+body.lofi .rail-brand .rl, body.lofi .brand .logo {
+  background: #8A8A8A !important;
+  box-shadow: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   4. BUTTONS  — outlined / filled grey, clearly tappable but unstyled
+   --------------------------------------------------------------------------- */
+body.lofi .btn-primary, body.lofi .new-btn, body.lofi .buy-btn,
+body.lofi .topup-btn, body.lofi .topup-btn.urgent {
+  background: #6E6E6E !important;
+  color: #FFFFFF !important;
+  border: 1px solid #555 !important;
+}
+body.lofi .btn-primary:hover, body.lofi .new-btn:hover,
+body.lofi .buy-btn:hover, body.lofi .topup-btn:hover {
+  background: #5A5A5A !important;
+}
+body.lofi .btn-primary:disabled {
+  background: #CFCFCF !important;
+  color: #888 !important;
+  border-color: #BDBDBD !important;
+}
+body.lofi .btn-ghost, body.lofi .renew-btn, body.lofi .txt-btn,
+body.lofi .a-act, body.lofi .step-btn {
+  background: transparent !important;
+  color: #4A4A4A !important;
+  border: 1.5px dashed #8A8A8A !important;
+}
+body.lofi .btn-ghost:hover, body.lofi .renew-btn:hover,
+body.lofi .txt-btn:hover { background: #EDEDED !important; }
+body.lofi .btn-danger, body.lofi .btn-err, body.lofi .txt-btn.danger {
+  background: transparent !important;
+  color: #3A3A3A !important;
+  border: 1.5px dashed #555 !important;
+}
+
+/* alert action buttons used on Home */
+body.lofi .alert-error .a-act { background:#3A3A3A !important; color:#fff !important; border:none !important; }
+body.lofi .alert-warning .a-act { background:transparent !important; color:#555 !important; border:1.5px dashed #8A8A8A !important; }
+
+/* ---------------------------------------------------------------------------
+   5. AVATARS  — the only "photo-like" elements → flat grey IMG placeholder
+   Diagonal hatch + readable initials kept on top.
+   --------------------------------------------------------------------------- */
+body.lofi .avatar, body.lofi .avatar.olive,
+body.lofi .avatar.slate, body.lofi .avatar.sm {
+  background:
+    repeating-linear-gradient(45deg, #C8C8C8 0 6px, #D6D6D6 6px 12px) !important;
+  color: #2A2A2A !important;
+  border: 1.5px solid #9A9A9A !important;
+  border-radius: 4px !important;   /* squared-off = clearly a placeholder */
+  box-shadow: none !important;
+}
+
+/* QR placeholder (Shop checkout / PayNow) → hatched grey box */
+body.lofi .qr-mock {
+  background:
+    repeating-linear-gradient(45deg, #BFBFBF 0 8px, #D2D2D2 8px 16px) !important;
+  border: 1.5px dashed #8A8A8A !important;
+}
+body.lofi .qr-mock * { visibility: hidden !important; }
+
+/* ---------------------------------------------------------------------------
+   6. TINTED / COLOURED STATUS SURFACES
+   Hardcoded brand/status rgba backgrounds + literal text hexes → grey.
+   These are NOT reachable by the token swap, so they're targeted here.
+   --------------------------------------------------------------------------- */
+
+/* alert + banner tints */
+body.lofi .alert-error, body.lofi .err-cons, body.lofi .err-max,
+body.lofi .banner-error, body.lofi .ab-err { background:#E6E6E6 !important; color:#2A2A2A !important; border-color:#3A3A3A !important; }
+body.lofi .alert-warning, body.lofi .err-full, body.lofi .banner-warning,
+body.lofi .ab-warn, body.lofi .pass-card.pc-warn { background:#EFEFEF !important; color:#3A3A3A !important; border-color:#707070 !important; }
+body.lofi .banner-info, body.lofi .ab-info { background:#F0F0F0 !important; color:#333 !important; border-color:#808080 !important; }
+body.lofi .banner-success { background:#ECECEC !important; color:#333 !important; border-color:#5A5A5A !important; }
+body.lofi .ab-warn .abi, body.lofi .ab-info .abi,
+body.lofi .alert-error .a-ico, body.lofi .alert-warning .a-ico { background:#7A7A7A !important; color:#fff !important; }
+
+/* tags (booking type) — tint bg + literal text colours */
+body.lofi .tag, body.lofi .tag-practice, body.lofi .tag-lesson,
+body.lofi .tag-private, body.lofi .tag-course {
+  background:#E4E4E4 !important; color:#3A3A3A !important;
+}
+
+/* status pills / chips across screens */
+body.lofi .chip, body.lofi .chip-warn, body.lofi .chip-ok,
+body.lofi .chip-group, body.lofi .chip-bow, body.lofi .chip.selected,
+body.lofi .bk-status, body.lofi .st-ok, body.lofi .st-done, body.lofi .st-cancel,
+body.lofi .st-chip, body.lofi .st-active, body.lofi .st-pending,
+body.lofi .st-expired, body.lofi .st-used,
+body.lofi .sum-quiet, body.lofi .sum-filling, body.lofi .sum-full,
+body.lofi .rs-quiet, body.lofi .rs-filling, body.lofi .rs-full,
+body.lofi .scc-tag, body.lofi .scc-tag.ok, body.lofi .scc-tag.warn,
+body.lofi .cc-tag, body.lofi .tag-ok, body.lofi .tag-info,
+body.lofi .wc-badge, body.lofi .bd-warn, body.lofi .bd-err,
+body.lofi .ann-sev, body.lofi .ann.warning .ann-sev, body.lofi .ann.info .ann-sev,
+body.lofi .prod-save, body.lofi .prod-save.sv-warn, body.lofi .prod-save.sv-lim,
+body.lofi .ro-tag, body.lofi .pill-step, body.lofi .jyp-badge {
+  background:#E4E4E4 !important;
+  color:#3A3A3A !important;
+  border-color:#9A9A9A !important;
+}
+
+/* product / wallet / txn icon tiles (tinted rgba bg) → flat grey */
+body.lofi .ic-rp, body.lofi .ic-jy, body.lofi .ic-mc, body.lofi .ic-pass,
+body.lofi .ic-combo, body.lofi .ic-act,
+body.lofi .wc-ico, body.lofi .wc-ico.ok, body.lofi .wc-ico.warn,
+body.lofi .wc-ico.err, body.lofi .wc-ico.info,
+body.lofi .pass-ico, body.lofi .txn-ico, body.lofi .txn-ico.ti-debit,
+body.lofi .txn-ico.ti-credit,
+body.lofi .hi-ico, body.lofi .co-item-ico, body.lofi .a-ico,
+body.lofi .si-pulse, body.lofi .sc-pulse,
+body.lofi .scc-ico, body.lofi .scc-ico.ok, body.lofi .scc-ico.warn,
+body.lofi .act-ico, body.lofi .sc-ico,
+body.lofi .gear-ico, body.lofi .lc-pin, body.lofi .c-ico, body.lofi .abi {
+  background:#E0E0E0 !important;
+  color:#4A4A4A !important;
+}
+
+/* coloured text amounts / states → greyscale */
+body.lofi .wc-amount.err, body.lofi .wc-exp.err, body.lofi .wc-exp.warn,
+body.lofi .pd-val.warn, body.lofi .c-val.neg, body.lofi .c-val.pos,
+body.lofi .txn-amt.pos, body.lofi .avail-lbl.lbl-low,
+body.lofi .avail-lbl.lbl-full,
+body.lofi .cal-day.today:not(.sel) .dn,
+body.lofi .sc-eyebrow, body.lofi .overage-timer {
+  color:#3A3A3A !important;
+}
+
+/* selected-state tinted rows / chips → light grey fill, dashed grey border */
+body.lofi .slot-row.s-sel, body.lofi .slot-row.s-bad,
+body.lofi .act-item.sel, body.lofi .venue-card.sel,
+body.lofi .gear-item.sel, body.lofi .range-opt.sel,
+body.lofi .pkg-item.sel, body.lofi .loc-chip.sel,
+body.lofi .time-chip.sel, body.lofi .prof-item.active,
+body.lofi .ps-prof-item.active, body.lofi .cal-day.sel {
+  background:#E2E2E2 !important;
+  border-color:#6E6E6E !important;
+  box-shadow:none !important;
+}
+body.lofi .cal-day.sel .dn { color:#1A1A1A !important; }
+
+/* selection rings / dots / toggles */
+body.lofi .sel-ring, body.lofi .s-ring, body.lofi .gear-ring,
+body.lofi .pkg-ring, body.lofi .ro-ring,
+body.lofi .act-item.sel .sel-ring, body.lofi .slot-row.s-sel .s-ring,
+body.lofi .gear-item.sel .gear-ring, body.lofi .pkg-item.sel .pkg-ring,
+body.lofi .range-opt.sel .ro-ring {
+  background:#9A9A9A !important;
+  border-color:#6E6E6E !important;
+}
+body.lofi .f-toggle { background:#BDBDBD !important; }
+body.lofi .f-toggle.on { background:#6E6E6E !important; }
+body.lofi .f-knob { background:#fff !important; }
+
+/* ---------------------------------------------------------------------------
+   7. DATA-VIZ  — histograms, availability bars, progress, strength meters
+   Quiet/Filling/Full keep DISTINCT greys so the meaning survives.
+   --------------------------------------------------------------------------- */
+body.lofi .pill.q, body.lofi .fill-q, body.lofi .ps.strong,
+body.lofi .att-yes .att-dot,
+body.lofi .leg .dot[style*="success"] { background:#9C9C9C !important; }
+body.lofi .pill.m, body.lofi .fill-m, body.lofi .ps.med,
+body.lofi .leg .dot[style*="warning"] { background:#707070 !important; }
+body.lofi .pill.f, body.lofi .fill-f, body.lofi .ps.weak,
+body.lofi .leg .dot[style*="error"]   { background:#3F3F3F !important; }
+body.lofi .bar-track, body.lofi .ps,
+body.lofi .step-seg { background:#D8D8D8 !important; }
+body.lofi .step-seg.done, body.lofi .step-seg.cur { background:#6E6E6E !important; }
+body.lofi .hcol.now .pill { outline:2px solid #2A2A2A !important; }
+body.lofi .hcol.now::after { border-bottom-color:#2A2A2A !important; }
+
+/* legend "Now" dot + any inline token-coloured dots */
+body.lofi .leg .dot { background:#8A8A8A !important; }
+
+/* nav active state → grey, not brand */
+body.lofi .nav-item.on { color:#2A2A2A !important; }
+body.lofi .nav-item.on, body.lofi .seg-tab.on, body.lofi .vt.on,
+body.lofi .ht.on, body.lofi .f-seg-btn.on, body.lofi .segctrl button.on,
+body.lofi .pay-tab.on, body.lofi .month-pill.on {
+  background:#DEDEDE !important;
+  color:#1A1A1A !important;
+}
+
+/* ---------------------------------------------------------------------------
+   8. SCRIM / SHEETS  — keep functional, neutral
+   --------------------------------------------------------------------------- */
+body.lofi .scrim { background: rgba(20,20,20,.45) !important; }
+body.lofi .grip, body.lofi .sheet-grip { background:#BDBDBD !important; }
+
+/* ---------------------------------------------------------------------------
+   9. WIREFRAME STAMP  — fixed corner banner when skin is active
+   --------------------------------------------------------------------------- */
+body.lofi::after {
+  content: "WIREFRAME \00B7 STRUCTURE NOT FINAL VISUAL DESIGN";
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 99999;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  padding: 6px 12px;
+  border: 1px dashed #9A9A9A;
+  border-radius: 3px;
+  pointer-events: none;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------------
+   10. TOGGLE BUTTON  — always styled regardless of body.lofi
+   The #wf-lofi-toggle element is explicitly excluded from the global flattening
+   rules above (it is not a child of .lofi in a meaningful sense — but since body
+   itself gets the class, we must restore its appearance here).
+   --------------------------------------------------------------------------- */
+#wf-lofi-toggle {
+  /* Always visible, always styled — override any body.lofi resets */
+  position: fixed !important;
+  bottom: 16px !important;
+  left: 16px !important;
+  z-index: 999999 !important;
+  padding: 7px 13px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+  letter-spacing: .2px !important;
+  cursor: pointer !important;
+  border-radius: 6px !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25) !important;
+  transition: background 0.15s ease !important;
+  animation: none !important;
+  /* high-contrast colours always (even when body.lofi is active) */
+  background: #1A1A1A !important;
+  color: #FFFFFF !important;
+  outline: 1px solid rgba(255,255,255,.15) !important;
+  text-shadow: none !important;
+}
+#wf-lofi-toggle:hover {
+  background: #333333 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   11. DEV NOTE COMPONENT
+   Hidden in client mode (body.lofi). Visible only when body.devmode is active.
+   Place <div class="dev-note">…</div> anywhere in the HTML near the relevant element.
+   --------------------------------------------------------------------------- */
+.dev-note {
+  display: none;
+  background: #FFFDE7;
+  border: 1.5px dashed #E6C000;
+  border-radius: 4px;
+  padding: 8px 10px 8px 10px;
+  font-size: 11px;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  color: #4A3500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin: 4px 0;
+  position: relative;
+}
+.dev-note::before {
+  content: "DEV NOTE";
+  display: block;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #B88A00;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  margin-bottom: 4px;
+}
+.dev-note code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10.5px;
+  background: rgba(0,0,0,0.07);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.dev-note strong {
+  font-weight: 700;
+}
+body.devmode .dev-note {
+  display: block;
+}
+
+/* ---------------------------------------------------------------------------
+   12. CLIENT NOTE COMPONENT
+   Always visible (both client and dev modes). Use when a note describes
+   product-facing behaviour the client should also see during review.
+   --------------------------------------------------------------------------- */
+.client-note {
+  display: block;
+  background: #E8F4FD;
+  border: 1.5px solid #4A90E2;
+  border-radius: 4px;
+  padding: 8px 10px 8px 10px;
+  font-size: 11px;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  color: #1A3A5C;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin: 4px 0;
+  position: relative;
+}
+.client-note::before {
+  content: "CLIENT NOTE";
+  display: block;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #2E6BB8;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  margin-bottom: 4px;
+}
+.client-note code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10.5px;
+  background: rgba(0,0,0,0.07);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.client-note strong {
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------------
+   13. V3 COLOUR LEAK FIXES  — classes used in v3 screens not yet neutralised
+   Added 2026-06-14. All rules scoped under body.lofi.
+   --------------------------------------------------------------------------- */
+
+/* Wallet card tinted states (.wlt-card.wc-warn / .wlt-card.wc-err)
+   The skin already dashes their borders; these override the warm-tinted bg. */
+body.lofi .wlt-card.wc-warn,
+body.lofi .wlt-card.wc-err {
+  background: #F0F0F0 !important;
+  border-color: #9A9A9A !important;
+}
+body.lofi .wlt-card.wc-warn:hover,
+body.lofi .wlt-card.wc-err:hover {
+  border-color: #6E6E6E !important;
+}
+
+/* Pass card warning tint background (border-color already covered by skin) */
+body.lofi .pass-card.pc-warn {
+  background: #F0F0F0 !important;
+}
+
+/* Wallet badge: bd-ok (green) — bd-warn/bd-err already in skin */
+body.lofi .bd-ok {
+  background: #E4E4E4 !important;
+  color: #3A3A3A !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Booking confirmation banner (green tinted, Home + Sign-in screens) */
+body.lofi .bk-tile,
+body.lofi .booking-banner {
+  background: #EFEFEF !important;
+  border-color: #9A9A9A !important;
+}
+body.lofi .bkt-ico,
+body.lofi .bb-ico {
+  background: #E0E0E0 !important;
+  color: #4A4A4A !important;
+}
+
+/* No-booking / warning banners (amber tinted, Home + Sign-in screens) */
+body.lofi .nb-note,
+body.lofi .nb-warn {
+  background: #EFEFEF !important;
+  border-color: #9A9A9A !important;
+}
+body.lofi .nbn-ico,
+body.lofi .nb-ico {
+  background: #E0E0E0 !important;
+  color: #4A4A4A !important;
+}
+
+/* Success / info / error outcome icons (Login, Me, Booking, Sign-in screens) */
+body.lofi .suc-ico,
+body.lofi .success-ico,
+body.lofi .out-ico,
+body.lofi .out-ico.success,
+body.lofi .out-ico.info,
+body.lofi .out-ico.error,
+body.lofi .term-ico.ok,
+body.lofi .ci-ico {
+  background: #E0E0E0 !important;
+  color: #4A4A4A !important;
+}
+
+/* Session coverage rows tint (Sign-in screen) */
+body.lofi .scc-row.covered,
+body.lofi .scc-row.overdue {
+  background: #F4F4F4 !important;
+}
+
+/* Voucher applied chip (Paid Activity screen — green tint) */
+body.lofi .voucher-chip {
+  background: #E4E4E4 !important;
+  color: #3A3A3A !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Selected payment option tint (Paid Activity + Sign-in screens) */
+body.lofi .pay-opt.sel {
+  background: #EBEBEB !important;
+  border-color: #6E6E6E !important;
+}
+body.lofi .pay-opt.sel .pay-ico {
+  background: #9A9A9A !important;
+  color: #FFFFFF !important;
+}
+
+/* Credit type selector selected + error states (Booking + Sign-in screens) */
+body.lofi .cred-type-btn.sel,
+body.lofi .cred-type-btn.sel.err {
+  background: #EBEBEB !important;
+  border-color: #6E6E6E !important;
+  color: #3A3A3A !important;
+}
+
+/* Status pill: st-upcoming (Shop screen — missing from skin, same style as st-active) */
+body.lofi .st-upcoming {
+  background: #E4E4E4 !important;
+  color: #3A3A3A !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Expired pass chip (Wallet screen — faded but still has rgba(0,0,0,.07) which is fine,
+   but override to be consistent with all other chips) */
+body.lofi .chip-expired {
+  background: #E8E8E8 !important;
+  color: #6E6E6E !important;
+}
+
+/* Promo/voucher input focus ring (Paid Activity — .promo-input not in skin's input list) */
+body.lofi .promo-input:focus {
+  border-color: #6E6E6E !important;
+  box-shadow: 0 0 0 2px rgba(110,110,110,.25) !important;
+}
+
+/* Dev simulator panel (Paid Activity — hidden in client view anyway via display:none,
+   but neutralise the brand amber bg in case it becomes visible) */
+body.lofi .dev-sim {
+  background: #F0F0F0 !important;
+  border-color: #9A9A9A !important;
+}
+
+/* Scenario switcher pill (Sign-in screen — .scen-btn.on brand colour) */
+body.lofi .scen-btn {
+  color: #CFCFCF !important;
+}
+body.lofi .scen-btn.on {
+  background: #FFFFFF !important;
+  color: #1A1A1A !important;
+}
+body.lofi .scen-seg {
+  background: rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+/* HitPay drop-in widget mock (Paid Activity screen)
+   This is a 3rd-party payment UI mockup with hard-coded blues/greens/darks.
+   Flatten entirely to greyscale in Client view. */
+body.lofi .hp-dropin {
+  background: #F5F5F5 !important;
+  color: #2A2A2A !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15) !important;
+}
+body.lofi .hp-dropin-head,
+body.lofi .hp-dropin-method {
+  border-color: #CFCFCF !important;
+}
+body.lofi .hp-dropin-brand,
+body.lofi .hp-dropin-amt-val,
+body.lofi .hp-dropin-method-name {
+  color: #1A1A1A !important;
+}
+body.lofi .hp-dropin-amt-lbl,
+body.lofi .hp-dropin-close,
+body.lofi .hp-dropin-foot {
+  color: #6E6E6E !important;
+}
+body.lofi .hp-dropin-foot strong {
+  color: #3A3A3A !important;
+}
+body.lofi .hp-dropin-method-ico {
+  background: #8A8A8A !important;
+  color: #FFFFFF !important;
+}
+body.lofi .hp-dropin-field input {
+  border-color: #BDBDBD !important;
+  background: #FFFFFF !important;
+  color: #1A1A1A !important;
+}
+body.lofi .hp-dropin-autofill {
+  background: #6E6E6E !important;
+  color: #FFFFFF !important;
+}
+body.lofi .hp-dropin-pay {
+  background: #4A4A4A !important;
+  color: #FFFFFF !important;
+}
+body.lofi .hp-bg-logo-mark {
+  background: #8A8A8A !important;
+}
+body.lofi .hp-backdrop {
+  background: rgba(20,20,20,.35) !important;
+}
+
+/* SVG fill colours inside the credit-card icon in HitPay mock */
+body.lofi .hp-dropin-method-ico svg rect[fill="#3a8df0"],
+body.lofi .hp-dropin-method-ico svg rect[fill="#3a8df0"] {
+  fill: #8A8A8A !important;
+}
+
+/* Warning container background (bill-total-row.due, nb-warn, etc.) — warm amber tint not in token remap */
+body.lofi {
+  --color-warning-container: #F0F0F0;
+  --color-on-warning-container: #3A3A3A;
+}
