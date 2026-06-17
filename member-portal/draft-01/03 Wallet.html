@@ -288,7 +288,7 @@ svg{display:block;}
               </div>
               <div class="wc-bal-row"><span class="wc-amount err">&#8722;2</span><span class="wc-unit">MC</span></div>
               <div class="wc-foot">
-                <span class="wc-exp err">Clear balance to enable booking</span>
+                <span class="wc-exp err">Clear balance to book sessions</span>
                 <span class="shop-link" onclick="location.href='04 Shop.html'">Top up in Shop →</span>
               </div>
             </div>
@@ -597,13 +597,14 @@ function pickPkg(i){
   document.getElementById('tuBtn').textContent=(curW==='PASS'?'Renew':'Checkout')+' · '+p.p;
 }
 </script>
-<script>
-document.body.classList.add('lofi');
-setForm(localStorage.getItem('wf-form')||'phone');
-</script>
+
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+<script>
+document.body.classList.add('lofi');
+setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 </body>
 </html>

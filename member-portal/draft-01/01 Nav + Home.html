@@ -633,7 +633,6 @@ svg{ display:block; }
         <button class="prof-item active" onclick="setProfile('Caleb Tan','CT','olive','Master Class',this)">
           <span class="avatar olive">CT</span>
           <span class="pi-text"><div class="pi-name">Caleb Tan</div><div class="pi-meta">Master Class · 8 yrs</div></span>
-          <span class="pi-check"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
         <button class="prof-item" onclick="setProfile('Mei Lin Tan','ML','slate','Master Class',this)">
           <span class="avatar slate">ML</span>
@@ -751,13 +750,14 @@ function goSignin(){if(selectedLoc)localStorage.setItem('wf-signin-loc',selected
 function goSigninCode(){if(selectedLoc)localStorage.setItem('wf-signin-loc',selectedLoc);localStorage.setItem('wf-signin-substep','code');location.href='05%20Sign-in%20%2B%20Sign-out.html'+(selectedLoc?'?loc='+encodeURIComponent(selectedLoc):'');}
 function goNewBooking(){localStorage.setItem('wf-open-booking','1');location.href='02%20Make%20a%20Booking.html?new=1';}
 </script>
-<script>
-document.body.classList.add('lofi');
-setForm(localStorage.getItem('wf-form')||'phone');
-</script>
+
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+<script>
+document.body.classList.add('lofi');
+setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 </body>
 </html>

@@ -468,7 +468,7 @@ body.devmode .dev-sim{display:block;}
 
         <!-- FOOT (form view only) -->
         <div class="app-foot" id="appFoot">
-          <button class="btn btn-primary" id="primaryBtn" onclick="proceed()" disabled>Proceed to pay</button>
+          <button class="btn btn-primary" id="primaryBtn" onclick="proceed()" disabled>Proceed to Pay</button>
         </div>
 
       </div>
@@ -770,6 +770,27 @@ function setForm(m){
   frame.classList.toggle('desktop', m === 'desktop');
 }
 
+// ── Mode toggle (canonical) ──
+(function(){
+  var KEY='wf-mode';
+  var DEV='devmode';
+  var LOFI='lofi';
+  var mode=localStorage.getItem(KEY)||'client';
+  if(mode==='dev'){document.body.classList.add(DEV);}else{document.body.classList.add(LOFI);}
+  var btn=document.createElement('button');
+  btn.id='wf-lofi-toggle';
+  function update(){btn.textContent=document.body.classList.contains(DEV)?'⚙ Dev notes':'● Client view';}
+  btn.addEventListener('click',function(){
+    var isDev=document.body.classList.contains(DEV);
+    if(isDev){document.body.classList.remove(DEV);document.body.classList.add(LOFI);localStorage.setItem(KEY,'client');}
+    else{document.body.classList.remove(LOFI);document.body.classList.add(DEV);localStorage.setItem(KEY,'dev');}
+    update();
+  });
+  update();
+  document.body.appendChild(btn);
+})();
+</script>
+<script>
 document.body.classList.add('lofi');
 </script>
 </body>

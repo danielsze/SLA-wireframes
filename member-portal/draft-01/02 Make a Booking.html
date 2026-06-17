@@ -1132,7 +1132,7 @@ function confirm(){
   /* Success actions. "Sign in to Range now" shows only inside the booking's sign-in window:
      from 30 min before the start hour up to the end hour, and only for today's bookings. */
   const startH=ss[0],endH=slotEndHour(ss[ss.length-1]);
-  const inSigninWindow=S.selDay===NOW_DAY&&NOW_HOUR>=startH-0.5&&NOW_HOUR<=endH;
+  const inSigninWindow=S.selDay===NOW_DAY&&NOW_HOUR>=startH-0.25&&NOW_HOUR<=endH;
   const arrowIco='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const signinLoc=vloc||'West Coast';
   document.getElementById('sucBtns').innerHTML=inSigninWindow
@@ -1155,13 +1155,14 @@ function confirm(){
   if(wantsNew) openBooking();
 })();
 </script>
-<script>
-document.body.classList.add('lofi');
-setForm(localStorage.getItem('wf-form')||'phone');
-</script>
+
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+<script>
+document.body.classList.add('lofi');
+setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 </body>
 </html>

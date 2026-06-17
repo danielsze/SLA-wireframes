@@ -594,7 +594,6 @@ svg{display:block;}
             <div class="psp-name">Caleb Tan</div>
             <div class="psp-meta">Master Class &middot; 16 y.o.</div>
           </span>
-          <span class="psp-check"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
         <button class="ps-prof-item" onclick="switchProfile('Mei Lin Tan','ML','slate',this)">
           <span class="avatar sm slate">ML</span>
@@ -980,13 +979,14 @@ function applyState(state,pill){
   }
 }
 </script>
-<script>
-document.body.classList.add('lofi');
-setForm(localStorage.getItem('wf-form')||'phone');
-</script>
+
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+<script>
+document.body.classList.add('lofi');
+setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 </body>
 </html>
