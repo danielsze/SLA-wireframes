@@ -339,7 +339,8 @@ body.devmode .dev-sim{display:block;}
 
             <div class="dev-note">Slot-hold logic (e.g. 10-minute reservation while on this screen) is a backend concern and is out of scope for this wireframe.</div>
 
-            <div class="client-note">Email receipt — decide who sends what: (1) SLA backend sends a branded booking confirmation + receipt; (2) HitPay sends its standard payment receipt; or (3) both. HitPay's payment receipt is automatic and unavoidable, so SLA should send the booking confirmation (activity / date / time / location / booking code) and avoid duplicating payment line items — or co-brand a single email. Please confirm the preferred approach.</div>
+            <div class="dev-note">Email receipt — decide who sends what: (1) SLA backend sends a branded booking confirmation + receipt; (2) HitPay sends its standard payment receipt; or (3) both. HitPay's payment receipt is automatic and unavoidable, so SLA should send the booking confirmation (activity / date / time / location / booking code) and avoid duplicating payment line items — or co-brand a single email. Lock before backend wiring.</div>
+            <div class="client-note">Will you require an additional booking confirmation email after successful payment?</div>
 
           </div>
           </div><!-- /viewForm -->
