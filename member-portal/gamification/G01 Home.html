@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G01 · Home — Arrow Stats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1180px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:6px 14px;border-radius:var(--radius-full);transition:all var(--duration-fast);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.state-bar{display:flex;align-items:center;gap:10px;width:100%;max-width:1180px;margin-bottom:22px;flex-wrap:wrap;}
+.sb-lbl{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#A89880;flex-shrink:0;}
+.pills{display:flex;gap:6px;flex-wrap:wrap;}
+.pill-btn{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:5px 13px;cursor:pointer;transition:all var(--duration-fast);white-space:nowrap;}
+.pill-btn.on{background:var(--color-primary);border-color:var(--color-primary);color:#fff;}
+
+/* ── Device frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;flex-shrink:0;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+
+/* ── App layout ── */
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;grid-template-areas:"header" "main" "nav";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+.app-nav{grid-area:nav;}
+
+/* ── Status bar ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sbr{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+
+/* ── App header ── */
+.hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.profile-switch{display:flex;align-items:center;gap:10px;flex:1;min-width:0;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:var(--radius-sm);transition:background var(--duration-fast);}
+.profile-switch:hover{background:var(--color-surface-variant);}
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);flex-shrink:0;}
+.avatar.sm{width:30px;height:30px;font-size:12px;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.ps-text{text-align:left;min-width:0;}
+.ps-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.ps-name{font-size:15px;font-weight:700;color:var(--color-text-primary);display:flex;align-items:center;gap:4px;}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);transition:background var(--duration-fast);}
+.icon-btn:hover{background:var(--color-surface-variant);}
+
+/* ── Nav ── */
+.nav{display:flex;align-items:stretch;background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:6px 4px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:7px 2px 12px;color:var(--color-text-disabled);transition:color var(--duration-fast);}
+.nav-item .ni-label{font-size:10.5px;font-weight:700;letter-spacing:.2px;}
+.nav-item.on{color:var(--color-primary);}
+.rail-brand,.rail-foot{display:none;}
+
+/* ── Home feed ── */
+.feed{padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-md);}
+.greeting h1{font-size:24px;font-weight:800;letter-spacing:-.3px;line-height:1.15;}
+.greeting p{font-size:13.5px;color:var(--color-text-secondary);margin-top:4px;}
+
+/* ── Session card ── */
+.session-card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);padding:var(--space-md);}
+.sc-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sc-pulse{width:36px;height:36px;border-radius:var(--radius-full);flex-shrink:0;background:rgba(42,107,62,.12);display:grid;place-items:center;color:var(--color-success);}
+.sc-meta{flex:1;}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--color-success);}
+.sc-range{font-size:16px;font-weight:700;margin-top:1px;}
+.sc-since{font-size:12px;color:var(--color-text-secondary);font-weight:600;margin-top:2px;}
+.sc-timer-wrap{background:var(--color-surface-lowest);border-radius:var(--radius-sm);border:var(--border-hairline) solid var(--color-border-subtle);display:flex;align-items:center;justify-content:center;padding:12px;margin-bottom:12px;}
+.sc-timer{font-size:28px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;}
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
+
+/* ── Arrow stats card (NEW) ── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--color-text-secondary);}
+.txt-link{font-size:12px;font-weight:700;color:var(--color-primary);text-decoration:none;display:flex;align-items:center;gap:3px;}
+.arrow-stats-card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;}
+.as-body{padding:var(--space-md);display:flex;flex-direction:column;gap:14px;}
+.as-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.as-month-lbl{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary);}
+.as-month-num{font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--color-text-primary);font-variant-numeric:tabular-nums;line-height:1.05;margin-top:3px;}
+.as-month-sub{font-size:11px;color:var(--color-text-disabled);margin-top:4px;}
+.as-trend{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;background:var(--color-surface-variant);color:var(--color-success);}
+.as-chart{display:flex;align-items:flex-end;gap:7px;}
+.as-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.as-bar-area{height:72px;width:100%;display:flex;align-items:flex-end;justify-content:center;}
+.as-bar{width:60%;max-width:20px;background:var(--color-surface-highest);border-radius:3px 3px 0 0;min-height:3px;}
+.as-bar.cur{background:var(--color-primary);}
+.as-bar-lbl{font-size:10px;font-weight:700;color:var(--color-text-disabled);}
+.as-bar-lbl.cur{color:var(--color-primary);}
+.as-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px var(--space-md);gap:6px;text-align:center;}
+.as-empty-ico{width:36px;height:36px;border-radius:var(--radius-full);background:var(--color-surface-variant);display:grid;place-items:center;color:var(--color-text-disabled);}
+.as-empty-title{font-size:13px;font-weight:700;color:var(--color-text-primary);}
+.as-empty-sub{font-size:12px;color:var(--color-text-secondary);line-height:1.4;max-width:220px;}
+.arrow-stats-card.is-new{border-color:var(--color-primary);}
+
+/* ── "New" marker + placeholder blocks ── */
+.new-pill{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:var(--color-primary);color:var(--color-on-primary);padding:2px 7px;border-radius:var(--radius-full);}
+.title-grp{display:flex;align-items:center;gap:8px;}
+.ph{border:1.5px dashed var(--color-border-emphasis);border-radius:var(--radius-md);background:repeating-linear-gradient(45deg,rgba(120,120,120,.05) 0 9px,rgba(120,120,120,.10) 9px 18px);padding:18px var(--space-md);display:flex;flex-direction:column;gap:3px;min-height:72px;justify-content:center;}
+.ph-eyebrow{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--color-text-disabled);}
+.ph-lbl{font-size:13px;font-weight:700;color:var(--color-text-secondary);}
+.ph-sub{font-size:11px;color:var(--color-text-disabled);line-height:1.4;}
+
+/* ── Desktop container query ── */
+@container (min-width:760px){
+  .app{grid-template-columns:248px 1fr;grid-template-rows:69px 1fr;grid-template-areas:"nav header" "nav main";}
+  .statusbar{display:none;}
+  .hdr{padding:14px 40px;}
+  .nav{flex-direction:column;align-items:stretch;justify-content:flex-start;border-top:none;border-right:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface-variant);padding:0;gap:4px;}
+  .rail-brand{display:flex;align-items:center;gap:11px;padding:22px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:8px;}
+  .rail-brand .logo{width:36px;height:36px;border-radius:11px;}
+  .rail-brand .rb-name{font-size:16px;font-weight:800;color:var(--color-text-primary);}
+  .rail-brand .rb-sub{font-size:10.5px;color:var(--color-text-secondary);font-weight:600;}
+  .nav-item{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 22px;margin:0 12px;border-radius:var(--radius-sm);}
+  .nav-item .ni-label{font-size:14px;}
+  .nav-item.on{background:var(--color-surface-highest);color:var(--color-primary);}
+  .rail-foot{display:flex;align-items:center;gap:10px;margin-top:auto;padding:16px 20px;border-top:var(--border-hairline) solid var(--color-border-subtle);}
+  .rf-name{font-size:13px;font-weight:700;color:var(--color-text-primary);}
+  .rf-sub{font-size:11px;color:var(--color-text-secondary);}
+  .feed{max-width:640px;margin:0 auto;padding:32px 40px 52px;}
+}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">G01 · Home — Arrow Stats</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="11" height="14" viewBox="0 0 22 28" fill="none"><rect x="2" y="1" width="18" height="26" rx="3" stroke="currentColor" stroke-width="2"/><line x1="8" y1="23" x2="14" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="12" viewBox="0 0 26 20" fill="none"><rect x="1" y="1" width="24" height="14" rx="2" stroke="currentColor" stroke-width="2"/><line x1="7" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Desktop
+      </button>
+    </div>
+  </div>
+
+  <div class="state-bar">
+    <span class="sb-lbl">State</span>
+    <div class="pills">
+      <button class="pill-btn on" onclick="applyState('has-data',this)">Has arrow data</button>
+      <button class="pill-btn" onclick="applyState('no-data',this)">No data yet</button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <!-- Header -->
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sbr">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5 1.5 4A9 9 0 0 1 14.5 4Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="8" cy="9.5" r="1.1" fill="currentColor"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="hdr">
+            <button class="profile-switch">
+              <span class="avatar olive">CT</span>
+              <span class="ps-text">
+                <span class="ps-label">Active profile</span>
+                <span class="ps-name">Caleb Tan <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main -->
+        <div class="app-main">
+          <div class="feed">
+            <div class="greeting">
+              <h1>Good afternoon, Caleb</h1>
+              <p>Saturday, 20 Jun 2026</p>
+            </div>
+
+            <!-- ══ Arrow Stats highlight (NEW — Idea A) ══ -->
+            <div>
+              <div class="sec-head" style="margin-bottom:10px;">
+                <span class="title-grp">
+                  <span class="sec-title">Arrow Stats</span>
+                  <span class="new-pill">New</span>
+                </span>
+                <a class="txt-link" href="G06 Me.html">View history <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              </div>
+              <div class="arrow-stats-card is-new" id="statsCard">
+                <!-- has-data state (default) -->
+                <div class="as-body" id="statsData">
+                  <div class="as-head">
+                    <div>
+                      <div class="as-month-lbl">Arrows in June</div>
+                      <div class="as-month-num">1,240</div>
+                    </div>
+                    <span class="as-trend">▲ 18% vs May</span>
+                  </div>
+                  <div class="as-chart">
+                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar" style="height:52%"></div></div><span class="as-bar-lbl">Mar</span></div>
+                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar" style="height:79%"></div></div><span class="as-bar-lbl">Apr</span></div>
+                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar" style="height:85%"></div></div><span class="as-bar-lbl">May</span></div>
+                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar cur" style="height:100%"></div></div><span class="as-bar-lbl cur">Jun</span></div>
+                  </div>
+                </div>
+                <!-- no-data state -->
+                <div class="as-empty" id="statsEmpty" style="display:none;">
+                  <div class="as-empty-ico">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </div>
+                  <div class="as-empty-title">No arrow data yet</div>
+                  <div class="as-empty-sub">Log your first session by signing out and entering your arrow count.</div>
+                </div>
+              </div>
+              <div class="dev-note">💡 <strong>Arrow Stats card</strong> (Idea A) — month-by-month momentum on Home: current-month total, trend vs last month, and a 4-month bar chart. <strong>Lifetime total + avg-per-session live on the Me tab</strong> (with the heatmap), not here. Data from <code>GET /api/user</code> as monthly aggregates of <code>arrows_fired</code>. "View history" → Me tab.</div>
+            </div>
+
+            <!-- Rest of Home feed — placeholder, unchanged from v3 -->
+            <div class="ph">
+              <span class="ph-eyebrow">Placeholder · not part of this showcase</span>
+              <span class="ph-lbl">Rest of Home feed</span>
+              <span class="ph-sub">Alerts · Announcements · Range sign-in · Upcoming bookings — unchanged from v3 (01 Nav + Home)</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="nav app-nav">
+          <div class="rail-brand">
+            <span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+            <span><div class="rb-name">x10s</div><div class="rb-sub">Salt Light Archery</div></span>
+          </div>
+          <button class="nav-item on"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ni-label">Home</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Booking</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Wallet</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Shop</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></button>
+          <div class="rail-foot">
+            <span class="avatar sm olive">CT</span>
+            <span><div class="rf-name">Caleb Tan</div><div class="rf-sub">Master Class</div></span>
+          </div>
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function setForm(m){
+  document.getElementById('frame').classList.toggle('desktop',m==='desktop');
+  document.getElementById('segPhone').classList.toggle('on',m==='phone');
+  document.getElementById('segDesktop').classList.toggle('on',m==='desktop');
+  localStorage.setItem('wf-form',m);
+}
+function applyState(state,pill){
+  document.querySelectorAll('.pill-btn').forEach(p=>p.classList.remove('on'));
+  if(pill) pill.classList.add('on');
+  var hasData = state === 'has-data';
+  document.getElementById('statsData').style.display = hasData ? '' : 'none';
+  document.getElementById('statsEmpty').style.display = hasData ? 'none' : '';
+}
+</script>
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
+</body>
+</html>

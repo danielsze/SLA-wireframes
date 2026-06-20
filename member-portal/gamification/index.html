@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLA Member Portal — Gamification</title>
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+  body{font-family:var(--font-primary, system-ui, sans-serif);background:var(--color-surface-lowest, #faf7f2);color:var(--color-text-primary, #1c1611);margin:0;padding:48px 32px 80px;}
+  .wrap{max-width:920px;margin:0 auto;}
+  .eyebrow{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--color-text-secondary, #5c4f3d);font-weight:700;margin:0 0 6px;}
+  h1{font-size:32px;margin:0 0 4px;letter-spacing:-.3px;}
+  .badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(139,94,21,.12);color:var(--color-primary, #8b5e15);padding:3px 10px;border-radius:99px;margin-bottom:16px;}
+  .lede{font-size:15px;color:var(--color-text-secondary, #5c4f3d);margin:0 0 32px;line-height:1.6;max-width:620px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:16px;}
+  a.card{display:flex;flex-direction:column;gap:6px;text-decoration:none;background:var(--color-surface, #fffdf7);border:1px solid var(--color-border-subtle, #e2d9cc);border-radius:var(--radius-md, 12px);padding:20px 22px;box-shadow:var(--shadow-1, 0 1px 2px rgba(0,0,0,.1));transition:transform .12s, box-shadow .12s;}
+  a.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2, 0 2px 6px rgba(0,0,0,.12));}
+  .num{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--color-primary, #8b5e15);}
+  .title{font-size:17px;font-weight:700;}
+  .desc{font-size:13px;color:var(--color-text-secondary, #5c4f3d);line-height:1.5;}
+  .note{margin-top:32px;padding:14px 18px;border-left:3px solid var(--color-warning, #9b4f00);background:var(--color-surface-variant, #f2ebe0);border-radius:6px;font-size:13px;line-height:1.6;color:var(--color-text-secondary, #5c4f3d);}
+  .ref{margin-top:20px;font-size:13px;}
+  .ref a{color:var(--color-primary, #8b5e15);}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Salt Light Archery · Member Portal</p>
+  <h1>Gamification — Experimental</h1>
+  <span class="badge">Draft · Not client-ready</span>
+  <p class="lede">A focused look at two gamification ideas. Each screen shows <strong>only the new element</strong> in full; everything else is an obvious placeholder, unchanged from the v3 wireframes. The toggle (bottom-left) switches between <strong>Client view</strong> (greyscale) and <strong>Dev notes</strong> (annotated hi-fi).</p>
+
+  <p class="eyebrow" style="margin-top:8px;">Idea A · Arrow shot tracking</p>
+  <div class="grid">
+    <a class="card" href="./G05%20Sign-out.html">
+      <span class="num">G05</span>
+      <span class="title">Sign-out — Arrow Entry</span>
+      <span class="desc">Where the member logs arrows: a count step at sign-out (stepper + skip).</span>
+    </a>
+    <a class="card" href="./G01%20Home.html">
+      <span class="num">G01</span>
+      <span class="title">Home — Arrow Stats</span>
+      <span class="desc">How the stats highlight shows up on Home (this month + lifetime).</span>
+    </a>
+    <a class="card" href="./G06%20Me.html">
+      <span class="num">G06</span>
+      <span class="title">Me — Activity heatmap</span>
+      <span class="desc">The GitHub-style activity heatmap + avg-per-session on the Me tab.</span>
+    </a>
+  </div>
+
+  <p class="eyebrow" style="margin-top:28px;">Idea B · Verified scores</p>
+  <div class="grid">
+    <a class="card" href="./G06%20Me.html">
+      <span class="num">G06</span>
+      <span class="title">Me — Verified Scores</span>
+      <span class="desc">How staff-entered competition scores appear on the Me tab (same screen as the heatmap).</span>
+    </a>
+  </div>
+
+  <div class="note">
+    <strong>Experimental draft.</strong> Independent of the v3 screens — review in isolation. Numbers are illustrative and kept consistent across screens (1,240 arrows this month · 8,750 lifetime · 96 avg/session).
+  </div>
+
+  <p class="ref">← <a href="../../index.html">Back to all drafts</a> &nbsp;·&nbsp; <a href="../draft-01/">v3 reference screens</a></p>
+</div>
+</body>
+</html>
