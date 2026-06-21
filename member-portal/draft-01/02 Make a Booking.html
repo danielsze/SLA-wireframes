@@ -634,7 +634,7 @@ svg{display:block;}
           <div class="det-row" id="detAttRow"><span class="det-lbl">Signed in at</span><span id="detAtt">–</span></div>
         </div>
         <div class="client-note" style="margin:12px 0 4px">💡 <strong>Cancellation window</strong> — Decide: fixed hours before session (e.g. 12 hrs) or end of previous day? Should the cutoff differ by activity type (practice vs lesson)?</div>
-        <div class="client-note" style="margin:4px 0 8px">💡 <strong>Past booking — info to display</strong> — Consider: which fields matter for past sessions (sign-in time, credit deducted, instructor, access code)? Should there be a receipt link or feedback prompt?</div>
+        <div class="dev-note" style="margin:4px 0 8px">💡 <strong>Past booking — info to display</strong> — Consider: which fields matter for past sessions (sign-in time, credit deducted, instructor, access code)? Should there be a receipt link or feedback prompt?</div>
         <div class="det-actions" id="detActions"></div>
       </div>
 
@@ -1155,14 +1155,10 @@ function confirm(){
   if(wantsNew) openBooking();
 })();
 </script>
-
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
-</script>
-<script>
-document.body.classList.add('lofi');
-setForm(localStorage.getItem('wf-form')||'phone');
 </script>
 </body>
 </html>

@@ -402,10 +402,6 @@ function setForm(m) {
   localStorage.setItem('wf-form', m);
 }
 </script>
-
-<script>
-document.body.classList.add('lofi');
-setForm(localStorage.getItem('wf-form')||'phone');
-</script>
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
 </body>
 </html>
