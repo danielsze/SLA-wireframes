@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Sign-in / Sign-out</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
+svg{display:block;}
+
+/* ── Stage ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1180px;margin-bottom:28px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.scen-seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;gap:2px;}
+.scen-btn{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:7px 14px;border-radius:var(--radius-full);transition:all var(--duration-fast) ease;white-space:nowrap;}
+.scen-btn.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:7px 16px;border-radius:var(--radius-full);transition:all var(--duration-fast) ease;display:flex;align-items:center;gap:7px;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+
+/* ── Frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;grid-template-areas:"header" "main" "nav";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+.app-nav{grid-area:nav;}
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+.hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.profile-switch{display:flex;align-items:center;gap:10px;flex:1;min-width:0;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:var(--radius-sm);transition:background var(--duration-fast) ease;}
+.profile-switch:hover{background:var(--color-surface-variant);}
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);flex-shrink:0;}
+.avatar.sm{width:30px;height:30px;font-size:12px;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.ps-text{text-align:left;min-width:0;}
+.ps-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.ps-name{font-size:15px;font-weight:700;color:var(--color-text-primary);display:flex;align-items:center;gap:4px;}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);transition:background var(--duration-fast) ease;}
+.icon-btn:hover{background:var(--color-surface-variant);}
+.nav{display:flex;align-items:stretch;background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:6px 4px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:7px 2px 12px;color:var(--color-text-disabled);transition:color var(--duration-fast) ease;}
+.nav-item .ni-label{font-size:10.5px;font-weight:700;}
+.nav-item.on{color:var(--color-primary);}
+.rail-brand{display:none;}
+.rail-foot{display:none;}
+.card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);}
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast) ease,transform var(--duration-fast) ease;}
+.btn:active{transform:scale(.99);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;}
+.btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--color-text-secondary);}
+
+/* ── Home feed ── */
+.feed{padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-md);}
+.greeting h1{font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.15;}
+.greeting p{font-size:13.5px;color:var(--color-text-secondary);margin-top:3px;}
+
+/* ── Other-sections placeholder (for context only) ── */
+.home-placeholder{margin-top:var(--space-sm);padding:var(--space-lg) var(--space-md);border:1.5px dashed var(--color-border-emphasis);border-radius:var(--radius-md);background:transparent;display:flex;flex-direction:column;align-items:center;gap:var(--space-xs);text-align:center;color:var(--color-text-disabled);}
+.home-placeholder .hp-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;}
+.home-placeholder .hp-sub{font-size:12px;color:var(--color-text-secondary);}
+
+/* ── Sign-in card (not signed in) ── */
+.signin{padding:var(--space-md);}
+.si-top{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
+.si-pulse{width:36px;height:36px;border-radius:var(--radius-full);flex-shrink:0;background:var(--color-surface-highest);display:grid;place-items:center;color:var(--color-primary);}
+.si-eyebrow{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--color-text-disabled);}
+.si-title{font-size:16px;font-weight:700;margin-top:1px;}
+.si-fieldlabel{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:9px;}
+.loc-pick{display:flex;gap:8px;margin-bottom:14px;}
+.loc-chip{flex:1;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;font-family:inherit;cursor:pointer;padding:11px 12px;border-radius:var(--radius-sm);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);transition:all var(--duration-fast) ease;}
+.loc-chip .lc-pin{width:32px;height:32px;border-radius:var(--radius-full);flex-shrink:0;display:grid;place-items:center;background:var(--color-surface-variant);color:var(--color-text-secondary);}
+.loc-chip .lc-name{font-size:14px;font-weight:700;color:var(--color-text-primary);}
+.loc-chip.sel{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.loc-chip.sel .lc-pin{background:var(--color-primary);color:#fff;}
+
+/* ── Active session card ── */
+.session-card{padding:var(--space-md);}
+.sc-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sc-pulse{width:36px;height:36px;border-radius:var(--radius-full);flex-shrink:0;background:rgba(42,107,62,.12);display:grid;place-items:center;color:var(--color-success);}
+.sc-meta{flex:1;min-width:0;}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--color-success);}
+.sc-range{font-size:16px;font-weight:700;margin-top:1px;}
+.sc-since{font-size:12px;color:var(--color-text-secondary);font-weight:600;}
+.sc-timer-wrap{background:var(--color-surface-lowest);border-radius:var(--radius-sm);border:var(--border-hairline) solid var(--color-border-subtle);display:flex;align-items:center;justify-content:center;padding:12px;margin-bottom:12px;}
+.sc-timer{font-size:28px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;}
+.sc-coverage{display:flex;flex-direction:column;gap:0;border-radius:var(--radius-sm);overflow:hidden;border:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:14px;}
+.scc-row{display:flex;align-items:center;gap:10px;padding:10px var(--space-md);}
+.scc-row+.scc-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.scc-row.covered{background:rgba(42,107,62,.04);}
+.scc-row.overdue{background:rgba(155,79,0,.05);}
+.scc-ico{width:24px;height:24px;border-radius:var(--radius-full);flex-shrink:0;display:grid;place-items:center;font-size:13px;}
+.scc-ico.ok{background:rgba(42,107,62,.12);color:var(--color-success);}
+.scc-ico.warn{background:rgba(155,79,0,.12);color:var(--color-warning);}
+.scc-ico.neutral{background:var(--color-surface-variant);color:var(--color-text-secondary);}
+.scc-body{flex:1;min-width:0;}
+.scc-label{font-size:13px;font-weight:700;}
+.scc-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px;}
+.scc-tag{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 8px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;}
+.scc-tag.ok{background:rgba(42,107,62,.12);color:var(--color-success);}
+.scc-tag.warn{background:rgba(155,79,0,.12);color:var(--color-warning);}
+.overage-timer{font-size:12px;font-weight:800;color:var(--color-warning);font-variant-numeric:tabular-nums;flex-shrink:0;}
+
+/* ── Sheets ── */
+.scrim{position:absolute;inset:0;background:rgba(28,22,17,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity var(--duration-normal) ease;}
+.scrim.open{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--color-surface);border-radius:var(--radius-xl) var(--radius-xl) 0 0;box-shadow:var(--shadow-5);transform:translateY(100%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);max-height:92%;display:flex;flex-direction:column;}
+.sheet.open{transform:translateY(0);}
+.sheet-grip{width:38px;height:4px;border-radius:99px;background:var(--color-border-emphasis);margin:10px auto 0;flex-shrink:0;}
+.sheet-hdr{display:flex;align-items:center;gap:10px;padding:10px var(--space-md) 12px;flex-shrink:0;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
+.sh-back{width:34px;height:34px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);transition:background var(--duration-fast) ease;flex-shrink:0;}
+.sh-back:hover{background:var(--color-surface-variant);}
+.sh-title{flex:1;font-size:17px;font-weight:700;}
+.sh-step{font-size:12px;font-weight:700;color:var(--color-text-disabled);white-space:nowrap;}
+.sh-close{width:34px;height:34px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);transition:background var(--duration-fast) ease;flex-shrink:0;}
+.sh-close:hover{background:var(--color-surface-variant);}
+.sheet-body{overflow-y:auto;padding:var(--space-md) var(--space-md) calc(20px + env(safe-area-inset-bottom));flex:1;}
+.sheet-foot{padding:0 var(--space-md) calc(20px + env(safe-area-inset-bottom));flex-shrink:0;}
+#billPage{position:absolute;inset:0;z-index:90;background:var(--color-surface-lowest);display:flex;flex-direction:column;overflow:hidden;transform:translateX(100%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);}
+#billPage.open{transform:translateX(0);}
+.bill-pg-hdr{display:flex;align-items:center;gap:8px;padding:max(50px,env(safe-area-inset-top)) var(--space-md) 12px;flex-shrink:0;border-bottom:var(--border-hairline) solid var(--color-border-subtle);background:var(--color-surface);}
+.bill-pg-title{flex:1;font-size:16px;font-weight:800;color:var(--color-text-primary);text-align:center;}
+.bill-pg-body{overflow-y:auto;padding:var(--space-md) var(--space-md) 0;flex:1;}
+.bill-pg-foot{padding:var(--space-sm) var(--space-md) calc(20px + env(safe-area-inset-bottom));flex-shrink:0;background:var(--color-surface);border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.pay-opt{display:flex;align-items:center;gap:12px;padding:13px var(--space-md);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer;margin-bottom:8px;transition:border-color var(--duration-fast) ease,background var(--duration-fast) ease;}
+.pay-opt.sel{border-color:var(--color-primary);background:rgba(139,94,21,.06);}
+.pay-opt-ico{width:34px;height:34px;border-radius:var(--radius-sm);background:var(--color-surface-variant);display:grid;place-items:center;flex-shrink:0;font-size:17px;}
+.pay-opt-body{flex:1;}
+.pay-opt-lbl{font-size:14px;font-weight:700;color:var(--color-text-primary);}
+.pay-opt-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px;line-height:1.4;}
+.pay-opt-radio{width:18px;height:18px;border-radius:99px;border:2px solid var(--color-border-emphasis);flex-shrink:0;transition:all var(--duration-fast) ease;position:relative;}
+.pay-opt.sel .pay-opt-radio{border-color:var(--color-primary);background:var(--color-primary);}
+.pay-opt.sel .pay-opt-radio::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:99px;background:#fff;}
+.cred-section{padding:var(--space-md);background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:14px;}
+.cred-head-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--color-text-secondary);}
+.cred-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-sm);}
+.cred-type-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cred-type-btns{display:flex;gap:4px;}
+.cred-type-btn{font-family:inherit;font-size:12px;font-weight:700;padding:4px 11px;border-radius:var(--radius-full);border:1.5px solid var(--color-border-emphasis);background:transparent;cursor:pointer;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.cred-type-btn.sel{border-color:var(--color-primary);background:rgba(139,94,21,.1);color:var(--color-primary);}
+.cl{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;margin-bottom:6px;}
+.cl .c-lbl{color:var(--color-text-secondary);}
+.cl .c-val{font-weight:700;}
+.cl .c-val.neg{color:var(--color-error);}
+.c-div{height:1px;background:var(--color-border-subtle);margin:8px 0;}
+.cred-settle-note{font-size:12px;color:var(--color-text-secondary);margin-top:6px;}
+
+/* ── Range options ── */
+.rg-group-lbl{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--color-text-disabled);padding:4px 2px 8px;}
+.rg-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.range-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-family:inherit;cursor:pointer;padding:12px 14px;border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);transition:all var(--duration-fast) ease;}
+.range-opt:hover{border-color:var(--color-border-emphasis);}
+.range-opt.sel{border-color:var(--color-primary);background:var(--color-surface-highest);}
+.ro-ring{width:20px;height:20px;border-radius:var(--radius-full);border:2px solid var(--color-border-emphasis);flex-shrink:0;display:grid;place-items:center;transition:all var(--duration-fast) ease;}
+.range-opt.sel .ro-ring{border-color:var(--color-primary);background:var(--color-primary);}
+.ro-info{flex:1;min-width:0;}
+.ro-name{font-size:14px;font-weight:700;}
+.ro-hours{font-size:11px;color:var(--color-text-secondary);font-weight:600;margin-top:1px;}
+.ro-status{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;}
+.rs-quiet{background:rgba(42,107,62,.12);color:var(--color-success);}
+.rs-filling{background:rgba(155,79,0,.12);color:var(--color-warning);}
+.rs-full{background:rgba(139,26,26,.12);color:var(--color-error);}
+
+/* ── Access code ── */
+.code-wrap{display:flex;align-items:center;justify-content:center;padding:var(--space-md) 0;}
+.code-input{font-family:var(--font-primary);font-size:32px;font-weight:800;letter-spacing:8px;text-align:center;width:100%;padding:16px;background:var(--color-surface-lowest);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-md);outline:none;color:var(--color-text-primary);transition:border-color var(--duration-fast) ease;}
+.code-input:focus{border-color:var(--color-primary);}
+.code-input::placeholder{letter-spacing:6px;color:var(--color-text-disabled);font-weight:600;font-size:24px;}
+.code-hint{font-size:12.5px;color:var(--color-text-secondary);text-align:center;line-height:1.5;margin-bottom:var(--space-md);}
+.btn-gap{display:flex;flex-direction:column;gap:var(--space-sm);}
+
+/* ── Stepper ── */
+.stepper-wrap{display:flex;align-items:center;justify-content:center;gap:0;border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-md);overflow:hidden;background:var(--color-surface);margin:var(--space-md) 0;}
+.step-btn{font-family:inherit;font-size:26px;font-weight:400;border:none;background:transparent;cursor:pointer;padding:14px 24px;color:var(--color-primary);transition:background var(--duration-fast) ease;line-height:1;}
+.step-btn:hover{background:var(--color-surface-variant);}
+.step-val{font-size:32px;font-weight:800;min-width:80px;text-align:center;padding:14px 0;border-left:var(--border-hairline) solid var(--color-border-subtle);border-right:var(--border-hairline) solid var(--color-border-subtle);}
+.stepper-hint{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-bottom:var(--space-md);}
+
+/* ── Confirm summary ── */
+.confirm-card{background:var(--color-surface-lowest);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);overflow:hidden;margin-bottom:var(--space-md);}
+.cc-row{display:flex;align-items:center;justify-content:space-between;padding:12px var(--space-md);gap:12px;}
+.cc-row+.cc-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.cc-lbl{font-size:12.5px;font-weight:600;color:var(--color-text-secondary);}
+.cc-val{font-size:14px;font-weight:700;text-align:right;}
+.cc-tag{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 8px;border-radius:var(--radius-full);}
+.tag-ok{background:rgba(42,107,62,.12);color:var(--color-success);}
+.tag-info{background:rgba(26,82,118,.1);color:var(--color-info);}
+
+/* ── Gear list (matches 02 booking) ── */
+.gear-list{display:flex;flex-direction:column;gap:var(--space-sm);}
+.gear-item{border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;font-family:inherit;text-align:left;transition:all var(--duration-fast) ease;overflow:hidden;}
+.gear-item.sel{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.gear-header{display:flex;align-items:center;gap:13px;padding:12px var(--space-md);}
+.gear-ico{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-surface-variant);display:grid;place-items:center;color:var(--color-text-secondary);flex-shrink:0;transition:all var(--duration-fast) ease;font-size:12px;font-weight:800;}
+.gear-item.sel .gear-ico{background:var(--color-primary);color:#fff;}
+.gear-name{font-size:14px;font-weight:700;}
+.gear-ring{width:22px;height:22px;border-radius:var(--radius-full);border:2px solid var(--color-border-emphasis);display:grid;place-items:center;flex-shrink:0;transition:all var(--duration-fast) ease;}
+.gear-item.sel .gear-ring{border-color:var(--color-primary);background:var(--color-primary);}
+.gear-accordion{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .25s ease;opacity:0;}
+.gear-accordion.show{max-height:400px;opacity:1;}
+.gear-acc-inner{padding:var(--space-md);padding-top:0;display:flex;flex-direction:column;gap:var(--space-md);border-top:1px solid var(--color-border-subtle);margin:0 var(--space-md) var(--space-md);padding-top:var(--space-md);}
+.f-label{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:6px;}
+.f-seg{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;gap:2px;}
+.f-seg-btn{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:8px 4px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.f-seg-btn.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.f-input{width:100%;font-family:inherit;font-size:14px;font-weight:600;border:1.5px solid var(--color-border-emphasis);border-radius:var(--radius-sm);padding:10px 12px;background:var(--color-surface);color:var(--color-text-primary);outline:none;-moz-appearance:textfield;}
+.f-input::-webkit-inner-spin-button,.f-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.f-input:focus{border-color:var(--color-primary);}
+.f-bool{display:flex;align-items:center;justify-content:space-between;}
+.f-bool-lbl{font-size:13.5px;font-weight:600;}
+.f-toggle{width:44px;height:24px;border-radius:12px;background:var(--color-border-emphasis);cursor:pointer;border:none;position:relative;transition:background .2s ease;flex-shrink:0;}
+.f-toggle.on{background:var(--color-primary);}
+.f-knob{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s ease;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+.f-toggle.on .f-knob{left:22px;}
+/* ── Sign-out billing ── */
+.bill-section{border-radius:var(--radius-md);overflow:hidden;border:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:12px;}
+.bill-head{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:8px var(--space-md);background:var(--color-surface-lowest);color:var(--color-text-disabled);}
+.bill-row{display:flex;align-items:center;gap:12px;padding:12px var(--space-md);background:var(--color-surface);}
+.bill-row+.bill-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.bill-row.settled{background:var(--color-success-container);}
+.bill-row.due{background:var(--color-warning-container);}
+.br-ico{width:30px;height:30px;border-radius:var(--radius-full);flex-shrink:0;display:grid;place-items:center;}
+.br-ico.ok{background:var(--color-success-container);color:var(--color-success);}
+.br-ico.warn{background:var(--color-warning-container);color:var(--color-warning);}
+.br-body{flex:1;min-width:0;}
+.br-desc{font-size:13.5px;font-weight:700;}
+.br-sub{font-size:11.5px;color:var(--color-text-secondary);margin-top:1px;}
+.br-amt{text-align:right;flex-shrink:0;}
+.br-amt-main{font-size:14px;font-weight:700;}
+.br-amt-main.settled{color:var(--color-success);}
+.br-amt-main.due{color:var(--color-warning);}
+.br-amt-note{font-size:10.5px;color:var(--color-text-disabled);margin-top:1px;}
+.bill-session{padding:var(--space-sm) var(--space-md) var(--space-md);background:transparent;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
+.bs-eyebrow{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:2px;}
+.bs-range{font-size:18px;font-weight:800;letter-spacing:-.3px;color:var(--color-text-primary);}
+.bs-dur{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+.bill-total-row{display:flex;align-items:center;justify-content:space-between;padding:14px var(--space-md);background:var(--color-surface);border-top:var(--border-emphasis) solid var(--color-border-emphasis);}
+.bill-total-row.due{border-radius:var(--radius-md);border:1.5px solid var(--color-warning);background:var(--color-warning-container);margin-bottom:14px;}
+.bt-lbl{font-size:14px;font-weight:700;}
+.bt-amt{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--color-primary);}
+.bill-paid-mark{display:flex;align-items:center;gap:10px;padding:10px 0 6px;}
+.bill-paid-mark .mark-ico{width:28px;height:28px;border-radius:var(--radius-full);background:var(--color-success-container);display:grid;place-items:center;flex-shrink:0;color:var(--color-success);}
+.bill-paid-mark .mark-title{font-size:13.5px;font-weight:700;color:var(--color-success);}
+.bill-paid-mark .mark-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+
+/* ── Settlement ── */
+.pay-seg{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;gap:2px;margin-bottom:var(--space-md);}
+.pay-tab{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:9px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.pay-tab.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.pay-method{display:none;}
+.pay-method.on{display:block;}
+.paynow-box{background:var(--color-surface-lowest);border-radius:var(--radius-md);border:var(--border-subtle) solid var(--color-border-subtle);padding:var(--space-md);display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:var(--space-md);}
+.qr-mock{width:108px;height:108px;border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0;}
+.paynow-amt{font-size:20px;font-weight:800;letter-spacing:-.5px;}
+.paynow-note{font-size:12px;color:var(--color-text-secondary);text-align:center;}
+.card-fields{display:flex;flex-direction:column;gap:var(--space-sm);margin-bottom:var(--space-md);}
+.fld-row{display:flex;gap:var(--space-sm);}
+.fld{display:flex;flex-direction:column;gap:5px;flex:1;}
+.fld label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);}
+.fld input{font-family:inherit;font-size:14px;font-weight:600;padding:11px 12px;background:var(--color-surface-variant);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;color:var(--color-text-primary);transition:border-color var(--duration-fast) ease;}
+.fld input:focus{border-color:var(--color-primary);}
+.fld input::placeholder{color:var(--color-text-disabled);font-weight:500;}
+.counter-info{background:var(--color-surface-lowest);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);padding:var(--space-md);display:flex;align-items:center;gap:12px;margin-bottom:var(--space-md);}
+.ci-ico{width:40px;height:40px;border-radius:var(--radius-full);background:rgba(26,82,118,.1);display:grid;place-items:center;color:var(--color-info);flex-shrink:0;}
+.ci-text .ci-title{font-size:14px;font-weight:700;}
+.ci-text .ci-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px;line-height:1.4;}
+
+/* ── Booking banner ── */
+.booking-banner{display:flex;align-items:center;gap:12px;padding:14px var(--space-md);background:rgba(42,107,62,.06);border:1.5px solid rgba(42,107,62,.25);border-radius:var(--radius-md);margin-bottom:var(--space-md);}
+.bb-ico{width:38px;height:38px;border-radius:var(--radius-full);background:rgba(42,107,62,.12);display:grid;place-items:center;color:var(--color-success);flex-shrink:0;}
+.bb-body{flex:1;min-width:0;}
+.bb-label{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-success);}
+.bb-name{font-size:16px;font-weight:700;margin-top:2px;}
+.bb-meta{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+/* ── No-booking warning ── */
+.nb-warn{display:flex;align-items:flex-start;gap:12px;padding:14px var(--space-md);background:rgba(155,79,0,.05);border:1.5px solid rgba(155,79,0,.25);border-radius:var(--radius-md);margin-bottom:var(--space-md);}
+.nb-ico{width:38px;height:38px;border-radius:var(--radius-full);background:rgba(155,79,0,.1);display:grid;place-items:center;color:var(--color-warning);flex-shrink:0;}
+.nb-body .nb-title{font-size:14px;font-weight:700;}
+.nb-body .nb-sub{font-size:12px;color:var(--color-text-secondary);margin-top:3px;line-height:1.4;}
+/* ── Booking tile + no-booking note (inline card) ── */
+.bk-tile{display:flex;align-items:center;gap:10px;padding:11px var(--space-md);background:rgba(42,107,62,.06);border:1.5px solid rgba(42,107,62,.25);border-radius:var(--radius-sm);margin-bottom:12px;}
+.bkt-ico{width:28px;height:28px;border-radius:var(--radius-full);background:rgba(42,107,62,.12);display:grid;place-items:center;color:var(--color-success);flex-shrink:0;}
+.bkt-body{flex:1;min-width:0;}
+.bkt-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-success);}
+.bkt-name{font-size:14px;font-weight:700;margin-top:1px;}
+.bkt-meta{font-size:12px;color:var(--color-text-secondary);margin-top:1px;}
+.nb-note{display:flex;align-items:flex-start;gap:10px;padding:11px var(--space-md);background:rgba(155,79,0,.05);border:1.5px solid rgba(155,79,0,.25);border-radius:var(--radius-sm);margin-bottom:12px;}
+.nbn-ico{width:28px;height:28px;border-radius:var(--radius-full);background:rgba(155,79,0,.1);display:grid;place-items:center;color:var(--color-warning);flex-shrink:0;font-size:13px;font-weight:700;}
+.nbn-body{padding-top:2px;}
+.nbn-title{font-size:13px;font-weight:700;color:var(--color-text-primary);}
+.nbn-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px;line-height:1.4;}
+.divider-or{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-disabled);margin:var(--space-md) 0;}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:var(--border-hairline);background:var(--color-border-subtle);}
+.arr-lbl{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:4px;margin-top:var(--space-md);}
+.arrow-input{font-family:inherit;font-size:32px;font-weight:800;text-align:center;width:100%;padding:14px;background:var(--color-surface);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-md);outline:none;color:var(--color-text-primary);transition:border-color var(--duration-fast) ease;margin:8px 0;}
+.arrow-input:focus{border-color:var(--color-primary);}
+.arrow-input::-webkit-inner-spin-button,.arrow-input::-webkit-outer-spin-button{opacity:1;}
+.arrow-val-badge{display:flex;align-items:baseline;justify-content:center;gap:4px;padding:10px 0 2px;}
+.arrow-val-badge .avb-num{font-size:40px;font-weight:800;color:var(--color-primary);font-variant-numeric:tabular-nums;line-height:1;}
+.arrow-val-badge .avb-unit{font-size:13px;font-weight:700;color:var(--color-text-secondary);letter-spacing:.3px;}
+input[type=range].arrow-input{-webkit-appearance:none;appearance:none;height:8px;padding:0;border:none;border-radius:99px;background:linear-gradient(to right,var(--color-primary) 0%,var(--color-primary) var(--pct,50%),var(--color-surface-highest) var(--pct,50%),var(--color-surface-highest) 100%);cursor:pointer;}
+input[type=range].arrow-input::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--color-primary);border:3px solid var(--color-on-primary);box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;}
+input[type=range].arrow-input::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--color-primary);border:3px solid var(--color-on-primary);box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;}
+/* ── Session info row ── */
+.sc-info-row{display:flex;align-items:center;justify-content:space-between;padding:10px var(--space-md);border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.sir-lbl{font-size:12px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.5px;font-size:11px;}
+.sir-val{font-size:14px;font-weight:700;}
+.sc-comment-wrap{padding:0 var(--space-md) var(--space-sm);}
+.sc-comment{font-family:inherit;font-size:13.5px;font-weight:500;width:100%;padding:10px 12px;background:var(--color-surface-lowest);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;color:var(--color-text-primary);resize:none;line-height:1.5;transition:border-color var(--duration-fast) ease;}
+.sc-comment:focus{border-color:var(--color-primary);}
+.sc-comment::placeholder{color:var(--color-text-disabled);}
+.so-success{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-lg) 0 var(--space-md);}
+.suc-ico{width:64px;height:64px;border-radius:var(--radius-full);background:rgba(42,107,62,.12);display:grid;place-items:center;color:var(--color-success);margin-bottom:var(--space-md);}
+.suc-title{font-size:22px;font-weight:700;}
+.suc-sub{font-size:13.5px;color:var(--color-text-secondary);margin-top:6px;line-height:1.5;max-width:280px;}
+.suc-ref{font-size:11px;color:var(--color-text-disabled);margin-top:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+
+/* ── Desktop ── */
+@container (min-width:760px){
+  .app{grid-template-columns:248px 1fr;grid-template-rows:69px 1fr;grid-template-areas:"nav header" "nav main";}
+  .app-main{background:var(--color-surface-lowest);}
+  .hdr{padding:14px 40px;}
+  .nav{flex-direction:column;align-items:stretch;justify-content:flex-start;border-top:none;border-right:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface-variant);padding:0;gap:4px;}
+  .rail-brand{display:flex;align-items:center;gap:11px;padding:22px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:8px;}
+  .rail-brand .logo{width:36px;height:36px;border-radius:11px;background:var(--color-primary);display:grid;place-items:center;}
+  .rail-brand .rb-name{font-size:16px;font-weight:800;}
+  .rail-brand .rb-sub{font-size:10.5px;color:var(--color-text-secondary);font-weight:600;}
+  .nav-item{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 22px;margin:0 12px;border-radius:var(--radius-sm);}
+  .nav-item .ni-label{font-size:14px;}
+  .nav-item.on{background:var(--color-surface-highest);color:var(--color-primary);}
+  .rail-foot{display:flex;align-items:center;gap:10px;margin-top:auto;padding:16px 20px;border-top:var(--border-hairline) solid var(--color-border-subtle);}
+  .rf-name{font-size:13px;font-weight:700;}.rf-sub{font-size:11px;color:var(--color-text-secondary);}
+  .feed{max-width:640px;margin:0 auto;padding:32px 40px 48px;}
+}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s ease;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 5 · Sign-in / Sign-out</span>
+    <div class="scen-seg">
+      <button class="scen-btn on" id="sA" onclick="setScenario('signin')">Sign-in · booking</button>
+      <button class="scen-btn" id="sOH" onclick="setScenario('signin_oh')">Sign-in · Outside hours</button>
+      <button class="scen-btn" id="sB" onclick="setScenario('active')">Active session</button>
+      <button class="scen-btn" id="sC" onclick="setScenario('signout')">Sign-out flow</button>
+      <button class="scen-btn" id="sD" onclick="setScenario('bill')">Session bill</button>
+      <button class="scen-btn" id="sE" onclick="setScenario('undo')">Undo Sign Out</button>
+    </div>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.4" stroke="currentColor" stroke-width="2"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="8.5" y1="21" x2="15.5" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Desktop
+      </button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <!-- HEADER -->
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="hdr">
+            <button class="profile-switch">
+              <span class="avatar olive">CT</span>
+              <span class="ps-text">
+                <span class="ps-label">Active profile</span>
+                <span class="ps-name">Caleb Tan <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="app-main">
+          <div class="feed">
+            <div class="greeting">
+              <h1>Good morning, Caleb</h1>
+              <p>Friday, 5 June</p>
+            </div>
+            <div class="sec-head"><span class="sec-title">Range Sign In</span></div>
+
+            <!-- Sign-in state (not signed in) -->
+            <div class="card signin" id="homeSignin">
+              <div class="si-top">
+                <span class="si-pulse"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 2v3m0 14v3M2 12h3m14 0h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/></svg></span>
+                <div><div class="si-eyebrow">Not signed in</div><div class="si-title">At the range? Sign in.</div></div>
+              </div>
+              <div class="si-fieldlabel">Your location</div>
+              <div class="loc-pick">
+                <button class="loc-chip sel" id="lcWC" onclick="pickLoc('West Coast')">
+                  <span class="lc-text"><span class="lc-name">West Coast</span></span>
+                </button>
+                <button class="loc-chip" id="lcCC" onclick="pickLoc('Chai Chee')">
+                  <span class="lc-text"><span class="lc-name">Chai Chee</span></span>
+                </button>
+              </div>
+              <div class="bk-tile" id="bkTile" style="display:none;">
+                <span class="bkt-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <div class="bkt-body">
+                  <div class="bkt-name">Range Practice</div>
+                  <div class="bkt-meta">West Coast · 9:00–10:00 AM</div>
+                </div>
+              </div>
+              <div class="nb-note" id="nbNote" style="display:none;">
+                <span class="nbn-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <div class="nbn-body">We didn't find a valid booking at West Coast. Tap below to sign in anyway, or make a booking first.</div>
+              </div>
+              <button class="btn btn-primary" id="signinBtn" onclick="openSignin()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Sign In
+              </button>
+              <div id="nbButtons" style="display:none;flex-direction:column;gap:10px;">
+                <button class="btn btn-primary" onclick="goNewBookingFromHome()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  New Booking
+                </button>
+                <button class="btn btn-ghost" onclick="openSigninCode()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Sign In with Access Code
+                </button>
+              </div>
+              <button class="btn btn-primary" id="undoSignoutBtn" style="display:none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 7v6h6M21 17A9 9 0 0 0 5.64 5.64L3 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Undo Sign Out
+              </button>
+              <div class="client-note" id="undoClientNote" style="display:none;margin-top:10px;">You signed out while your booking is still active. Tap above to undo and return to your session.</div>
+              <div class="dev-note" id="undoDevNote" style="display:none;margin-top:10px;">💡 <strong>Undo Sign Out — eligibility (TBC with team):</strong> Show this variant when (1) user signed out within the last N minutes, AND (2) they have an active booking that has not yet ended. Location picker is hidden — location is already known. Define the eligibility window and unwind behaviour before build.</div>
+            </div>
+
+            <!-- Active session card -->
+            <div class="card session-card" id="homeSession" style="display:none;">
+              <div class="sc-head">
+                <span class="sc-pulse"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 7v5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+                <div class="sc-meta">
+                  <div class="sc-eyebrow">Signed in</div>
+                  <div class="sc-range" id="sessionLocLabel">West Coast</div>
+                </div>
+                <div class="sc-since">Since 8:57 AM</div>
+              </div>
+              <div class="sc-coverage">
+                <div class="scc-row covered">
+                  <div class="scc-body"><div class="scc-label">Range Practice</div><div class="scc-sub">9:00–11:00 AM · 2 hours</div></div>
+                  <span class="scc-tag ok">Booked</span>
+                </div>
+                <div class="scc-row overdue">
+                  <div class="scc-body"><div class="scc-label">Range Practice</div><div class="scc-sub">11:00 AM-1:00 PM · 2 hours</div></div>
+                  <span class="scc-tag warn">Walk-In</span>
+                </div>
+                <div class="scc-row covered">
+                  <div class="scc-body"><div class="scc-label">Master Class</div><div class="scc-sub">1:00 PM – 3:00 PM · 2 hours</div></div>
+                  <span class="scc-tag ok">Booked</span>
+                </div>
+                <div class="scc-row overdue">
+                  <div class="scc-body"><div class="scc-label">Range Practice</div><div class="scc-sub">3:00 PM - now · 25 mins</div></div>
+                  <span class="scc-tag warn">Walk-In</span>
+                </div>
+              </div>
+              <div class="sc-info-row"><span class="sir-lbl">Arrows (start)</span><span class="sir-val" id="sessionArrowDisplay">72</span></div>
+              <div style="padding:var(--space-sm) var(--space-md) var(--space-md);">
+                <button class="btn btn-primary" onclick="openSignout()" style="background:var(--color-error);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Sign Out
+                </button>
+              </div>
+            </div>
+
+            <!-- Placeholder marker: other home sections (announcements, shortcuts, etc.) live below the Range Sign In card -->
+            <div class="home-placeholder">
+              <div class="hp-label">Other home sections</div>
+              <div class="hp-sub">Announcements, shortcuts, etc. — not part of this spec</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- NAV -->
+        <nav class="nav">
+          <div class="rail-brand">
+            <span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+            <span><div class="rb-name">x10s</div><div class="rb-sub">Salt Light Archery</div></span>
+          </div>
+          <button class="nav-item on"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ni-label">Home</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4M8 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Booking</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Wallet</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Shop</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></button>
+          <div class="rail-foot">
+            <span class="avatar sm olive">CT</span>
+            <span><div class="rf-name">Caleb Tan</div><div class="rf-sub">Master Class</div></span>
+          </div>
+        </nav>
+
+      </div><!-- /app -->
+
+      <div class="scrim" id="scrim" onclick="handleScrimClick()"></div>
+
+      <!-- SIGN-IN SHEET -->
+      <div class="sheet" id="siSheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-hdr">
+          <button class="sh-back" id="siBtnBack" onclick="siBack()" style="visibility:hidden;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="sh-title" id="siTitle">Where are you shooting?</span>
+          <span class="sh-step" id="siStepLbl">1 / 4</span>
+          <button class="sh-close" onclick="closeAll()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m18 6-12 12M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        </div>
+        <div class="sheet-body" id="siBody"></div>
+        <div class="sheet-foot" id="siFoot"></div>
+      </div>
+
+      <div class="client-note">💡 <strong>Sign-out flow</strong> — Sign-out is a 2-step bottom sheet (gear selection → arrows + notes). "Confirm Sign Out" opens the full-screen session bill, which overlays the entire app. Undo Sign Out returns to step 2. Once "Confirm Sign Out" is tapped on the bill page, sign-out is final and the bill cannot be revisited. Payment is settled as either credits or at the range office — not a combination.</div>
+
+      <!-- SIGN-OUT SHEET -->
+      <div class="sheet" id="soSheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-hdr">
+          <button class="sh-back" id="soBtnBack" onclick="soBack()" style="visibility:hidden;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="sh-title" id="soTitle">Session summary</span>
+          <span class="sh-step" id="soStepLbl">1 / 4</span>
+          <button class="sh-close" onclick="closeAll()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m18 6-12 12M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        </div>
+        <div class="sheet-body" id="soBody"></div>
+        <div class="sheet-foot" id="soFoot"></div>
+      </div>
+
+      <!-- SESSION BILL PAGE (full-screen, one-time) -->
+      <div id="billPage">
+        <div class="bill-pg-hdr">
+          <button id="billUndoBtn" onclick="soUndo()" style="display:flex;align-items:center;gap:5px;font-family:inherit;font-size:12px;font-weight:700;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:4px 2px;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Undo Sign Out
+          </button>
+          <span class="bill-pg-title">Session Bill</span>
+          <span style="width:96px;flex-shrink:0;"></span>
+        </div>
+        <div class="bill-pg-body" id="billPageBody"></div>
+        <div class="bill-pg-foot" id="billPageFoot"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── State ── */
+const MOCK_BOOKING={activity:'Range Practice',loc:'West Coast',time:'9:00–10:00 AM'};
+let scenario = 'signin';
+let siHasBooking = true, siArrows = 12, siCode = '', siSubStep = 0, selectedLoc = 'West Coast';
+let outsideHours = false;
+let soStep = 1, soArrows = 72, soCode = '', soPayMethod = 'paynow';
+let sessionStart, timerInterval;
+
+const CHK = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+const RANGES = [
+  {id:'1', name:'Range 1', loc:'West Coast', hours:'9am–9pm', status:'quiet',   statusCls:'rs-quiet',   statusLbl:'Quiet'},
+  {id:'2', name:'Range 2', loc:'West Coast', hours:'9am–9pm', status:'filling', statusCls:'rs-filling', statusLbl:'Filling'},
+  {id:'3', name:'Range 3', loc:'West Coast', hours:'11am–9pm',status:'filling', statusCls:'rs-filling', statusLbl:'Filling'},
+  {id:'4', name:'Range 1', loc:'Chai Chee',  hours:'11am–7pm',status:'quiet',   statusCls:'rs-quiet',   statusLbl:'Quiet'},
+];
+
+/* ── Form factor ── */
+function setForm(m){
+  document.getElementById('frame').classList.toggle('desktop', m==='desktop');
+  document.getElementById('segPhone').classList.toggle('on', m==='phone');
+  document.getElementById('segDesktop').classList.toggle('on', m==='desktop');
+  localStorage.setItem('wf-form',m);
+}
+
+/* ── Scenario ── */
+function setScenario(s){
+  scenario = s;
+  document.querySelectorAll('.scen-btn').forEach(b=>b.classList.remove('on'));
+  const idMap={signin:'sA',signin_oh:'sOH',active:'sB',signout:'sC',bill:'sD',undo:'sE'};
+  if(document.getElementById(idMap[s])) document.getElementById(idMap[s]).classList.add('on');
+  closeAll();
+  outsideHours = (s==='signin_oh');
+  const isSignin = s==='signin'||s==='signin_oh';
+  const showSigninCard = isSignin||s==='undo';
+  document.getElementById('homeSignin').style.display  = showSigninCard ? '' : 'none';
+  document.getElementById('homeSession').style.display = !showSigninCard ? '' : 'none';
+  clearInterval(timerInterval);
+  if(s==='active'||s==='signout'){
+    sessionStart = Date.now() - (3*3600)*1000;
+    // update location label and arrow count on session card
+    const locEl = document.getElementById('sessionLocLabel');
+    if(locEl) locEl.textContent = selectedLoc;
+    const arrowEl = document.getElementById('sessionArrowDisplay');
+    if(arrowEl) arrowEl.textContent = siArrows+' arrows';
+  }
+  if(isSignin){
+    selectedLoc='West Coast';
+    document.getElementById('lcWC').classList.add('sel');
+    document.getElementById('lcCC').classList.remove('sel');
+    updateSigninCard();
+    siHasBooking = !outsideHours && selectedLoc===MOCK_BOOKING.loc;
+    siCode=''; siSubStep = 0;
+    if(s!=='signin_oh'){
+      renderSiStep();
+      document.getElementById('scrim').classList.add('open');
+      document.getElementById('siSheet').classList.add('open');
+    }
+  }
+  if(s==='signout'){
+    soStep=1; renderSoStep();
+    document.getElementById('scrim').classList.add('open');
+    document.getElementById('soSheet').classList.add('open');
+  }
+  if(s==='bill'){
+    sessionStart = Date.now() - (3*3600)*1000;
+    soArrowEnd=11;
+    soShowBill();
+  }
+  if(s==='undo'){
+    // Show homeSignin in undo state — hide loc picker, show booking tile + undo button
+    document.querySelector('#homeSignin .si-fieldlabel').style.display='none';
+    document.querySelector('#homeSignin .loc-pick').style.display='none';
+    document.querySelector('#homeSignin .si-eyebrow').textContent='Recently signed out';
+    document.querySelector('#homeSignin .si-title').textContent='Undo your sign out?';
+    document.getElementById('bkTile').style.display='';
+    document.getElementById('nbNote').style.display='none';
+    document.getElementById('nbButtons').style.display='none';
+    document.getElementById('signinBtn').style.display='none';
+    document.getElementById('undoSignoutBtn').style.display='';
+    document.getElementById('undoClientNote').style.display='';
+    document.getElementById('undoDevNote').style.display='';
+  }
+}
+
+/* ── Timer ── */
+function fmt(secs){
+  const h=Math.floor(secs/3600), m=Math.floor((secs%3600)/60), s=secs%60;
+  if(h>0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+function tickTimer(){
+  // sessionStart kept for billing math in sign-out; no visual timers on active card
+}
+
+/* ── Close all sheets ── */
+function closeAll(){
+  document.getElementById('scrim').classList.remove('open');
+  document.getElementById('siSheet').classList.remove('open');
+  document.getElementById('soSheet').classList.remove('open');
+}
+function handleScrimClick(){
+  if(scenario==='signin'||scenario==='signout') return; // don't dismiss mid-flow on scrim tap for these
+  closeAll();
+}
+
+/* ── Sign-in sheet ── */
+function pickLoc(loc){
+  selectedLoc=loc;
+  document.getElementById('lcWC').classList.toggle('sel',loc==='West Coast');
+  document.getElementById('lcCC').classList.toggle('sel',loc==='Chai Chee');
+  updateSigninCard();
+}
+function updateSigninCard(){
+  if(scenario==='undo') return;
+  if(outsideHours){
+    document.getElementById('bkTile').style.display='none';
+    document.getElementById('nbNote').style.display='none';
+    document.getElementById('nbButtons').style.display='none';
+    document.getElementById('signinBtn').style.display='';
+    document.getElementById('signinBtn').disabled=!selectedLoc;
+    return;
+  }
+  const hasBooking=selectedLoc===MOCK_BOOKING.loc;
+  const noBookingState=!hasBooking&&selectedLoc;
+  document.getElementById('bkTile').style.display=hasBooking?'':'none';
+  document.getElementById('nbNote').style.display=noBookingState?'':'none';
+  document.getElementById('signinBtn').style.display=noBookingState?'none':'';
+  document.getElementById('signinBtn').disabled=!selectedLoc;
+  document.getElementById('nbButtons').style.display=noBookingState?'flex':'none';
+  if(noBookingState){
+    document.getElementById('nbNote').querySelector('.nbn-body').innerHTML=
+      '<div class="nbn-title">No booking found</div><div class="nbn-sub">Note that Sign-In unlocks 15 mins before your booked session starts. Else, make a booking or sign in with access code.</div>';
+  }
+}
+function goNewBookingFromHome(){ localStorage.setItem('wf-open-booking','1'); location.href='02%20Make%20a%20Booking.html?new=1'; }
+function openSigninCode(){ siHasBooking=false; siCode=''; siSubStep=1; renderSiStep(); document.getElementById('scrim').classList.add('open'); document.getElementById('siSheet').classList.add('open'); }
+function openSignin(){
+  siHasBooking = selectedLoc === MOCK_BOOKING.loc;
+  siCode=''; siSubStep=0;
+  renderSiStep();
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('siSheet').classList.add('open');
+}
+
+function renderSiStep(){
+  document.getElementById('siTitle').textContent = 'Sign In';
+  document.getElementById('siStepLbl').textContent = '';
+  document.getElementById('siBtnBack').style.visibility = 'hidden';
+  const body = document.getElementById('siBody');
+  const foot = document.getElementById('siFoot');
+
+  if(siHasBooking || siSubStep === 2){
+    if(siSubStep === 2){ document.getElementById('siBtnBack').style.visibility = 'visible'; }
+    body.innerHTML = `
+      <div class="arr-lbl">Arrows • Start</div>
+      <div class="arrow-val-badge"><span class="avb-num" id="siArrowDisplay">${siArrows}</span><span class="avb-unit">arrows</span></div>
+      <input type="range" class="arrow-input" id="siArrowVal" value="${siArrows}" min="0" max="20" inputmode="numeric" oninput="siArrows=parseInt(this.value)||0;document.getElementById('siArrowDisplay').textContent=siArrows;this.style.setProperty('--pct',(this.value/this.max*100)+'%')" style="--pct:${(siArrows/20*100).toFixed(1)}%" />
+      <p class="stepper-hint" style="padding:0;">Number of arrows at start of session</p>
+      <div class="arr-lbl" style="margin-top:var(--space-md);">Session notes</div>
+      <textarea placeholder="Add any notes about your session…" class="sc-comment" rows="3" style="margin-top:6px;"></textarea>`;
+    foot.innerHTML = `<button class="btn btn-primary" onclick="siConfirm()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Sign In · ${selectedLoc}
+    </button>`;
+  } else if(siSubStep === 0) {
+    body.innerHTML = `
+      <div class="nb-warn">
+        <span class="nb-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="nb-body">
+          <div class="nb-title">No booking found</div>
+          <div class="nb-sub">Note that Sign-In unlocks 15 mins before your booked session starts. Else, make a booking or sign in with access code.</div>
+        </div>
+      </div>
+      <div class="btn-gap">
+        <button class="btn btn-primary" onclick="window.location.href='02%20Make%20a%20Booking.html'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          New Booking
+        </button>
+        <button class="btn btn-ghost" onclick="showSiCodeStep()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sign In with Access Code
+        </button>
+      </div>`;
+    foot.innerHTML = '';
+  } else {
+    document.getElementById('siBtnBack').style.visibility = 'visible';
+    body.innerHTML = `
+      <p class="code-hint">Enter the access code for event.</p>
+      <div class="code-wrap"><input class="code-input" id="siCodeInput" type="text" inputmode="text" placeholder="A0B1C2D3" value="${siCode}" oninput="siCode=this.value;updateSiCodeBtn()" /></div>`;
+    foot.innerHTML = `<button class="btn btn-primary" id="siBtnCode" ${siCode.trim().length>0?'':'disabled'} onclick="siSubmitCode()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Sign In with Access Code
+    </button>`;
+  }
+}
+function showSiCodeStep(){ siSubStep=1; siCode=''; renderSiStep(); }
+function siSubmitCode(){ if(siCode.trim().length===0) return; siSubStep=2; renderSiStep(); }
+function siBack(){ if(siSubStep===2){ siSubStep=1; } else { siSubStep=0; siCode=''; } renderSiStep(); }
+function updateSiCodeBtn(){
+  const btn=document.getElementById('siBtnCode');
+  if(btn) btn.disabled=siCode.trim().length===0;
+}
+function adjustArrows(d, who){
+  if(who==='si'){ siArrows=Math.max(0,Math.min(300,siArrows+d)); const v=document.getElementById('siArrowVal'); if(v) v.textContent=siArrows; }
+  else { soArrows=Math.max(0,Math.min(300,soArrows+d)); const v=document.getElementById('soArrowVal'); if(v) v.textContent=soArrows; }
+}
+function siConfirm(){
+  setScenario('active');
+}
+
+/* ── Sign-out sheet ── */
+const GEAR=[
+  {id:'none',     name:'No Rental Required',         price:0,  fields:[]},
+  {id:'arrows',   name:'Arrow x6 Rental',            price:5,  fields:[]},
+  {id:'compound', name:'Basic Compound Bow Set',     price:15, fields:['drawHand','drawLength','drawPoundage','stabilizer']},
+  {id:'recurve',  name:'Basic Metal Recurve Bow Set',price:15, fields:['drawHand','drawLength','drawPoundage','stabilizer']},
+  {id:'wooden',   name:'Wooden Bow Set',             price:15, fields:['drawHand','drawLength','drawPoundage','stabilizer']},
+  {id:'trad',     name:'Traditional Bow Set',        price:15, fields:[]},
+];
+const FIELD_DEFS={
+  drawHand:    {label:'Draw hand',           type:'seg',    options:['Left','Right'], dflt:'Right'},
+  drawLength:  {label:'Draw length (in)',     type:'number', min:10, max:35, placeholder:'e.g. 28', dflt:''},
+  drawPoundage:{label:'Bow poundage (lbs)',   type:'number', min:10, max:60, placeholder:'e.g. 30', dflt:''},
+  stabilizer:  {label:'Stabilizer required', type:'bool',   dflt:false},
+};
+let soGearIdx=0, soGearFields={}, soArrowEnd=12, soComment='';
+let soArrowsFired='', soShowCode=false;
+let billPayWithCredits=true, billCreditType='RP', billCreditConfirmed=false;
+const BILL_CREDIT_BAL={RP:2, CC:6};
+const BILL_CRED_TYPES=['RP','CC'];
+const BILL_CRED_AMT=2;
+const CHK_GEAR='<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function gearPriceLabel(p){return p===0?'$0':'$'+p;}
+function renderGearSo(){
+  return GEAR.map((item,i)=>{
+    const sel=soGearIdx===i;
+    const accHtml=item.fields.length&&sel?`
+      <div class="gear-accordion show"><div class="gear-acc-inner">${renderFieldsSoHtml(item.fields)}</div></div>`
+      :item.fields.length?`<div class="gear-accordion"></div>`:'';
+    return`<div class="gear-item${sel?' sel':''}" onclick="pickGearSo(${i})">
+      <div class="gear-header">
+        <span class="gear-ico">${gearPriceLabel(item.price)}</span>
+        <div style="flex:1"><div class="gear-name">${item.name}</div></div>
+        <div class="gear-ring">${sel?CHK_GEAR:''}</div>
+      </div>${accHtml}</div>`;
+  }).join('');
+}
+function renderFieldsSoHtml(fields){
+  return fields.map(fk=>{
+    const fd=FIELD_DEFS[fk], val=soGearFields[fk]!==undefined?soGearFields[fk]:(fd.dflt||'');
+    if(fd.type==='seg'){const btns=fd.options.map(o=>`<button class="f-seg-btn${val===o?' on':''}" onclick="event.stopPropagation();setSoGearSeg('${fk}','${o}')">${o}</button>`).join('');return`<div><div class="f-label">${fd.label}</div><div class="f-seg">${btns}</div></div>`;}
+    if(fd.type==='number'){return`<div><div class="f-label">${fd.label}</div><input class="f-input" type="number" min="${fd.min}" max="${fd.max}" placeholder="${fd.placeholder}" value="${val}" onclick="event.stopPropagation()" oninput="setSoGearNum('${fk}',this.value)"></div>`;}
+    if(fd.type==='bool'){const on=val===true||val==='true';return`<div class="f-bool"><span class="f-bool-lbl">${fd.label}</span><button class="f-toggle${on?' on':''}" onclick="event.stopPropagation();toggleSoGearBool('${fk}')"><div class="f-knob"></div></button></div>`;}
+    return'';
+  }).join('');
+}
+function setSoGearSeg(fk,v){soGearFields[fk]=v;refreshGearBody();}
+function setSoGearNum(fk,v){soGearFields[fk]=v;}
+function toggleSoGearBool(fk){soGearFields[fk]=!soGearFields[fk];refreshGearBody();}
+function pickGearSo(i){soGearIdx=i;soGearFields={};refreshGearBody();}
+function refreshGearBody(){const b=document.getElementById('soBody');if(b)b.innerHTML=`<div class="gear-list">${renderGearSo()}</div>`;}
+
+function openSignout(){
+  soStep=1; soGearIdx=0; soGearFields={}; soArrowEnd=siArrows; soComment=''; soCode=''; soPayMethod='paynow'; soArrowsFired=''; soShowCode=false;
+  renderSoStep();
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('soSheet').classList.add('open');
+}
+
+const SO_TITLES = ['Equipment rental','Session details','Session bill'];
+
+function renderSoStep(){
+  document.getElementById('soTitle').textContent = SO_TITLES[Math.min(soStep-1,2)];
+  document.getElementById('soStepLbl').textContent = soStep<=2 ? soStep+' / 2' : '';
+  document.getElementById('soBtnBack').style.visibility = soStep>1&&soStep<=2 ? 'visible' : 'hidden';
+  const body = document.getElementById('soBody');
+  const foot = document.getElementById('soFoot');
+
+  if(soStep===1){
+    body.innerHTML = `<div class="gear-list">${renderGearSo()}</div>`;
+    foot.innerHTML = `<button class="btn btn-primary" onclick="soNext()">Continue</button>`;
+  }
+  else if(soStep===2){
+    body.innerHTML = `
+      <div class="arr-lbl">Arrows (End)</div>
+      <div class="arrow-val-badge"><span class="avb-num" id="soArrowEndDisplay">${soArrowEnd}</span><span class="avb-unit">arrows</span></div>
+      <input type="range" class="arrow-input" id="soArrowEndVal" value="${soArrowEnd}" min="0" max="20" inputmode="numeric" oninput="soArrowEnd=parseInt(this.value)||0;document.getElementById('soArrowEndDisplay').textContent=soArrowEnd;this.style.setProperty('--pct',(this.value/this.max*100)+'%')" style="--pct:${(soArrowEnd/20*100).toFixed(1)}%" />
+      <div class="arr-lbl" style="margin-top:var(--space-md);">Arrows shot today (optional)</div>
+      <p class="code-hint">Roughly how many you fired this session — counts toward your stats.</p>
+      <input type="number" inputmode="numeric" min="0" max="999" placeholder="e.g. 96" value="${soArrowsFired}" oninput="soArrowsFired=this.value"
+        style="font-family:inherit;font-size:13.5px;font-weight:500;width:100%;padding:10px 12px;background:var(--color-surface-lowest);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;margin-bottom:var(--space-md);" />
+      ${soShowCode?`
+        <div class="arr-lbl">Access code</div>
+        <p class="code-hint">For a private event booked under someone else's name. Adding it here reduces what's payable — private events are pre-paid.</p>
+        <div class="code-wrap"><input class="code-input" type="text" inputmode="text" maxlength="8" placeholder="A0B1C2D3" value="${soCode}" oninput="soCode=this.value" /></div>
+      `:`
+        <button type="button" onclick="soShowCode=true;renderSoStep();"
+          style="background:none;border:none;padding:0;margin:0 0 var(--space-md);font:inherit;font-size:13px;font-weight:600;color:var(--color-primary);cursor:pointer;text-decoration:underline;text-underline-offset:3px;">
+          Have an access code? It may reduce what's payable.
+        </button>
+      `}
+      <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Session notes</div>
+      <textarea placeholder="Add any notes about your session…" oninput="soComment=this.value"
+        style="font-family:inherit;font-size:13.5px;font-weight:500;width:100%;padding:10px 12px;background:var(--color-surface-lowest);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;resize:none;line-height:1.5;transition:border-color var(--duration-fast) ease;"
+        rows="3">${soComment}</textarea>`;
+    foot.innerHTML = `<button class="btn btn-primary" onclick="soShowBill()" style="margin-top:var(--space-sm);">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Confirm Sign Out
+    </button>`;
+  }
+}
+function pickGearSo_legacy(){}
+function setSoPay(m, due){
+  soPayMethod=m;
+  ['PN','Card','Counter'].forEach(x=>{ document.getElementById('pt'+x)?.classList.toggle('on',x.toLowerCase()===m||(x==='PN'&&m==='paynow')); document.getElementById('pm'+x)?.classList.toggle('on',x.toLowerCase()===m||(x==='PN'&&m==='paynow')); });
+  document.getElementById('ptPN').classList.toggle('on',m==='paynow');
+  document.getElementById('pmPN').classList.toggle('on',m==='paynow');
+  const btn=document.getElementById('soPayBtn');
+  if(btn) btn.textContent = m==='counter'?'Confirm Sign Out':'Pay $'+due;
+}
+function soBack(){ if(soStep>1&&soStep<=2){ soStep--; renderSoStep(); }}
+function soNext(){ soStep++; renderSoStep(); }
+function soShowBill(){ billCreditConfirmed=false; renderBillPage(); document.getElementById('billPage').classList.add('open'); }
+function renderBillPage(){
+  // Mock matches the 4-row coverage above: 2h covered + 2h walk-in + 2h covered + 25min walk-in.
+  // Payable time = 2h 25min → round_up @ 15-min tolerance → 3h. 3h × $5/hr = $15.
+  const payableHours = 3;
+  const hourlyRate = 5;
+  const overageCost = payableHours * hourlyRate;
+  const equip = GEAR[soGearIdx];
+  // Rental waived because a lesson (Master Class) is in this session's coverage.
+  const rentalWaivedByLesson = true;
+  const rentalCharge = (equip.id === 'none' || rentalWaivedByLesson) ? 0 : equip.price;
+  const totalDue = (overageCost + rentalCharge).toFixed(2);
+  const body = document.getElementById('billPageBody');
+  const foot = document.getElementById('billPageFoot');
+  body.innerHTML = `
+    <div class="dev-note" style="margin-bottom:14px;">💡 Session bill formula + reconciliation rules: <a href="https://app.notion.com/p/Phase-2-2-10-Enhanced-Sign-In-Sign-Out-Mechanics-30e92478a0f28024b1fbe9fdcc896ca5" target="_blank">Notion — Phase 2.10 Enhanced Sign-In / Sign-Out Mechanics</a>.
+    </div>
+    <div class="bill-session" style="margin-bottom:14px;">
+      <div class="bs-eyebrow">Session</div>
+      <div class="bs-range">8:57 AM – 3:25 PM</div>
+      <div class="bs-dur">6h 28min · West Coast</div>
+    </div>
+    <div class="sc-coverage" style="margin-bottom:14px;">
+      <div class="scc-row covered">
+        <div class="scc-body"><div class="scc-label">Range Practice</div><div class="scc-sub">9:00–11:00 AM · 2 hours</div></div>
+        <span class="scc-tag ok">Paid</span>
+      </div>
+      <div class="scc-row overdue">
+        <div class="scc-body"><div class="scc-label">Range Practice</div><div class="scc-sub">11:00 AM-1:00 PM · 2 hours</div></div>
+        <span class="scc-tag warn">Unpaid</span>
+      </div>
+      <div class="scc-row covered">
+        <div class="scc-body"><div class="scc-label">Master Class</div><div class="scc-sub">1:00 PM – 3:00 PM · 2 hours</div></div>
+        <span class="scc-tag ok">Paid</span>
+      </div>
+      <div class="scc-row overdue">
+        <div class="scc-body"><div class="scc-label">Range Practice</div><div class="scc-sub">3:00 PM – 3:25 PM · 25 mins</div></div>
+        <span class="scc-tag warn">Unpaid</span>
+      </div>
+      ${equip.id!=='none'?`<div class="scc-row ${rentalCharge===0?'covered':'overdue'}">
+        <div class="scc-body"><div class="scc-label">${equip.name}</div><div class="scc-sub">$${equip.price}</div></div>
+        <span class="scc-tag ${rentalCharge===0?'ok':'warn'}">${rentalCharge===0?'Waived':'Unpaid'}</span>
+      </div>`:`<div class="scc-row">
+        <div class="scc-body"><div class="scc-label">No rental</div><div class="scc-sub">Equipment rental not required</div></div>
+      </div>`}
+    </div>
+    <div class="client-note" style="margin-bottom:14px;">If you held a valid <strong>Range Pass</strong> for this location, walk-in slices would show a <strong>RANGE PASS</strong> chip instead of UNPAID and would not add to the total.</div>
+    <div class="sc-coverage" style="margin-bottom:14px;">
+      <div class="scc-row">
+        <span class="scc-ico" style="background:var(--color-surface-variant);color:var(--color-text-secondary);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="scc-body"><div class="scc-label">Arrows · Start</div></div>
+        <span style="font-size:15px;font-weight:800;color:var(--color-text-primary);">${siArrows}</span>
+      </div>
+      <div class="scc-row">
+        <span class="scc-ico" style="background:var(--color-surface-variant);color:var(--color-text-secondary);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="scc-body"><div class="scc-label">Arrows · End</div></div>
+        <span style="font-size:15px;font-weight:800;color:var(--color-text-primary);">${soArrowEnd}</span>
+      </div>
+    </div>
+    ${siArrows!==soArrowEnd?`<div class="nb-warn" style="margin-bottom:14px;">
+      <span class="nb-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div class="nb-body"><div class="nb-title">Arrow count mismatch</div><div class="nb-sub">Please inform range warden before leaving.</div></div>
+    </div>`:''}
+    ${parseFloat(totalDue)>0?`
+    <div class="bill-total-row due">
+      <span class="bt-lbl">Total payable</span><span class="bt-amt">$${totalDue}</span>
+    </div>
+    <div class="nb-warn" style="margin-bottom:14px;">
+      <span class="nb-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div class="nb-body"><div class="nb-title">Payment required</div><div class="nb-sub">Please proceed to the Range Office to make payment before leaving.</div></div>
+    </div>
+    <div class="dev-note" style="margin-bottom:14px;">💡 <strong>Session bill fields — to confirm:</strong><br>
+    What to show on this bill? Candidates:<br>
+    • Session period (sign-in → sign-out time + total duration)<br>
+    • Bookings matched (already shown as coverage rows above)<br>
+    • Itemised breakdown: overage time + rate, gear/equipment charge<br>
+    • Outstanding payable total (shown)<br>
+    • Payment instruction (counter only — no in-app payment)<br>
+    Confirm which rows are required with the team before build.</div>
+    `:''}
+  `;
+  foot.innerHTML = `<button class="btn btn-primary" onclick="soConfirmBill()" style="width:100%;">Done</button>`;
+}
+function confirmBillCredits(){ billCreditConfirmed=true; renderBillPage(); }
+function toggleBillPayCredits(){ billPayWithCredits=!billPayWithCredits; renderBillPage(); }
+function pickBillCreditType(c){ billCreditType=c; renderBillPage(); }
+function soUndo(){ document.getElementById('billPage').classList.remove('open'); closeAll(); setScenario('active'); }
+function soConfirmBill(){
+  location.href='01%20Nav%20%2B%20Home.html';
+}
+
+function _removedOldRenderSoStep(){
+  // replaced by new 2-step version above
+  if(false){
+    const elapsed = sessionStart ? Math.floor((Date.now()-sessionStart)/1000) : (2*3600+27*60);
+    const totalH = Math.floor(elapsed/3600), totalM = Math.floor((elapsed%3600)/60);
+    const body=null, foot=null;
+    body.innerHTML = `
+      <div class="confirm-card" style="margin-bottom:12px;">
+        <div class="cc-row"><span class="cc-lbl">Range</span><span class="cc-val">West Coast</span></div>
+        <div class="cc-row"><span class="cc-lbl">Session</span><span class="cc-val">9:00 AM – now · ${totalH}h ${totalM}m</span></div>
+      </div>
+      <div class="bill-section">
+        <div class="bill-head">Bookings matched</div>
+        <div class="bill-row settled">
+          <span class="br-ico ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div class="br-body"><div class="br-desc">Range Practice</div><div class="br-sub">9:00–11:00 AM · 2 hours</div></div>
+          <div class="br-amt"><div class="br-amt-main settled">−2.0 RP</div><div class="br-amt-note">Deducted at booking</div></div>
+        </div>
+      </div>
+      <div class="bill-section">
+        <div class="bill-head">Unbooked time</div>
+        <div class="bill-row due">
+          <span class="br-ico warn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div class="br-body"><div class="br-desc">Unbooked · 11:00 AM – now</div><div class="br-sub">${totalM} min · prorated at $5.00/hr</div></div>
+          <div class="br-amt"><div class="br-amt-main due">$${(totalM/60*5).toFixed(2)}</div><div class="br-amt-note">Due now</div></div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin:12px 2px 8px;">Link another booking (optional)</div>
+      <input type="text" inputmode="numeric" placeholder="Enter 6-digit access code" value="${soCode}" oninput="soCode=this.value"
+        style="font-family:inherit;font-size:14px;font-weight:600;padding:11px 12px;background:var(--color-surface-variant);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;color:var(--color-text-primary);width:100%;transition:border-color var(--duration-fast) ease;" />`;
+    foot.innerHTML = `<button class="btn btn-primary" onclick="soNext()" style="margin-top:12px;">Continue</button>`;
+  }
+  else if(soStep===2){
+    body.innerHTML = `
+      <p class="stepper-hint" style="margin-bottom:0;padding:4px 0 6px;">How many arrows did you shoot in total?</p>
+      <input type="number" class="arrow-input" id="soArrowVal" value="${soArrows}" min="0" max="300" inputmode="numeric" oninput="soArrows=parseInt(this.value)||0" />`;
+    foot.innerHTML = `<button class="btn btn-primary" onclick="soNext()">Continue</button>`;
+  }
+  else if(soStep===3){
+    const elapsed = sessionStart ? Math.floor((Date.now()-sessionStart)/1000) : (2*3600+27*60);
+    const totalM = Math.floor((elapsed-2*3600)/60);
+    const due = (totalM/60*5).toFixed(2);
+    body.innerHTML = `
+      <div class="bill-section">
+        <div class="bill-head">Settled at booking</div>
+        <div class="bill-row settled">
+          <span class="br-ico ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div class="br-body"><div class="br-desc">Range Practice · 9:00–11:00 AM</div><div class="br-sub">2 hours · credit deducted</div></div>
+          <div class="br-amt"><div class="br-amt-main settled">−2.0 RP</div><div class="br-amt-note">✓ Settled</div></div>
+        </div>
+      </div>
+      <div class="bill-section">
+        <div class="bill-head">Due now</div>
+        <div class="bill-row due">
+          <span class="br-ico warn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div class="br-body"><div class="br-desc">Unbooked · 11:00 AM – now</div><div class="br-sub">${totalM} min · $5.00/hr</div></div>
+          <div class="br-amt"><div class="br-amt-main due">$${due}</div><div class="br-amt-note">Due now</div></div>
+        </div>
+        <div class="bill-total-row"><span class="bt-lbl">Total due</span><span class="bt-amt">$${due}</span></div>
+      </div>`;
+    foot.innerHTML = `<button class="btn btn-primary" onclick="soNext()">Proceed to Payment</button>`;
+  }
+  else if(soStep===4){
+    const elapsed = sessionStart ? Math.floor((Date.now()-sessionStart)/1000) : (2*3600+27*60);
+    const totalM = Math.floor((elapsed-2*3600)/60);
+    const due = (totalM/60*5).toFixed(2);
+    body.innerHTML = `
+      <div class="pay-seg">
+        <button class="pay-tab${soPayMethod==='paynow'?' on':''}" id="ptPN" onclick="setSoPay('paynow')">PayNow</button>
+        <button class="pay-tab${soPayMethod==='card'?' on':''}" id="ptCard" onclick="setSoPay('card')">Card</button>
+        <button class="pay-tab${soPayMethod==='counter'?' on':''}" id="ptCounter" onclick="setSoPay('counter')">Pay at counter</button>
+      </div>
+      <div class="pay-method${soPayMethod==='paynow'?' on':''}" id="pmPN">
+        <div class="paynow-box">
+          <div class="qr-mock"><svg width="108" height="108" viewBox="0 0 29 29" fill="white" xmlns="http://www.w3.org/2000/svg"><rect width="29" height="29" fill="#1C1611"/><rect x="2" y="2" width="9" height="9" fill="white"/><rect x="3" y="3" width="7" height="7" fill="#1C1611"/><rect x="4" y="4" width="5" height="5" fill="white"/><rect x="18" y="2" width="9" height="9" fill="white"/><rect x="19" y="3" width="7" height="7" fill="#1C1611"/><rect x="20" y="4" width="5" height="5" fill="white"/><rect x="2" y="18" width="9" height="9" fill="white"/><rect x="3" y="19" width="7" height="7" fill="#1C1611"/><rect x="4" y="20" width="5" height="5" fill="white"/><rect x="13" y="2" width="2" height="2" fill="white"/><rect x="2" y="13" width="2" height="2" fill="white"/><rect x="13" y="5" width="2" height="4" fill="white"/><rect x="5" y="13" width="5" height="2" fill="white"/><rect x="16" y="13" width="2" height="2" fill="white"/><rect x="13" y="16" width="7" height="2" fill="white"/><rect x="19" y="13" width="2" height="5" fill="white"/><rect x="16" y="19" width="2" height="2" fill="white"/><rect x="22" y="13" width="5" height="2" fill="white"/><rect x="13" y="20" width="2" height="7" fill="white"/><rect x="16" y="22" width="2" height="2" fill="white"/><rect x="19" y="20" width="5" height="2" fill="white"/><rect x="22" y="22" width="5" height="5" fill="white"/><rect x="23" y="23" width="3" height="3" fill="#1C1611"/><rect x="24" y="24" width="1" height="1" fill="white"/></svg></div>
+          <div class="paynow-amt">$${due}</div>
+          <div class="paynow-note">Scan with any PayNow-enabled banking app.</div>
+        </div>
+      </div>
+      <div class="pay-method${soPayMethod==='card'?' on':''}" id="pmCard">
+        <div class="card-fields">
+          <div class="fld"><label>Card number</label><input type="text" placeholder="1234 5678 9012 3456" /></div>
+          <div class="fld-row">
+            <div class="fld"><label>Expiry</label><input type="text" placeholder="MM / YY" /></div>
+            <div class="fld"><label>CVV</label><input type="text" placeholder="123" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="pay-method${soPayMethod==='counter'?' on':''}" id="pmCounter">
+        <div class="counter-info">
+          <span class="ci-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+          <div class="ci-text"><div class="ci-title">Pay at the front desk</div><div class="ci-sub">Your session will be recorded. Please settle $${due} with the staff before you leave.</div></div>
+        </div>
+      </div>`;
+    foot.innerHTML = `<button class="btn btn-primary" onclick="soConfirm()">${soPayMethod==='counter'?'Confirm Sign Out':'Pay $'+due}</button>`;
+  }
+}
+
+/* ── Init ── */
+/* Init: show sign-in card with no location pre-selected */
+document.getElementById('homeSignin').style.display='';
+document.getElementById('homeSession').style.display='none';
+(function(){
+  const params=new URLSearchParams(location.search);
+  // Prefer the query param; fall back to localStorage (the dev server drops query
+  // strings on its extensionless redirect, so cross-page nav uses a one-shot key).
+  let incomingLoc=params.get('loc')||localStorage.getItem('wf-signin-loc');
+  const jumpToCode=localStorage.getItem('wf-signin-substep')==='code';
+  localStorage.removeItem('wf-signin-loc');
+  localStorage.removeItem('wf-signin-substep');
+  if(incomingLoc){
+    selectedLoc=incomingLoc;
+    document.getElementById('lcWC').classList.toggle('sel',incomingLoc==='West Coast');
+    document.getElementById('lcCC').classList.toggle('sel',incomingLoc==='Chai Chee');
+    updateSigninCard();
+    openSignin();
+    if(jumpToCode){ siHasBooking=false; showSiCodeStep(); }
+  } else {
+    selectedLoc=null;
+    document.getElementById('lcWC').classList.remove('sel');
+    document.getElementById('lcCC').classList.remove('sel');
+    updateSigninCard();
+  }
+})();
+</script>
+<script>
+(function(){
+  var KEY='wf-mode';
+  var DEV='devmode';
+  var LOFI='lofi';
+  var mode=localStorage.getItem(KEY)||'client';
+  if(mode==='dev'){document.body.classList.add(DEV);}else{document.body.classList.add(LOFI);}
+  var btn=document.createElement('button');
+  btn.id='wf-lofi-toggle';
+  function update(){btn.textContent=document.body.classList.contains(DEV)?'⚙ Dev notes':'● Client view';}
+  btn.addEventListener('click',function(){
+    var isDev=document.body.classList.contains(DEV);
+    if(isDev){document.body.classList.remove(DEV);document.body.classList.add(LOFI);localStorage.setItem(KEY,'client');}
+    else{document.body.classList.remove(LOFI);document.body.classList.add(DEV);localStorage.setItem(KEY,'dev');}
+    update();
+  });
+  update();
+  document.body.appendChild(btn);
+(function(){setForm(localStorage.getItem('wf-form')||'phone');})();
+})();
+</script>
+<script>
+/* wf-nav */
+(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+</body>
+</html>

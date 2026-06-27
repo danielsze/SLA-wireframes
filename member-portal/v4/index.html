@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLA Member Portal</title>
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+  body{
+    font-family:var(--font-primary, system-ui, sans-serif);
+    background:var(--color-surface-lowest, #faf7f2);
+    color:var(--color-text-primary, #1c1611);
+    margin:0; padding:48px 32px 80px;
+  }
+  .wrap{ max-width:920px; margin:0 auto; }
+  .eyebrow{ font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--color-text-secondary, #5c4f3d); font-weight:700; margin:0 0 6px; }
+  h1{ font-size:32px; margin:0 0 8px; letter-spacing:-.3px; }
+  .lede{ font-size:15px; color:var(--color-text-secondary, #5c4f3d); margin:0 0 36px; line-height:1.6; max-width:620px; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
+  a.card{
+    display:flex; flex-direction:column; gap:6px; text-decoration:none;
+    background:var(--color-surface, #fffdf7);
+    border:1px solid var(--color-border-subtle, #e2d9cc);
+    border-radius:var(--radius-md, 12px); padding:20px 22px;
+    box-shadow:var(--shadow-1, 0 1px 2px rgba(0,0,0,.1)); transition:transform .12s, box-shadow .12s;
+  }
+  a.card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-2, 0 2px 6px rgba(0,0,0,.12)); }
+  .num{ font-size:11px; font-weight:700; letter-spacing:1px; color:var(--color-primary, #8b5e15); }
+  .title{ font-size:17px; font-weight:700; }
+  .desc{ font-size:13px; color:var(--color-text-secondary, #5c4f3d); line-height:1.5; }
+  .note{ margin-top:40px; padding:16px 20px; border-left:3px solid var(--color-info, #1a5276);
+    background:var(--color-surface-variant, #f2ebe0); border-radius:6px; font-size:13px; line-height:1.6;
+    color:var(--color-text-secondary, #5c4f3d); }
+  .ref{ margin-top:24px; font-size:13px; }
+  .ref a{ color:var(--color-primary, #8b5e15); }
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Salt Light Archery · Updated 21 Jun 2026</p>
+    <h1>Member Portal</h1>
+    <p class="lede">Eight screens. Each opens in Client view by default; use the <strong>Client / Dev notes toggle</strong> (bottom-left of each screen) to flip between greyscale client review and annotated hi-fi review. Your choice persists across all screens.</p>
+
+    <div class="grid">
+      <a class="card" href="./00%20Login.html"><span class="num">00</span><span class="title">Login</span><span class="desc">Sign in + profile selector</span></a>
+      <a class="card" href="./01%20Nav%20%2B%20Home.html"><span class="num">01</span><span class="title">Nav + Home</span><span class="desc">Bottom nav, profile switch, home feed</span></a>
+      <a class="card" href="./02%20Make%20a%20Booking.html"><span class="num">02</span><span class="title">Make a Booking</span><span class="desc">Activity, date, session details flow</span></a>
+      <a class="card" href="./03%20Wallet.html"><span class="num">03</span><span class="title">Wallet</span><span class="desc">Credits, passes, transactions</span></a>
+      <a class="card" href="./04%20Shop.html"><span class="num">04</span><span class="title">Shop</span><span class="desc">Packages, passes, HitPay checkout</span></a>
+      <a class="card" href="./04a%20Paid%20Activity.html?act=basic-plus"><span class="num">04a</span><span class="title">Paid Activity</span><span class="desc">Activity detail · location · date/time · HitPay · success / failure / pending</span></a>
+      <a class="card" href="./05%20Sign-in%20%2B%20Sign-out.html"><span class="num">05</span><span class="title">Sign-in + Sign-out</span><span class="desc">Range entry / exit</span></a>
+      <a class="card" href="./06%20Me.html"><span class="num">06</span><span class="title">Me</span><span class="desc">Profile, settings, password</span></a>
+    </div>
+
+    <div class="note">
+      <strong>Three style layers:</strong> <code>tokens.css</code> (shared values) · each screen's embedded styles (layout) · <code>wireframe-skin.css</code> (Client view override, scoped to <code>body.lofi</code>). Editing structure in a screen updates both Client and Dev notes views automatically.
+    </div>
+  </div>
+</body>
+</html>
