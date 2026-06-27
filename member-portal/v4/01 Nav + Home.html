@@ -755,20 +755,10 @@ function goNewBooking(){localStorage.setItem('wf-open-booking','1');location.hre
   var KEY='wf-mode';
   var DEV='devmode';
   var LOFI='lofi';
-  var mode=localStorage.getItem(KEY)||'client';
-  if(mode==='dev'){document.body.classList.add(DEV);}else{document.body.classList.add(LOFI);}
-  var btn=document.createElement('button');
-  btn.id='wf-lofi-toggle';
-  function update(){btn.textContent=document.body.classList.contains(DEV)?'⚙ Dev notes':'● Client view';}
-  btn.addEventListener('click',function(){
-    var isDev=document.body.classList.contains(DEV);
-    if(isDev){document.body.classList.remove(DEV);document.body.classList.add(LOFI);localStorage.setItem(KEY,'client');}
-    else{document.body.classList.remove(LOFI);document.body.classList.add(DEV);localStorage.setItem(KEY,'dev');}
-    update();
-  });
-  update();
-  document.body.appendChild(btn);
-(function(){setForm(localStorage.getItem('wf-form')||'phone');})();
+  document.body.classList.remove(DEV);
+  document.body.classList.add(LOFI);
+  localStorage.setItem(KEY,'client');
+  (function(){setForm(localStorage.getItem('wf-form')||'phone');})();
 })();
 </script>
 <script>
