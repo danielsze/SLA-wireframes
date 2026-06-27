@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>G01 · Home — Arrow Stats</title>
+<title>G01 · Home — Hall of Fame</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
@@ -63,7 +63,7 @@ svg{display:block;}
 
 /* ── Nav ── */
 .nav{display:flex;align-items:stretch;background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:6px 4px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:7px 2px 12px;color:var(--color-text-disabled);transition:color var(--duration-fast);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:7px 2px 12px;color:var(--color-text-disabled);transition:color var(--duration-fast);text-decoration:none;}
 .nav-item .ni-label{font-size:10.5px;font-weight:700;letter-spacing:.2px;}
 .nav-item.on{color:var(--color-primary);}
 .rail-brand,.rail-foot{display:none;}
@@ -88,29 +88,39 @@ svg{display:block;}
 .btn-primary:hover{background:var(--color-primary-hover);}
 .btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
 
-/* ── Arrow stats card (NEW) ── */
+/* ── Hall of Fame (NEW) ── */
 .sec-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
 .sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--color-text-secondary);}
-.txt-link{font-size:12px;font-weight:700;color:var(--color-primary);text-decoration:none;display:flex;align-items:center;gap:3px;}
-.arrow-stats-card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;}
-.as-body{padding:var(--space-md);display:flex;flex-direction:column;gap:14px;}
-.as-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.as-month-lbl{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary);}
-.as-month-num{font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--color-text-primary);font-variant-numeric:tabular-nums;line-height:1.05;margin-top:3px;}
-.as-month-sub{font-size:11px;color:var(--color-text-disabled);margin-top:4px;}
-.as-trend{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;background:var(--color-surface-variant);color:var(--color-success);}
-.as-chart{display:flex;align-items:flex-end;gap:7px;}
-.as-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.as-bar-area{height:72px;width:100%;display:flex;align-items:flex-end;justify-content:center;}
-.as-bar{width:60%;max-width:20px;background:var(--color-surface-highest);border-radius:3px 3px 0 0;min-height:3px;}
-.as-bar.cur{background:var(--color-primary);}
-.as-bar-lbl{font-size:10px;font-weight:700;color:var(--color-text-disabled);}
-.as-bar-lbl.cur{color:var(--color-primary);}
-.as-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px var(--space-md);gap:6px;text-align:center;}
-.as-empty-ico{width:36px;height:36px;border-radius:var(--radius-full);background:var(--color-surface-variant);display:grid;place-items:center;color:var(--color-text-disabled);}
-.as-empty-title{font-size:13px;font-weight:700;color:var(--color-text-primary);}
-.as-empty-sub{font-size:12px;color:var(--color-text-secondary);line-height:1.4;max-width:220px;}
-.arrow-stats-card.is-new{border-color:var(--color-primary);}
+.scard{background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-1);overflow:hidden;}
+.hof-tabs{display:flex;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:var(--radius-full);padding:3px;margin-bottom:10px;width:fit-content;}
+.hof-tab{font-family:inherit;font-size:12px;font-weight:700;color:var(--color-text-secondary);background:transparent;border:none;cursor:pointer;padding:6px 16px;border-radius:var(--radius-full);transition:all var(--duration-fast);}
+.hof-tab.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.hof-eyebrow{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--color-text-disabled);padding:10px var(--space-md) 8px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
+.hof-list{display:flex;flex-direction:column;}
+.hof-row{display:flex;align-items:center;gap:12px;padding:11px var(--space-md);}
+.hof-row+.hof-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.hof-row.self{background:rgba(139,94,21,.06);border-left:3px solid var(--color-primary);padding-left:calc(var(--space-md) - 3px);}
+.hof-row.empty{background:rgba(120,120,120,.04);align-items:flex-start;}
+.hof-rank{font-size:13px;font-weight:800;color:var(--color-text-disabled);width:22px;text-align:center;flex-shrink:0;}
+.hof-rank.r1{color:#C8990A;}
+.hof-rank.r2{color:#909090;}
+.hof-rank.r3{color:#8B6340;}
+.hof-name{flex:1;min-width:0;}
+.hof-name-main{font-size:13.5px;font-weight:700;color:var(--color-text-primary);}
+.hof-name-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hof-val-wrap{text-align:right;flex-shrink:0;}
+.hof-val{font-size:14px;font-weight:800;color:var(--color-text-primary);font-variant-numeric:tabular-nums;}
+.hof-val-sub{font-size:11px;font-weight:600;color:var(--color-text-disabled);margin-top:1px;}
+.hof-more{font-size:12px;color:var(--color-text-disabled);text-align:center;padding:10px var(--space-md);font-weight:600;border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.bow-filter{display:flex;gap:6px;overflow-x:auto;padding:10px var(--space-md);border-bottom:var(--border-hairline) solid var(--color-border-subtle);scrollbar-width:none;}
+.bow-filter::-webkit-scrollbar{display:none;}
+.bow-chip{font-family:inherit;font-size:11px;font-weight:700;color:var(--color-text-secondary);background:var(--color-surface-variant);border:1px solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:6px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:1px;white-space:nowrap;min-width:104px;text-align:left;}
+.bow-chip small{font-size:9.5px;font-weight:700;color:var(--color-text-disabled);}
+.bow-chip.on{background:var(--color-primary);border-color:var(--color-primary);color:var(--color-on-primary);}
+.bow-chip.on small{color:rgba(255,255,255,.78);}
+.period-toggle{display:flex;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
+.period-btn{flex:1;font-family:inherit;font-size:12px;font-weight:700;color:var(--color-text-secondary);background:transparent;border:none;cursor:pointer;padding:9px;border-bottom:2px solid transparent;transition:all var(--duration-fast);}
+.period-btn.on{color:var(--color-primary);border-bottom-color:var(--color-primary);}
 
 /* ── "New" marker + placeholder blocks ── */
 .new-pill{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:var(--color-primary);color:var(--color-on-primary);padding:2px 7px;border-radius:var(--radius-full);}
@@ -150,7 +160,7 @@ svg{display:block;}
       <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
       x10s Member
     </div>
-    <span class="crumb">G01 · Home — Arrow Stats</span>
+    <span class="crumb">G01 · Home — Hall of Fame</span>
     <span class="spacer"></span>
     <div class="seg">
       <button id="segPhone" class="on" onclick="setForm('phone')">
@@ -165,8 +175,8 @@ svg{display:block;}
   <div class="state-bar">
     <span class="sb-lbl">State</span>
     <div class="pills">
-      <button class="pill-btn on" onclick="applyState('has-data',this)">Has arrow data</button>
-      <button class="pill-btn" onclick="applyState('no-data',this)">No data yet</button>
+      <button class="pill-btn on" onclick="switchHof('behavioral',document.querySelector('.hof-tab'))">HoF · Training</button>
+      <button class="pill-btn" onclick="switchHof('performance',document.querySelectorAll('.hof-tab')[1])">HoF · Competition</button>
     </div>
   </div>
 
@@ -204,49 +214,107 @@ svg{display:block;}
               <p>Saturday, 20 Jun 2026</p>
             </div>
 
-            <!-- ══ Arrow Stats highlight (NEW — Idea A) ══ -->
+            <!-- ══ Hall of Fame (NEW) ══ -->
             <div>
               <div class="sec-head" style="margin-bottom:10px;">
                 <span class="title-grp">
-                  <span class="sec-title">Arrow Stats</span>
+                  <span class="sec-title">Hall of Fame</span>
                   <span class="new-pill">New</span>
                 </span>
-                <a class="txt-link" href="G06 Me.html">View history <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
               </div>
-              <div class="arrow-stats-card is-new" id="statsCard">
-                <!-- has-data state (default) -->
-                <div class="as-body" id="statsData">
-                  <div class="as-head">
-                    <div>
-                      <div class="as-month-lbl">Arrows in June</div>
-                      <div class="as-month-num">1,240</div>
+              <div class="hof-tabs">
+                <button class="hof-tab on" onclick="switchHof('behavioral',this)">Training</button>
+                <button class="hof-tab" onclick="switchHof('performance',this)">Competition</button>
+              </div>
+
+              <div class="scard" id="hofBehavioral">
+                <div class="hof-eyebrow">Q2 2026 · Sessions attended · All members</div>
+                <div class="hof-list">
+                  <div class="hof-row">
+                    <span class="hof-rank r1">1</span>
+                    <div class="hof-name"><div class="hof-name-main">Mei Lin Tan</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">28</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                  <div class="hof-row">
+                    <span class="hof-rank r2">2</span>
+                    <div class="hof-name"><div class="hof-name-main">Ahmad Rashid</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">24</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                  <div class="hof-row">
+                    <span class="hof-rank r3">3</span>
+                    <div class="hof-name"><div class="hof-name-main">Sarah Ng</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">22</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                  <div class="hof-row self">
+                    <span class="hof-rank">8</span>
+                    <div class="hof-name"><div class="hof-name-main">Caleb Tan</div><div class="hof-name-sub">You</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">18</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                </div>
+                <div class="hof-more">+ 42 more members</div>
+                <div class="dev-note">💡 <strong>Training leaderboard</strong> — aggregated quarterly from <code>book_mgmt.Attendance</code> (attended=true) joined with <code>Access</code> for sign-in sessions. Shows top 3 + current user rank. Quarter derived from server date. New endpoint: <code>GET /api/leaderboard/behavioral?quarter=Q2-2026</code> returning <code>[{rank, name, session_count, is_self}]</code>.</div>
+              </div>
+
+              <div class="scard" id="hofPerformance" style="display:none;">
+                <div class="period-toggle">
+                  <button class="period-btn on" id="periodQuarterly" onclick="setPeriod('quarterly',this)">This quarter</button>
+                  <button class="period-btn" id="periodAllTime" onclick="setPeriod('alltime',this)">All-time</button>
+                </div>
+                <div class="bow-filter">
+                  <button class="bow-chip on" data-format="recurve-70-122" onclick="setFormat(this)"><span>Recurve</span><small>70m · 122cm</small></button>
+                  <button class="bow-chip" data-format="recurve-18-40" onclick="setFormat(this)"><span>Recurve</span><small>18m · 40cm</small></button>
+                  <button class="bow-chip" data-format="compound-50-80" onclick="setFormat(this)"><span>Compound</span><small>50m · 80cm</small></button>
+                  <button class="bow-chip" data-format="compound-18-40-inner" onclick="setFormat(this)"><span>Compound</span><small>18m · 40cm inner 10</small></button>
+                  <button class="bow-chip" data-format="barebow-50-122" onclick="setFormat(this)"><span>Barebow</span><small>50m · 122cm</small></button>
+                </div>
+                <div class="hof-list" id="competitionList">
+                  <div class="hof-row">
+                    <span class="hof-rank r1">1</span>
+                    <div class="hof-name">
+                      <div class="hof-name-main">Ahmad Rashid</div>
+                      <div class="hof-name-sub">Taipei Archery Open 2026</div>
+                      <div class="hof-name-sub">18 Jun 2026</div>
                     </div>
-                    <span class="as-trend">▲ 18% vs May</span>
+                    <div class="hof-val-wrap"><div class="hof-val">634/720</div></div>
                   </div>
-                  <div class="as-chart">
-                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar" style="height:52%"></div></div><span class="as-bar-lbl">Mar</span></div>
-                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar" style="height:79%"></div></div><span class="as-bar-lbl">Apr</span></div>
-                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar" style="height:85%"></div></div><span class="as-bar-lbl">May</span></div>
-                    <div class="as-bar-col"><div class="as-bar-area"><div class="as-bar cur" style="height:100%"></div></div><span class="as-bar-lbl cur">Jun</span></div>
+                  <div class="hof-row">
+                    <span class="hof-rank r2">2</span>
+                    <div class="hof-name">
+                      <div class="hof-name-main">Mei Lin Tan</div>
+                      <div class="hof-name-sub">FISU World University Games</div>
+                      <div class="hof-name-sub">2 May 2026</div>
+                    </div>
+                    <div class="hof-val-wrap"><div class="hof-val">621/720</div></div>
+                  </div>
+                  <div class="hof-row">
+                    <span class="hof-rank r3">3</span>
+                    <div class="hof-name">
+                      <div class="hof-name-main">Wei Ming Lim</div>
+                      <div class="hof-name-sub">SLA Club Championship</div>
+                      <div class="hof-name-sub">14 Mar 2026</div>
+                    </div>
+                    <div class="hof-val-wrap"><div class="hof-val">608/720</div></div>
+                  </div>
+                  <div class="hof-row self">
+                    <span class="hof-rank">4</span>
+                    <div class="hof-name">
+                      <div class="hof-name-main">Caleb Tan</div>
+                      <div class="hof-name-sub">Rhine-Ruhr FISU World University</div>
+                      <div class="hof-name-sub">2 May 2026 · You</div>
+                    </div>
+                    <div class="hof-val-wrap"><div class="hof-val">589/720</div></div>
                   </div>
                 </div>
-                <!-- no-data state -->
-                <div class="as-empty" id="statsEmpty" style="display:none;">
-                  <div class="as-empty-ico">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  </div>
-                  <div class="as-empty-title">No arrow data yet</div>
-                  <div class="as-empty-sub">Log your first session by signing out and entering your arrow count.</div>
-                </div>
+                <div class="hof-more" id="competitionMore">+ 38 more verified scores</div>
+                <div class="dev-note">💡 <strong>Competition leaderboard</strong> — reads from new <code>user_mgmt.VerifiedScore</code> table (see data model). Format filter is mandatory because rankings are only comparable within the same bow style + distance + face-size format. Rows represent verified score records, not unique members, so the same archer can appear more than once. Rows show name, score, competition title, and date only because the selected filter provides the format context. This quarter is the default; All-time = all verified score records for the selected format and includes the archer's own ranking as the highlighted self row when present. Endpoint: <code>GET /api/leaderboard/performance?format_id=recurve-70-122&period=quarterly</code> → <code>[{rank, name, score, max_score, competition, date, is_self}]</code>.</div>
               </div>
-              <div class="dev-note">💡 <strong>Arrow Stats card</strong> (Idea A) — month-by-month momentum on Home: current-month total, trend vs last month, and a 4-month bar chart. <strong>Lifetime total + avg-per-session live on the Me tab</strong> (with the heatmap), not here. Data from <code>GET /api/user</code> as monthly aggregates of <code>arrows_fired</code>. "View history" → Me tab.</div>
             </div>
 
             <!-- Rest of Home feed — placeholder, unchanged from v3 -->
             <div class="ph">
               <span class="ph-eyebrow">Placeholder · not part of this showcase</span>
-              <span class="ph-lbl">Rest of Home feed</span>
-              <span class="ph-sub">Alerts · Announcements · Range sign-in · Upcoming bookings — unchanged from v3 (01 Nav + Home)</span>
+              <span class="ph-lbl">Alerts · Announcements · Range sign-in · Upcoming bookings</span>
+              <span class="ph-sub">Unchanged from v3 (01 Nav + Home).</span>
             </div>
 
           </div>
@@ -262,7 +330,7 @@ svg{display:block;}
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Booking</span></button>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Wallet</span></button>
           <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Shop</span></button>
-          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></button>
+          <a class="nav-item" href="./G06%20Me.html"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></a>
           <div class="rail-foot">
             <span class="avatar sm olive">CT</span>
             <span><div class="rf-name">Caleb Tan</div><div class="rf-sub">Master Class</div></span>
@@ -284,11 +352,171 @@ function setForm(m){
 function applyState(state,pill){
   document.querySelectorAll('.pill-btn').forEach(p=>p.classList.remove('on'));
   if(pill) pill.classList.add('on');
-  var hasData = state === 'has-data';
-  document.getElementById('statsData').style.display = hasData ? '' : 'none';
-  document.getElementById('statsEmpty').style.display = hasData ? 'none' : '';
+}
+function switchHof(tab, btn){
+  document.querySelectorAll('.hof-tab').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.pill-btn').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  if(tab==='behavioral'){
+    document.querySelectorAll('.pill-btn')[0].classList.add('on');
+  } else {
+    document.querySelectorAll('.pill-btn')[1].classList.add('on');
+  }
+  document.getElementById('hofBehavioral').style.display = tab==='behavioral'?'':'none';
+  document.getElementById('hofPerformance').style.display = tab==='performance'?'':'none';
+  if(tab==='performance') renderCompetition();
+}
+var competitionPeriod='quarterly';
+var competitionData={
+  quarterly:{
+    'recurve-70-122':{
+      rows:[
+        {rank:1,name:'Ahmad Rashid',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'634/720',medal:'r1'},
+        {rank:2,name:'Mei Lin Tan',competition:'FISU World University Games',date:'2 May 2026',score:'621/720',medal:'r2'},
+        {rank:3,name:'Wei Ming Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'608/720',medal:'r3'}
+      ],
+      self:{rank:4,name:'Caleb Tan',competition:'Rhine-Ruhr FISU World University',date:'2 May 2026',score:'589/720'},
+      more:'+ 38 more verified scores'
+    },
+    'recurve-18-40':{
+      rows:[
+        {rank:1,name:'Sarah Ng',competition:'SLA Indoor League',date:'8 Apr 2026',score:'292/300',medal:'r1'},
+        {rank:2,name:'Mei Lin Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'289/300',medal:'r2'},
+        {rank:3,name:'Danish Lim',competition:'SLA Indoor League',date:'8 Apr 2026',score:'287/300',medal:'r3'}
+      ],
+      self:{rank:9,name:'Caleb Tan',competition:'SLA Indoor League',date:'8 Apr 2026',score:'274/300'},
+      more:'+ 21 more verified scores'
+    },
+    'compound-50-80':{
+      rows:[
+        {rank:1,name:'Natalie Koh',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'357/360',medal:'r1'},
+        {rank:2,name:'Ahmad Rashid',competition:'SLA Club Championship',date:'14 Mar 2026',score:'354/360',medal:'r2'},
+        {rank:3,name:'Caleb Tan',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'352/360',medal:'r3',self:true}
+      ],
+      self:null,
+      more:'+ 14 more verified scores'
+    },
+    'compound-18-40-inner':{
+      rows:[
+        {rank:1,name:'Natalie Koh',competition:'SLA Indoor League',date:'8 Apr 2026',score:'149/150',medal:'r1'},
+        {rank:2,name:'Farhan Lee',competition:'Club Postal Match',date:'25 Mar 2026',score:'148/150',medal:'r2'},
+        {rank:3,name:'Joanne Teo',competition:'SLA Indoor League',date:'8 Apr 2026',score:'147/150',medal:'r3'}
+      ],
+      self:null,
+      empty:'No verified score for this format yet',
+      more:'+ 9 more verified scores'
+    },
+    'barebow-50-122':{
+      rows:[
+        {rank:1,name:'Priya Menon',competition:'SLA Club Championship',date:'14 Mar 2026',score:'562/720',medal:'r1'},
+        {rank:2,name:'Marcus Tan',competition:'Barebow Open Series',date:'11 Apr 2026',score:'548/720',medal:'r2'},
+        {rank:3,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'531/720',medal:'r3'}
+      ],
+      self:null,
+      empty:'No verified score for this format yet',
+      more:'+ 17 more verified scores'
+    }
+  },
+  alltime:{
+    'recurve-70-122':{
+      rows:[
+        {rank:1,name:'Ahmad Rashid',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'634/720',medal:'r1'},
+        {rank:2,name:'Mei Lin Tan',competition:'FISU World University Games',date:'2 May 2026',score:'621/720',medal:'r2'},
+        {rank:3,name:'Wei Ming Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'608/720',medal:'r3'}
+      ],
+      self:{rank:4,name:'Caleb Tan',competition:'Rhine-Ruhr FISU World University',date:'2 May 2026',score:'589/720'},
+      more:'+ 38 more verified scores'
+    },
+    'recurve-18-40':{
+      rows:[
+        {rank:1,name:'Sarah Ng',competition:'SLA Indoor League',date:'8 Apr 2026',score:'292/300',medal:'r1'},
+        {rank:2,name:'Mei Lin Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'289/300',medal:'r2'},
+        {rank:3,name:'Danish Lim',competition:'SLA Indoor League',date:'8 Apr 2026',score:'287/300',medal:'r3'}
+      ],
+      self:{rank:7,name:'Caleb Tan',competition:'SLA Indoor League',date:'8 Apr 2026',score:'282/300'},
+      more:'+ 24 more verified scores'
+    },
+    'compound-50-80':{
+      rows:[
+        {rank:1,name:'Natalie Koh',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'357/360',medal:'r1'},
+        {rank:2,name:'Ahmad Rashid',competition:'SLA Club Championship',date:'14 Mar 2026',score:'354/360',medal:'r2'},
+        {rank:3,name:'Ahmad Rashid',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'353/360',medal:'r3'}
+      ],
+      self:{rank:4,name:'Caleb Tan',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'352/360'},
+      more:'+ 15 more verified scores'
+    },
+    'compound-18-40-inner':{
+      rows:[
+        {rank:1,name:'Natalie Koh',competition:'SLA Indoor League',date:'8 Apr 2026',score:'149/150',medal:'r1'},
+        {rank:2,name:'Farhan Lee',competition:'Club Postal Match',date:'25 Mar 2026',score:'148/150',medal:'r2'},
+        {rank:3,name:'Joanne Teo',competition:'SLA Indoor League',date:'8 Apr 2026',score:'147/150',medal:'r3'}
+      ],
+      self:null,
+      empty:'No verified score for this format yet',
+      more:'+ 9 more verified scores'
+    },
+    'barebow-50-122':{
+      rows:[
+        {rank:1,name:'Priya Menon',competition:'SLA Club Championship',date:'14 Mar 2026',score:'562/720',medal:'r1'},
+        {rank:2,name:'Marcus Tan',competition:'Barebow Open Series',date:'11 Apr 2026',score:'548/720',medal:'r2'},
+        {rank:3,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'531/720',medal:'r3'}
+      ],
+      self:null,
+      empty:'No verified score for this format yet',
+      more:'+ 17 more verified scores'
+    }
+  }
+};
+function rowHtml(row){
+  var isSelf=row.self?' self':'';
+  var rankClass=row.medal?' '+row.medal:'';
+  var you=row.self?' · You':'';
+  return '<div class="hof-row'+isSelf+'"><span class="hof-rank'+rankClass+'">'+row.rank+'</span><div class="hof-name"><div class="hof-name-main">'+row.name+'</div><div class="hof-name-sub">'+row.competition+'</div><div class="hof-name-sub">'+row.date+you+'</div></div><div class="hof-val-wrap"><div class="hof-val">'+row.score+'</div></div></div>';
+}
+function emptyHtml(text){
+  return '<div class="hof-row empty"><span class="hof-rank">-</span><div class="hof-name"><div class="hof-name-main">'+text+'</div></div></div>';
+}
+function renderCompetition(){
+  var active=document.querySelector('.bow-chip.on');
+  var format=active?active.dataset.format:'recurve-70-122';
+  var data=(competitionData[competitionPeriod]&&competitionData[competitionPeriod][format])||competitionData.quarterly['recurve-70-122'];
+  var rows=data.rows.map(rowHtml);
+  if(data.self) rows.push(rowHtml(Object.assign({},data.self,{self:true})));
+  if(data.empty) rows.push(emptyHtml(data.empty));
+  document.getElementById('competitionList').innerHTML=rows.join('');
+  document.getElementById('competitionMore').textContent=data.more;
+}
+function setFormat(btn){
+  btn.closest('.bow-filter').querySelectorAll('.bow-chip').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderCompetition();
+}
+function setPeriod(period, btn){
+  competitionPeriod=period;
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderCompetition();
 }
 </script>
-<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
+<script>
+(function(){
+  var KEY='wf-mode';
+  var mode=localStorage.getItem(KEY)||'client';
+  if(mode==='dev'){document.body.classList.add('devmode');}else{document.body.classList.add('lofi');}
+  var btn=document.createElement('button');
+  btn.id='wf-lofi-toggle';
+  function update(){btn.textContent=document.body.classList.contains('devmode')?'⚙ Dev notes':'● Client view';}
+  btn.addEventListener('click',function(){
+    var isDev=document.body.classList.contains('devmode');
+    if(isDev){document.body.classList.remove('devmode');document.body.classList.add('lofi');localStorage.setItem(KEY,'client');}
+    else{document.body.classList.remove('lofi');document.body.classList.add('devmode');localStorage.setItem(KEY,'dev');}
+    update();
+  });
+  update();
+  document.body.appendChild(btn);
+  setForm(localStorage.getItem('wf-form')||'phone');
+  renderCompetition();
+})();
+</script>
 </body>
 </html>
