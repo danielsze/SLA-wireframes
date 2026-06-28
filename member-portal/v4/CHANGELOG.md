@@ -1,9 +1,9 @@
-# v3 Wireframe Changelog
+# v4 Wireframe Changelog
 
 Design review session: 2026-06-14
 Reviewer: Daniel
-Implemented in: `phase2-designs/v3/` (to be branched from v2)
-Last updated: 2026-06-14
+Implemented in: `phase2-designs/v4/` (branched from v3)
+Last updated: 2026-06-28
 
 ---
 
@@ -35,6 +35,13 @@ Last updated: 2026-06-14
 | 14 | All | Button label audit | Sweep every screen and reconcile button labels for consistency (casing, verb choice, "Make a booking" vs "Book a slot" vs "Book now", "Sign In" vs "Sign in", etc.). Produce a single label vocabulary and apply. | ✅ |
 | 15 | 05 Sign-in + Sign-out | "Undo Sign Out" affordance | Added as a new scenario tab in 05. Shows home sign-in card in undo state: "Recently signed out" eyebrow, booking tile, "Undo Sign Out" CTA, client note. Dev-note captures eligibility conditions (TBC: N-minute window + active booking still running). | ✅ |
 | 16 | 05 Sign-in + Sign-out — Session Bill (`.cred-section`) | Decision: settlement is offline at the counter only. Removed credit deduction panel and "Partner decision needed" note. Outstanding payable row is shown with a counter-settle note. | ✅ |
+| 17 | 03 Wallet | Orphaned top-up sheet | Consistency scrub: removed the dead in-Wallet top-up bottom sheet (`#sheetTopup`, `openTopup`/`pickPkg`, `PKGS`/`PN`/`PS`/`CHK`, `.topup-btn`/`.renew-btn`/`.pkg-*` CSS). It was never invoked — cards route to history or "Top up in Shop →". Also eliminated mismatched top-up prices (5/10/20 packs @ $25/$45/$80) that didn't exist in Shop. Shop is the single source of truth for packages/pricing. | ✅ |
+| 18 | 04 Shop | Legacy modal checkout | Consistency scrub: removed the dead bottom-sheet checkout (`#coSheet`, `renderCheckout`/`renderActivityCheckout`, `payMethodHTML`/`pickPayMethod`, `openHitPay`/`processPayment`, `applyPromo`, `calcValidity`, `closeCheckout`, and all `.co-*`/`pay-tab`/`loc-chip`/`time-chip`/`success-*` CSS). The live path (`openCheckout`) navigates to the full page `04b Checkout.html` / `04a Paid Activity.html`; the modal was unreachable and had drifted from `04b`. Verified both pages render with no JS errors and the live checkout entry is intact. | ✅ |
+| 19 | 03 Wallet, 04b Checkout, 04 Shop | Label vocabulary scrub | Locked canonical terms: "Masterclass Credits" → **"Master Class Credits"** (Wallet card + JS meta); checkout detail label "Pass" → **"Pass Name"** (04b, matches Shop history); Shop history detail "Reference" → **"Sale reference"** (matches activity branch + 04b). Confirmed user-facing "Voucher" and "Club Credits" already consistent. Left intentionally untouched: booking `CREDIT_LABELS` "(CODE)" convention (`Club (CC)` etc.) and the separate "Renewal discount" auto-row in 04b. | ✅ |
+| 20 | 04b Checkout, 04a Paid Activity | Checkout CTA + success copy | Primary checkout CTA locked to **"Proceed to Pay"** (confirmed on 04b and 04a). Removed the "…added to your account and is ready to use" success sub-line (deleted with the Shop modal; verified absent on 04b/04a). Activity time-picker mismatch resolved by deleting the Shop modal (item 18); 04a's real calendar + timeslot flow is the single source. | ✅ |
+| 21 | 04 Shop, 04a Paid Activity, 04b Checkout | Currency format | Locked all displayed money to **`$X.00`** (leading `$`, exactly 2 decimals, no "SGD" prefix). Shop history prices get `.00`; 04a drops `SGD ` → `$`, adds a `money(n)=Number(n).toFixed(2)` helper for all dynamic totals/discounts (percentage voucher labels left as `−N%`); 04b already used `.toFixed(2)`. | ✅ |
+| 22 | 03 Wallet | Date format | Standardised all "Valid till" dates to weekday-prefixed form **"Valid till Wed, 10 Jun 2026"**. Added correct weekdays: 31 Aug → Mon, 31 Dec → Thu, 7 Aug → Fri, 7 Apr → Tue. | ✅ |
+| 23 | 03 Wallet | Negative glyph | Standardised the negative sign to **U+2212 `−`** everywhere: balance (`&#8722;` entity → literal `−`) and the transaction-list render (was ASCII hyphen via `+t.amt`, now `(t.amt<0?'−':…)+Math.abs(t.amt)`). | ✅ |
 
 ---
 
@@ -92,7 +99,7 @@ All primary CTA buttons use **Title Case**. Secondary inline links (e.g. "View a
 
 | Concept | Label |
 |---------|-------|
-| Checkout CTA | **Pay ${price}.00** |
+| Checkout CTA | **Proceed to Pay** (navigates to 04b Checkout / 04a Paid Activity; updated from "Pay ${price}.00" — Shop now opens a full checkout page, not an inline pay button) |
 | Voucher code action | **Apply** |
 | Post-payment dismiss | **Done** |
 
@@ -176,3 +183,46 @@ Billing algorithm + edge cases locked via Notion 2.10 page. Wireframe brought in
 | 38 | 02 Make a Booking | Timeslot + review copy | Updated walk-in, full-slot, consecutive-slot, sign-out charge, and refund copy | ✅ |
 | 39 | 02 Make a Booking | Review credits | Added dev-only credit scenario controls for available, insufficient, and no eligible credit states; lessons are credit-only while Range Practice can fall back to sign-out charge | ✅ |
 | 40 | 02 Make a Booking | Master Class review credits | Simplified lesson credit UI: hide the pay-with-credits toggle and explanatory copy, showing credit type, deduction, and balances directly | ✅ |
+
+## Session additions (2026-06-28) — 2.9 Me screen + Shop checkout page
+
+### 06 Me
+
+| # | Screen | Element | Change | Status |
+|---|--------|---------|--------|--------|
+| 41 | 06 Me | Emergency contact label | "Secondary contact" → "Emergency contact" in both view mode and edit form | ✅ |
+| 42 | 06 Me | Gender field (edit form) | Replaced segmented control with `<select>` dropdown; options: Male / Female / Prefer not to say | ✅ |
+
+### 04 Shop
+
+| # | Screen | Element | Change | Status |
+|---|--------|---------|--------|--------|
+| 43 | 04 Shop | Catalog rows — description subtitle | Added `.prod-sub` CSS + `desc` field on all items; renders a subtitle line under each product name in the catalog | ✅ |
+| 44 | 04 Shop | `openCheckout()` routing | Non-activity items now navigate to `04b Checkout.html?item=<id>` instead of opening a bottom sheet | ✅ |
+| 45 | 04 Shop | Dev notes | Added dev notes to Credits, Passes, Locker, and Combo sections flagging the new `description` backend DB field required on `sale_mgmt` records | ✅ |
+| 46 | 04 Shop | Combo data — c7 | Added `c7` combo item: 4 JY Credits + 30D Pass + 30D West Coast Locker — demonstrates credit + pass + locker component combo | ✅ |
+
+### 04b Checkout (new file)
+
+Full-page checkout for credits, passes, lockers, and combo packages. Replaces the old bottom sheet flow.
+
+| # | Screen | Element | Change | Status |
+|---|--------|---------|--------|--------|
+| 47 | 04b Checkout | Product hero | Icon + name + price (large) at top of page | ✅ |
+| 48 | 04b Checkout | "About" description block | Renders `it.desc` only when present; label is "ABOUT" | ✅ |
+| 49 | 04b Checkout | Detail sections | Per-type breakdown: Credits (qty × type, validity), Pass (name, locations, validity), Locker (name, locations, validity), Combo (one section per component) | ✅ |
+| 50 | 04b Checkout | Auto discount row | When `auto_discount` is present in API response, shows green "Renewal discount –10%" row by default; plain-text "Use a voucher instead →" link toggles to voucher mode. "← Use renewal discount" link toggles back. Discount `display` field is flexible — BE can send percentage or flat amount. | ✅ |
+| 51 | 04b Checkout | Voucher input | Shown by default when no `auto_discount`; otherwise hidden behind the toggle. `applyVoucher()` updates total (demo: –$5.00) | ✅ |
+| 52 | 04b Checkout | Total row | Reflects active discount mode: discounted total when auto discount is on, full price when in voucher mode (until voucher applied) | ✅ |
+| 53 | 04b Checkout | Payment method selector | PayNow / Credit Card segmented control + HitPay privacy note | ✅ |
+| 54 | 04b Checkout | HitPay placeholder → success | "Proceed to Pay" → HitPay drop-in placeholder → "Payment confirmed" screen with summary card (Item, Amount paid, Method, Date, Sale reference) | ✅ |
+| 55 | 04b Checkout | Sale reference format | `[PREFIX][YYYYMMDD][HHMMSS]` — prefix by item type: RC (credit), WC (pass), LK (locker), CB (combo). Matches existing sale reference format. | ✅ |
+| 56 | 04b Checkout | Dev/client toggle | Canonical `wf-mode` toggle wired in; dev notes visible in dev mode only | ✅ |
+
+### Button label additions (04b)
+
+| Concept | Label |
+|---------|-------|
+| Checkout page primary CTA | **Proceed to Pay** |
+| Post-payment dismiss | **Done** |
+| Voucher code action | **Apply** |

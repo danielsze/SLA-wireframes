@@ -97,6 +97,7 @@ svg{display:block;}
 .ic-act{background:var(--color-error-container);color:var(--color-error);}
 .prod-info{flex:1;min-width:0;}
 .prod-name{font-size:14px;font-weight:700;line-height:1.2;}
+.prod-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .prod-save{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);background:var(--color-success-container);color:var(--color-success);margin-top:5px;}
 .prod-save.sv-warn{background:var(--color-warning-container);color:var(--color-warning);}
 .prod-save.sv-lim{background:var(--color-error-container);color:var(--color-error);}
@@ -169,98 +170,6 @@ svg{display:block;}
 .pi-chk{margin-left:auto;color:var(--color-primary);}
 .sheet-sub{font-size:12.5px;color:var(--color-text-secondary);padding:0 2px 12px;}
 
-/* ── Checkout sheet ── */
-.co-sheet{max-height:88%;overflow-y:auto;padding-bottom:calc(28px + env(safe-area-inset-bottom));}
-.co-item-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:4px;}
-.co-item-ico{width:44px;height:44px;border-radius:var(--radius-sm);flex-shrink:0;display:grid;place-items:center;}
-.co-item-name{font-size:16px;font-weight:700;line-height:1.2;}
-.co-item-sub{font-size:12px;color:var(--color-text-secondary);margin-top:1px;}
-.co-item-price{font-size:20px;font-weight:800;margin-left:auto;flex-shrink:0;letter-spacing:-.5px;}
-
-/* Activation date */
-.co-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
-.co-row-lbl{font-size:14px;font-weight:700;}
-.co-row-val{font-size:14px;font-weight:700;color:var(--color-primary);display:flex;align-items:center;gap:6px;cursor:pointer;}
-input[type="date"]{font-family:inherit;font-size:14px;font-weight:700;color:var(--color-primary);border:none;background:transparent;cursor:pointer;outline:none;max-width:140px;}
-
-/* Activity details (paid activity only) */
-.act-details{padding:12px 0;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
-.act-det-head{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px;}
-.loc-pick{display:flex;gap:8px;margin-bottom:10px;}
-.loc-chip{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;font-family:inherit;cursor:pointer;padding:10px 11px;border-radius:var(--radius-sm);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);transition:all var(--duration-fast) ease;}
-.lc-pin{width:28px;height:28px;border-radius:var(--radius-full);flex-shrink:0;display:grid;place-items:center;background:var(--color-surface-variant);color:var(--color-text-secondary);}
-.lc-name{font-size:13px;font-weight:700;}
-.loc-chip.sel{background:var(--color-surface-highest);border-color:var(--color-primary);}
-.loc-chip.sel .lc-pin{background:var(--color-primary);color:#fff;}
-.time-chips{display:flex;gap:6px;flex-wrap:wrap;}
-.time-chip{font-family:inherit;font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:var(--radius-full);border:1.5px solid var(--color-border-subtle);background:var(--color-surface);cursor:pointer;transition:all var(--duration-fast) ease;color:var(--color-text-secondary);}
-.time-chip.sel{border-color:var(--color-primary);background:var(--color-surface-highest);color:var(--color-text-primary);}
-
-/* Payment section */
-.co-pay-head{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--color-text-secondary);padding:14px 0 10px;}
-.pay-seg{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;gap:2px;margin-bottom:var(--space-md);}
-.pay-tab{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:9px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
-.pay-tab.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
-.pay-method{display:none;}
-.pay-method.on{display:block;}
-
-/* PayNow */
-.paynow-box{background:var(--color-surface-lowest);border-radius:var(--radius-md);border:var(--border-subtle) solid var(--color-border-subtle);padding:var(--space-md);display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:var(--space-md);}
-.qr-mock{width:116px;height:116px;border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0;}
-.paynow-amt{font-size:22px;font-weight:800;letter-spacing:-.5px;}
-.paynow-note{font-size:12px;color:var(--color-text-secondary);text-align:center;line-height:1.5;}
-
-/* Card */
-.card-fields{display:flex;flex-direction:column;gap:var(--space-sm);margin-bottom:var(--space-md);}
-.fld-row{display:flex;gap:var(--space-sm);}
-.fld{display:flex;flex-direction:column;gap:5px;flex:1;}
-.fld label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);}
-.fld input{font-family:inherit;font-size:14px;font-weight:600;padding:11px 12px;background:var(--color-surface-variant);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;color:var(--color-text-primary);transition:border-color var(--duration-fast) ease;}
-.fld input:focus{border-color:var(--color-primary);}
-.fld input::placeholder{color:var(--color-text-disabled);font-weight:500;}
-
-/* Total + CTA */
-.co-total{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:var(--space-md);}
-.co-total-lbl{font-size:14px;font-weight:700;}
-.co-total-amt{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--color-primary);}
-
-/* Success */
-.co-success{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-lg) 0 var(--space-md);}
-.success-ico{width:64px;height:64px;border-radius:var(--radius-full);background:rgba(42,107,62,.12);display:grid;place-items:center;color:var(--color-success);margin-bottom:var(--space-md);}
-.success-title{font-size:22px;font-weight:700;}
-.success-sub{font-size:13.5px;color:var(--color-text-secondary);margin-top:6px;line-height:1.5;max-width:280px;}
-.success-ref{font-size:11px;color:var(--color-text-disabled);margin-top:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
-.success-card{background:var(--color-surface-lowest);border:var(--border-hairline) solid var(--color-border-subtle);border-radius:var(--radius-md);padding:var(--space-md);width:100%;margin-top:var(--space-md);text-align:left;}
-.sc-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
-.sc-row+.sc-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
-.sc-lbl{color:var(--color-text-secondary);font-weight:600;}
-.sc-val{font-weight:700;}
-
-/* ── Checkout detail rows ── */
-.co-detail-section{margin:2px 0;}
-.co-detail-section+.co-detail-section{border-top:var(--border-subtle) solid var(--color-border-subtle);margin-top:10px;padding-top:10px;}
-.co-detail-head{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--color-text-disabled);margin-bottom:6px;}
-.co-detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
-.co-detail-row:last-child{border-bottom:none;}
-.co-detail-lbl{font-size:13px;font-weight:600;color:var(--color-text-secondary);}
-.co-detail-val{font-size:13px;font-weight:700;text-align:right;max-width:62%;}
-
-/* Promo code */
-.co-promo-row{display:flex;gap:8px;padding:14px 0 2px;}
-.co-promo-input{flex:1;font-family:inherit;font-size:13px;font-weight:600;padding:10px 12px;background:var(--color-surface-variant);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;color:var(--color-text-primary);transition:border-color var(--duration-fast) ease;}
-.co-promo-input:focus{border-color:var(--color-primary);}
-.co-promo-input::placeholder{color:var(--color-text-disabled);font-weight:500;}
-.co-promo-btn{font-family:inherit;font-size:12px;font-weight:700;padding:10px 16px;border-radius:var(--radius-sm);background:var(--color-surface-highest);border:1.5px solid var(--color-border-subtle);color:var(--color-text-primary);cursor:pointer;white-space:nowrap;transition:all var(--duration-fast) ease;}
-.co-promo-btn:hover{border-color:var(--color-primary);color:var(--color-primary);}
-
-/* Privacy note */
-.co-privacy-note{font-size:11.5px;color:var(--color-text-disabled);text-align:center;line-height:1.55;padding:10px 4px 14px;}
-
-/* HitPay placeholder */
-.co-hitpay-box{background:var(--color-surface-lowest);border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-md);padding:24px var(--space-md);text-align:center;margin-bottom:var(--space-md);}
-.co-hitpay-brand{font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
-.co-hitpay-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.55;margin-bottom:12px;}
-.co-hitpay-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 10px;border-radius:var(--radius-full);background:var(--color-surface-variant);color:var(--color-text-disabled);}
 
 /* ── Desktop ── */
 @container (min-width:760px){
@@ -412,12 +321,6 @@ input[type="date"]{font-family:inherit;font-size:14px;font-weight:700;color:var(
         </button>
       </div>
 
-      <!-- CHECKOUT SHEET -->
-      <div class="sheet co-sheet" id="coSheet">
-        <div class="sheet-grip"></div>
-        <div id="coBody"></div>
-      </div>
-
       <!-- PURCHASE DETAIL SHEET -->
       <div class="sheet det-sheet" id="histDetSheet">
         <div id="histDetBody"></div>
@@ -448,12 +351,10 @@ function setView(v){
 function openProfSheet(){
   document.getElementById('scrim').classList.add('open');
   document.getElementById('profSheet').classList.add('open');
-  document.getElementById('coSheet').classList.remove('open');
 }
 function closeAll(){
   document.getElementById('scrim').classList.remove('open');
   document.getElementById('profSheet').classList.remove('open');
-  document.getElementById('coSheet').classList.remove('open');
   document.getElementById('histDetSheet').classList.remove('open');
 }
 function setProfile(name,initials,cls,squad,el){
@@ -480,64 +381,72 @@ const ICO = {
 const SECTIONS = [
   {
     id:'credits', title:'Credits', col:'left',
-    devNote:'💡 <strong>Credit package visibility</strong> — consider filtering which credit types are shown based on the archer\'s group (e.g. only show MC Credits to Master Class members). May require a <code>group</code> field on the profile schema or a package-to-group mapping table.',
+    devNote:'💡 <strong>Credit package visibility</strong> — consider filtering which credit types are shown based on the archer\'s group (e.g. only show MC Credits to Master Class members). May require a <code>group</code> field on the profile schema or a package-to-group mapping table.<br><br>🛠️ <strong>Backend:</strong> <code>description</code> field required on credit-type DB records (<code>sale_mgmt</code>). Surfaced via shop API; set per credit type in admin config.',
     items:[
-      {id:'rp4',   name:'4 RP Credits',   price:20,  ico:'credit', creditType:'Range Practice',         qty:4,  days:90},
-      {id:'rp8',   name:'8 RP Credits',   price:36,  ico:'credit', creditType:'Range Practice',         qty:8,  days:90},
-      {id:'rp12',  name:'12 RP Credits',  price:48,  ico:'credit', creditType:'Range Practice',         qty:12, days:90},
-      {id:'jy4',   name:'4 JY Credits',   price:40,  ico:'credit', creditType:'Junior Youth',           qty:4,  days:90},
-      {id:'jy8',   name:'8 JY Credits',   price:72,  ico:'credit', creditType:'Junior Youth',           qty:8,  days:90},
-      {id:'mc4',   name:'4 MC Credits',   price:90,  ico:'credit', creditType:'Master Class',           qty:4,  days:90},
-      {id:'mc12',  name:'12 MC Credits',  price:200, ico:'credit', creditType:'Master Class',           qty:12, days:90},
-      {id:'pc4',   name:'4 PC Credits',   price:120, ico:'credit', creditType:'Private Coaching',       qty:4,  days:90},
-      {id:'pc12',  name:'12 PC Credits',  price:280, ico:'credit', creditType:'Private Coaching',       qty:12, days:90},
+      {id:'rp4',   name:'4 RP Credits',   price:20,  ico:'credit', desc:'4 range practice sessions · valid 90 days',                    creditType:'Range Practice',   qty:4,  days:90},
+      {id:'rp8',   name:'8 RP Credits',   price:36,  ico:'credit', desc:'8 range practice sessions · valid 90 days',                    creditType:'Range Practice',   qty:8,  days:90},
+      {id:'rp12',  name:'12 RP Credits',  price:48,  ico:'credit', desc:'12 range practice sessions · valid 90 days',                   creditType:'Range Practice',   qty:12, days:90},
+      {id:'jy4',   name:'4 JY Credits',   price:40,  ico:'credit', desc:'4 junior youth program sessions · valid 90 days',              creditType:'Junior Youth',     qty:4,  days:90},
+      {id:'jy8',   name:'8 JY Credits',   price:72,  ico:'credit', desc:'8 junior youth program sessions · valid 90 days',              creditType:'Junior Youth',     qty:8,  days:90},
+      {id:'mc4',   name:'4 MC Credits',   price:90,  ico:'credit', desc:'4 master class coaching sessions · valid 90 days',             creditType:'Master Class',     qty:4,  days:90},
+      {id:'mc12',  name:'12 MC Credits',  price:200, ico:'credit', desc:'12 master class coaching sessions · valid 90 days',            creditType:'Master Class',     qty:12, days:90},
+      {id:'pc4',   name:'4 PC Credits',   price:120, ico:'credit', desc:'4 private coaching sessions with instructor · valid 90 days',  creditType:'Private Coaching', qty:4,  days:90},
+      {id:'pc12',  name:'12 PC Credits',  price:280, ico:'credit', desc:'12 private coaching sessions with instructor · valid 90 days', creditType:'Private Coaching', qty:12, days:90},
     ]
   },
   {
     id:'passes', title:'Range Passes', col:'right',
+    devNote:'🛠️ <strong>Backend:</strong> <code>description</code> field required on range-pass package DB records (<code>sale_mgmt</code>). Surfaced via shop API; set per pass type in admin config.',
     items:[
-      {id:'wc30',   name:'West Coast 30D Pass',  price:35,  ico:'pass', passName:'West Coast 30D Range Pass',  locations:['West Coast'],            days:30},
-      {id:'wc90',   name:'West Coast 90D Pass',  price:90,  ico:'pass', passName:'West Coast 90D Range Pass',  locations:['West Coast'],            days:90},
-      {id:'cc30',   name:'Chai Chee 30D Pass',   price:35,  ico:'pass', passName:'Chai Chee 30D Range Pass',   locations:['Chai Chee'],             days:30},
-      {id:'cc90',   name:'Chai Chee 90D Pass',   price:90,  ico:'pass', passName:'Chai Chee 90D Range Pass',   locations:['Chai Chee'],             days:90},
-      {id:'isl365', name:'Island 365D Pass',     price:299, ico:'pass', passName:'Island 365D Range Pass',     locations:['West Coast','Chai Chee'], days:365},
+      {id:'wc30',   name:'West Coast 30D Pass',  price:35,  ico:'pass', desc:'Unlimited range access at West Coast · 30 days',   passName:'West Coast 30D Range Pass',  locations:['West Coast'],            days:30},
+      {id:'wc90',   name:'West Coast 90D Pass',  price:90,  ico:'pass', desc:'Unlimited range access at West Coast · 90 days',   passName:'West Coast 90D Range Pass',  locations:['West Coast'],            days:90},
+      {id:'cc30',   name:'Chai Chee 30D Pass',   price:35,  ico:'pass', desc:'Unlimited range access at Chai Chee · 30 days',    passName:'Chai Chee 30D Range Pass',   locations:['Chai Chee'],             days:30},
+      {id:'cc90',   name:'Chai Chee 90D Pass',   price:90,  ico:'pass', desc:'Unlimited range access at Chai Chee · 90 days',    passName:'Chai Chee 90D Range Pass',   locations:['Chai Chee'],             days:90},
+      {id:'isl365', name:'Island 365D Pass',     price:299, ico:'pass', desc:'Unlimited access at all locations · 365 days',     passName:'Island 365D Range Pass',     locations:['West Coast','Chai Chee'], days:365},
     ]
   },
   {
     id:'locker', title:'Locker Access', col:'left',
+    devNote:'🛠️ <strong>Backend:</strong> <code>description</code> field required on locker package DB records (<code>sale_mgmt</code>). Surfaced via shop API; set per locker type in admin config.',
     items:[
-      {id:'lkcc30', name:'30D Chai Chee Locker Access',  price:15, ico:'locker', lockerName:'30D Chai Chee Locker Access',  locations:['Chai Chee'],  days:30},
-      {id:'lkcc90', name:'90D Chai Chee Locker Access',  price:35, ico:'locker', lockerName:'90D Chai Chee Locker Access',  locations:['Chai Chee'],  days:90},
-      {id:'lkwc30', name:'30D West Coast Locker Access', price:15, ico:'locker', lockerName:'30D West Coast Locker Access', locations:['West Coast'], days:30},
-      {id:'lkwc90', name:'90D West Coast Locker Access', price:35, ico:'locker', lockerName:'90D West Coast Locker Access', locations:['West Coast'], days:90},
+      {id:'lkcc30', name:'30D Chai Chee Locker Access',  price:15, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 30 days', lockerName:'30D Chai Chee Locker Access',  locations:['Chai Chee'],  days:30},
+      {id:'lkcc90', name:'90D Chai Chee Locker Access',  price:35, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 90 days', lockerName:'90D Chai Chee Locker Access',  locations:['Chai Chee'],  days:90},
+      {id:'lkwc30', name:'30D West Coast Locker Access', price:15, ico:'locker', desc:'Secure equipment storage at West Coast range · 30 days', lockerName:'30D West Coast Locker Access', locations:['West Coast'], days:30},
+      {id:'lkwc90', name:'90D West Coast Locker Access', price:35, ico:'locker', desc:'Secure equipment storage at West Coast range · 90 days', lockerName:'90D West Coast Locker Access', locations:['West Coast'], days:90},
     ]
   },
   {
     id:'combos', title:'Combo Packages', col:'right',
+    devNote:'🛠️ <strong>Backend:</strong> Combo packages can include credit, pass, and/or locker components. <code>description</code> field required on combo package DB records. Surfaced via shop API; set per combo in admin config.',
     items:[
-      {id:'c1', name:'4 JY Credits w/ Pass',    price:100, ico:'combo', components:[
+      {id:'c1', name:'4 JY Credits w/ Pass',           price:100, ico:'combo', desc:'Bundle: 4 JY credits + 30D all-location pass',            components:[
         {type:'credit', creditType:'Junior Youth', qty:4,  days:90},
         {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30}
       ]},
-      {id:'c2', name:'12 JY Credits w/ Pass',   price:280, ico:'combo', components:[
+      {id:'c2', name:'12 JY Credits w/ Pass',          price:280, ico:'combo', desc:'Bundle: 12 JY credits + 90D all-location pass',           components:[
         {type:'credit', creditType:'Junior Youth', qty:12, days:90},
         {type:'pass',   passName:'90D Range Pass',  locations:['West Coast','Chai Chee'], days:90}
       ]},
-      {id:'c3', name:'4 MC Credits w/ Pass',    price:120, ico:'combo', components:[
+      {id:'c3', name:'4 MC Credits w/ Pass',           price:120, ico:'combo', desc:'Bundle: 4 MC credits + 30D all-location pass',            components:[
         {type:'credit', creditType:'Master Class', qty:4,  days:90},
         {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30}
       ]},
-      {id:'c4', name:'12 MC Credits w/ Pass',   price:300, ico:'combo', components:[
+      {id:'c4', name:'12 MC Credits w/ Pass',          price:300, ico:'combo', desc:'Bundle: 12 MC credits + 90D all-location pass',           components:[
         {type:'credit', creditType:'Master Class', qty:12, days:90},
         {type:'pass',   passName:'90D Range Pass',  locations:['West Coast','Chai Chee'], days:90}
       ]},
-      {id:'c5', name:'24 MC Credits w/ Pass',   price:540, ico:'combo', components:[
+      {id:'c5', name:'24 MC Credits w/ Pass',          price:540, ico:'combo', desc:'Bundle: 24 MC credits + 365D all-location pass',          components:[
         {type:'credit', creditType:'Master Class', qty:24, days:90},
         {type:'pass',   passName:'365D Range Pass', locations:['West Coast','Chai Chee'], days:365}
       ]},
-      {id:'c6', name:'4 PC Credits w/ Pass',    price:150, ico:'combo', components:[
+      {id:'c6', name:'4 PC Credits w/ Pass',           price:150, ico:'combo', desc:'Bundle: 4 PC credits + 30D all-location pass',            components:[
         {type:'credit', creditType:'Private Coaching', qty:4,  days:90},
         {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30}
+      ]},
+      {id:'c7', name:'4 JY Credits w/ Pass + Locker',  price:110, ico:'combo', desc:'Bundle: 4 JY credits + 30D pass + 30D West Coast locker', components:[
+        {type:'credit', creditType:'Junior Youth', qty:4,  days:90},
+        {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30},
+        {type:'locker', lockerName:'30D West Coast Locker Access', locations:['West Coast'], days:30}
       ]},
     ]
   },
@@ -564,10 +473,10 @@ function renderCatalog(){
         <span class="prod-ico ic-${it.ico}">${ICO[it.ico]}</span>
         <div class="prod-info">
           <div class="prod-name">${it.name}</div>
-          ${it.sub ? `<div class="prod-sub">${it.sub}</div>` : ''}
+          ${it.desc ? `<div class="prod-sub">${it.desc}</div>` : ''}
         </div>
         <div class="prod-action">
-          <div class="prod-price">$${it.price}</div>
+          <div class="prod-price">$${it.price}.00</div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:var(--color-text-disabled);flex-shrink:0;"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </div>`;
@@ -583,214 +492,14 @@ function renderCatalog(){
 }
 
 /* ── Checkout ── */
-let coItem = null, coVenue = 'West Coast', coTime = 'Morning', coPayMethod = 'paynow';
-
-function pickPayMethod(m, el){
-  coPayMethod = m;
-  el.parentElement.querySelectorAll('.pay-tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-}
-
-function payMethodHTML(){
-  return `<div class="co-pay-head">Payment method</div>
-    <div class="pay-seg">
-      <button class="pay-tab${coPayMethod==='paynow'?' on':''}" onclick="pickPayMethod('paynow',this)">PayNow</button>
-      <button class="pay-tab${coPayMethod==='card'?' on':''}" onclick="pickPayMethod('card',this)">Credit Card</button>
-    </div>`;
-}
-
-function calcValidity(days){
-  const from = new Date(2026, 5, 10); // 10 Jun 2026 (fixed for wireframe)
-  const till = new Date(from);
-  till.setDate(till.getDate() + days);
-  const fmt = d => d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
-  return `${fmt(from)} – ${fmt(till)}`;
-}
-
 const ACT_ROUTE = { a1: 'basic-plus', a2: 'basic-refresher', a3: 'basic-test' };
 function openCheckout(id){
   if(ACT_ROUTE[id]){
     location.href = '04a%20Paid%20Activity.html?act=' + ACT_ROUTE[id];
     return;
   }
-  coItem = ITEM_MAP[id];
-  coVenue = 'West Coast';
-  coTime = 'Morning';
-  renderCheckout();
-  document.getElementById('scrim').classList.add('open');
-  document.getElementById('coSheet').classList.add('open');
+  location.href = '04b%20Checkout.html?item=' + id;
 }
-function closeCheckout(){closeAll();}
-
-function renderCheckout(){
-  const it = coItem;
-  if(it.act){ renderActivityCheckout(it); return; }
-
-  let detailsHTML = '';
-  if(it.components){
-    detailsHTML = it.components.map(c=>{
-      if(c.type==='credit') return `
-        <div class="co-detail-section">
-          <div class="co-detail-head">Credits</div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Credits</span><span class="co-detail-val">${c.qty} × ${c.creditType}</span></div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Validity</span><span class="co-detail-val">${calcValidity(c.days)}</span></div>
-        </div>`;
-      if(c.type==='pass') return `
-        <div class="co-detail-section">
-          <div class="co-detail-head">Range Pass</div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Pass Name</span><span class="co-detail-val">${c.passName}</span></div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Location(s)</span><span class="co-detail-val">${c.locations.join(', ')}</span></div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Validity</span><span class="co-detail-val">${calcValidity(c.days)}</span></div>
-        </div>`;
-      return `
-        <div class="co-detail-section">
-          <div class="co-detail-head">Locker Access</div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Locker Access</span><span class="co-detail-val">${c.lockerName}</span></div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Location(s)</span><span class="co-detail-val">${c.locations.join(', ')}</span></div>
-          <div class="co-detail-row"><span class="co-detail-lbl">Validity</span><span class="co-detail-val">${calcValidity(c.days)}</span></div>
-        </div>`;
-    }).join('');
-  } else if(it.ico==='pass'){
-    detailsHTML = `
-      <div class="co-detail-section">
-        <div class="co-detail-row"><span class="co-detail-lbl">Pass Name</span><span class="co-detail-val">${it.passName}</span></div>
-        <div class="co-detail-row"><span class="co-detail-lbl">Location(s)</span><span class="co-detail-val">${it.locations.join(', ')}</span></div>
-        <div class="co-detail-row"><span class="co-detail-lbl">Validity</span><span class="co-detail-val">${calcValidity(it.days)}</span></div>
-      </div>`;
-  } else if(it.ico==='locker'){
-    detailsHTML = `
-      <div class="co-detail-section">
-        <div class="co-detail-row"><span class="co-detail-lbl">Locker Access</span><span class="co-detail-val">${it.lockerName}</span></div>
-        <div class="co-detail-row"><span class="co-detail-lbl">Location(s)</span><span class="co-detail-val">${it.locations.join(', ')}</span></div>
-        <div class="co-detail-row"><span class="co-detail-lbl">Validity</span><span class="co-detail-val">${calcValidity(it.days)}</span></div>
-      </div>`;
-  } else {
-    detailsHTML = `
-      <div class="co-detail-section">
-        <div class="co-detail-row"><span class="co-detail-lbl">Credits</span><span class="co-detail-val">${it.qty} × ${it.creditType}</span></div>
-        <div class="co-detail-row"><span class="co-detail-lbl">Validity</span><span class="co-detail-val">${calcValidity(it.days)}</span></div>
-      </div>`;
-  }
-
-  document.getElementById('coBody').innerHTML = `
-    <div class="co-item-row">
-      <span class="co-item-ico ic-${it.ico}">${ICO[it.ico]}</span>
-      <div><div class="co-item-name">${it.name}</div></div>
-      <div class="co-item-price">$${it.price}</div>
-    </div>
-    ${detailsHTML}
-    <div class="co-promo-row">
-      <input class="co-promo-input" type="text" placeholder="Voucher code" id="promoInput" />
-      <button class="co-promo-btn" onclick="applyPromo()">Apply</button>
-    </div>
-    <div class="co-total" style="margin-top:4px;">
-      <span class="co-total-lbl">Total</span>
-      <span class="co-total-amt">$${it.price}.00</span>
-    </div>
-    ${payMethodHTML()}
-    <p class="co-privacy-note">You'll be directed to HitPay, our secure payment gateway. Salt Light Archery does not collect or store any payment information.</p>
-    <button class="btn btn-primary" onclick="openHitPay()">Pay $${it.price}.00</button>`;
-}
-
-function renderActivityCheckout(it){
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('coBody').innerHTML = `
-    <div class="co-item-row">
-      <span class="co-item-ico ic-${it.ico}">${ICO[it.ico]}</span>
-      <div>
-        <div class="co-item-name">${it.name}</div>
-        ${it.sub ? `<div class="co-item-sub">${it.sub}</div>` : ''}
-      </div>
-      <div class="co-item-price">$${it.price}</div>
-    </div>
-    <div class="act-details">
-      <div class="act-det-head">Session details</div>
-      <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Location</div>
-      <div class="loc-pick">
-        <button class="loc-chip${coVenue==='West Coast'?' sel':''}" onclick="pickVenue('West Coast')">
-          <span class="lc-pin"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="2"/></svg></span>
-          <span class="lc-name">West Coast</span>
-        </button>
-        <button class="loc-chip${coVenue==='Chai Chee'?' sel':''}" onclick="pickVenue('Chai Chee')">
-          <span class="lc-pin"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="2"/></svg></span>
-          <span class="lc-name">Chai Chee</span>
-        </button>
-      </div>
-      <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Date</div>
-      <div class="co-row" style="padding:9px 0;border:none;margin-bottom:10px;">
-        <div class="co-row-val"><input type="date" value="${today}" style="font-size:14px;font-weight:700;color:var(--color-primary);" /></div>
-      </div>
-      <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Preferred time</div>
-      <div class="time-chips">
-        ${['Morning','Afternoon','Evening'].map(t=>`<button class="time-chip${coTime===t?' sel':''}" onclick="pickTime('${t}')">${t}</button>`).join('')}
-      </div>
-    </div>
-    <div class="co-promo-row">
-      <input class="co-promo-input" type="text" placeholder="Voucher code" id="promoInput" />
-      <button class="co-promo-btn" onclick="applyPromo()">Apply</button>
-    </div>
-    <div class="co-total" style="margin-top:4px;">
-      <span class="co-total-lbl">Total</span>
-      <span class="co-total-amt">$${it.price}.00</span>
-    </div>
-    ${payMethodHTML()}
-    <p class="co-privacy-note">You'll be directed to HitPay, our secure payment gateway. Salt Light Archery does not collect or store any payment information.</p>
-    <button class="btn btn-primary" onclick="openHitPay()">Pay $${it.price}.00</button>`;
-}
-
-function applyPromo(){
-  const input = document.getElementById('promoInput');
-  if(!input || !input.value.trim()) return;
-  input.style.borderColor = 'var(--color-success)';
-  const btn = input.nextElementSibling;
-  if(btn){ btn.textContent = '✓ Applied'; btn.style.color = 'var(--color-success)'; btn.disabled = true; }
-}
-
-function openHitPay(){
-  document.getElementById('coBody').innerHTML = `
-    <div class="co-item-row" style="border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:16px;">
-      <span class="co-item-ico ic-${coItem.ico}">${ICO[coItem.ico]}</span>
-      <div><div class="co-item-name">${coItem.name}</div></div>
-      <div class="co-item-price">$${coItem.price}</div>
-    </div>
-    <div class="co-hitpay-box">
-      <div class="co-hitpay-brand">HitPay</div>
-      <div class="co-hitpay-desc">In the live app, a PayNow QR code or credit / debit card form will appear here.</div>
-      <div class="co-hitpay-badge">Wireframe placeholder — HitPay drop-in</div>
-    </div>
-    <button class="btn btn-primary" onclick="processPayment()">Simulate: Confirm Payment</button>`;
-}
-
-function pickVenue(v){
-  coVenue = v;
-  renderActivityCheckout(coItem);
-}
-function pickTime(t){
-  coTime = t;
-  renderActivityCheckout(coItem);
-}
-
-function processPayment(){
-  const it = coItem;
-  const ref = 'PO-20260610-' + String(Math.floor(Math.random()*900)+100);
-  document.getElementById('coBody').innerHTML = `
-    <div class="co-success">
-      <div class="success-ico">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="success-title">Payment confirmed</div>
-      <div class="success-sub">${it.name} has been added to your account and is ready to use.</div>
-      <div class="success-ref">${ref}</div>
-      <div class="success-card">
-        <div class="sc-row"><span class="sc-lbl">Item</span><span class="sc-val">${it.name}</span></div>
-        <div class="sc-row"><span class="sc-lbl">Amount paid</span><span class="sc-val">$${it.price}.00</span></div>
-        <div class="sc-row"><span class="sc-lbl">Method</span><span class="sc-val">HitPay</span></div>
-        <div class="sc-row"><span class="sc-lbl">Date</span><span class="sc-val">10 Jun 2026</span></div>
-      </div>
-    </div>
-    <button class="btn btn-primary" onclick="closeAll()">Done</button>`;
-}
-
 /* ── Purchase history ── */
 const HISTORY = [
   {idx:0, date:'1 May 2026',  month:'2026-05', name:'90D West Coast Locker Access', type:'locker', price:35,  method:'PayNow', status:'active',  ref:'SY20260501143022',
@@ -857,7 +566,7 @@ function renderHistory(){
         <div class="hi-sub">${h.date} · ${h.ref}</div>
       </div>
       <div class="hi-right">
-        <div class="hi-price">$${h.price}</div>
+        <div class="hi-price">$${h.price}.00</div>
       </div>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:var(--color-text-disabled);flex-shrink:0;margin-left:4px;"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>`;
@@ -871,7 +580,6 @@ function openHistDetail(idx){
   document.getElementById('histDetBody').innerHTML = renderHistDetail(h);
   document.getElementById('scrim').classList.add('open');
   document.getElementById('histDetSheet').classList.add('open');
-  document.getElementById('coSheet').classList.remove('open');
   document.getElementById('profSheet').classList.remove('open');
 }
 
@@ -905,7 +613,7 @@ function renderHistDetail(h){
     rows = topRows + `
       <div class="det-section">
         <div class="det-section-head">Purchase summary</div>
-        <div class="det-row"><span class="det-lbl">Amount paid</span><span class="det-val">$${h.price}</span></div>
+        <div class="det-row"><span class="det-lbl">Amount paid</span><span class="det-val">$${h.price}.00</span></div>
         ${voucherRow}
         <div class="det-row"><span class="det-lbl">Payment method</span><span class="det-val">${h.method}</span></div>
         <div class="det-row det-row-last"><span class="det-lbl">Sale reference</span><span class="det-val det-ref">${h.ref}</span></div>
@@ -913,7 +621,7 @@ function renderHistDetail(h){
   }
   if(h.type !== 'act'){
     rows += `<div class="det-row"><span class="det-lbl">Payment</span><span class="det-val">${h.method}</span></div>
-      <div class="det-row det-row-last"><span class="det-lbl">Reference</span><span class="det-val det-ref">${h.ref}</span></div>`;
+      <div class="det-row det-row-last"><span class="det-lbl">Sale reference</span><span class="det-val det-ref">${h.ref}</span></div>`;
   }
 
   const ico = HI_ICO[h.type]||HI_ICO.credit;
@@ -926,7 +634,7 @@ function renderHistDetail(h){
         <div class="det-date">${h.date}</div>
       </div>
       <div class="det-price-block">
-        <div class="det-price">$${h.price}</div>
+        <div class="det-price">$${h.price}.00</div>
       </div>
     </div>
     <div class="det-body">${rows}</div>`;

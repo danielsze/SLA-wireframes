@@ -81,10 +81,6 @@ svg{display:block;}
 .wc-exp{font-size:12px;font-weight:600;color:var(--color-text-secondary);}
 .wc-exp.warn{color:var(--color-warning);}
 .wc-exp.err{color:var(--color-error);font-weight:700;}
-.topup-btn{font-family:inherit;font-size:12.5px;font-weight:700;border:none;cursor:pointer;padding:7px 14px;border-radius:var(--radius-sm);background:var(--color-primary);color:#fff;white-space:nowrap;transition:background var(--duration-fast);flex-shrink:0;}
-.topup-btn:hover{background:var(--color-primary-hover);}
-.topup-btn.urgent{background:var(--color-error);}
-.topup-btn.urgent:hover{background:#6D1515;}
 .wc-chevron{color:var(--color-text-disabled);flex-shrink:0;margin-left:4px;display:flex;align-items:center;}
 .pass-card{padding:var(--space-md);border-radius:var(--radius-md);background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);}
 .pass-card.pc-warn{border-color:rgba(155,79,0,.35);background:#FFFBF4;}
@@ -107,8 +103,6 @@ svg{display:block;}
 .pass-card.pc-expired .pass-ico{background:rgba(0,0,0,.08);color:var(--color-text-disabled);}
 .shop-link{color:var(--color-primary);font-weight:700;cursor:pointer;font-size:12px;white-space:nowrap;flex-shrink:0;}
 .shop-link:hover{text-decoration:underline;}
-.renew-btn{font-family:inherit;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--color-primary);background:transparent;color:var(--color-primary);cursor:pointer;white-space:nowrap;transition:background var(--duration-fast);}
-.renew-btn:hover{background:rgba(139,94,21,.06);}
 /* History full-page overlay */
 .hist-page{position:absolute;inset:0;z-index:81;background:var(--color-surface-lowest);display:flex;flex-direction:column;transform:translateX(100%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);}
 .hist-page.open{transform:translateX(0);}
@@ -155,15 +149,6 @@ svg{display:block;}
 .sheet-close:hover{background:var(--color-surface-highest);}
 .sheet-sub{font-size:12.5px;color:var(--color-text-secondary);padding:0 var(--space-md) var(--space-md);flex-shrink:0;}
 .sheet-scroll{overflow-y:auto;flex:1;}
-.pkg-list{display:flex;flex-direction:column;gap:var(--space-sm);padding:0 var(--space-md) var(--space-md);}
-.pkg-item{display:flex;align-items:center;gap:var(--space-md);padding:13px var(--space-md);border-radius:var(--radius-md);border:1.5px solid var(--color-border-subtle);background:var(--color-surface);cursor:pointer;font-family:inherit;transition:all var(--duration-fast);text-align:left;width:100%;}
-.pkg-item:hover{border-color:var(--color-border-emphasis);}
-.pkg-item.sel{border-color:var(--color-primary);background:var(--color-surface-highest);}
-.pkg-ring{width:20px;height:20px;border-radius:var(--radius-full);border:2px solid var(--color-border-emphasis);display:grid;place-items:center;flex-shrink:0;transition:all var(--duration-fast);}
-.pkg-item.sel .pkg-ring{border-color:var(--color-primary);background:var(--color-primary);}
-.pkg-info{flex:1;}
-.pkg-credits{font-size:15px;font-weight:700;}
-.pkg-price{font-size:12px;color:var(--color-text-secondary);margin-top:1px;}
 .sheet-btn-wrap{padding:12px var(--space-md) 0;flex-shrink:0;}
 .btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast) ease,transform var(--duration-fast) ease;}
 .btn:active{transform:scale(.99);}
@@ -259,7 +244,7 @@ svg{display:block;}
               </div>
               <div class="wc-bal-row"><span class="wc-amount">8</span><span class="wc-unit">RP</span></div>
               <div class="wc-foot">
-                <span class="wc-exp">Valid till 31 Aug 2026</span>
+                <span class="wc-exp">Valid till Mon, 31 Aug 2026</span>
               </div>
             </div>
 
@@ -282,11 +267,11 @@ svg{display:block;}
             <div class="wlt-card wc-err" onclick="openHistory('MC')">
               <div class="wc-top">
                 <span class="wc-ico err">MC</span>
-                <div class="wc-meta"><div class="wc-name">Masterclass Credits</div></div>
+                <div class="wc-meta"><div class="wc-name">Master Class Credits</div></div>
                 <span class="wc-badge bd-err">Overdue</span>
                 <span class="wc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               </div>
-              <div class="wc-bal-row"><span class="wc-amount err">&#8722;2</span><span class="wc-unit">MC</span></div>
+              <div class="wc-bal-row"><span class="wc-amount err">−2</span><span class="wc-unit">MC</span></div>
               <div class="wc-foot">
                 <span class="wc-exp err">Clear balance to book sessions</span>
                 <span class="shop-link" onclick="location.href='04 Shop.html'">Top up in Shop →</span>
@@ -305,7 +290,7 @@ svg{display:block;}
                 <span class="wc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               </div>
               <div class="wc-bal-row"><span class="wc-amount">12</span><span class="wc-unit">CC</span></div>
-              <div class="wc-foot"><span class="wc-exp">Valid till 31 Dec 2026</span></div>
+              <div class="wc-foot"><span class="wc-exp">Valid till Thu, 31 Dec 2026</span></div>
             </div>
 
             <!-- Passes -->
@@ -336,7 +321,7 @@ svg{display:block;}
               </div>
               <div class="pass-dates">
                 <div class="pd-item"><div class="pd-label">Valid from</div><div class="pd-val">9 May 2026</div></div>
-                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">7 Aug 2026</div></div>
+                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">Fri, 7 Aug 2026</div></div>
               </div>
               <div class="pass-foot">
                 <span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">61 days remaining</span>
@@ -351,7 +336,7 @@ svg{display:block;}
               </div>
               <div class="pass-dates">
                 <div class="pd-item"><div class="pd-label">Valid from</div><div class="pd-val">8 Mar 2026</div></div>
-                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">7 Apr 2026</div></div>
+                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">Tue, 7 Apr 2026</div></div>
               </div>
               <div class="pass-foot">
                 <span class="shop-link" onclick="location.href='04 Shop.html'">Renew in Shop →</span>
@@ -414,20 +399,6 @@ svg{display:block;}
         <div class="hpg-body" id="histBody"></div>
       </div>
 
-      <!-- Top-up sheet -->
-      <div class="sheet" id="sheetTopup">
-        <div class="sheet-grip"></div>
-        <div class="sheet-head">
-          <span class="sheet-title" id="tuTitle">Top up</span>
-          <button class="sheet-close" onclick="closeAll()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
-        </div>
-        <p class="sheet-sub" id="tuSub"></p>
-        <div class="sheet-scroll"><div class="pkg-list" id="pkgList"></div></div>
-        <div class="sheet-btn-wrap">
-          <button class="btn btn-primary" id="tuBtn" disabled onclick="closeAll()">Proceed to Checkout</button>
-        </div>
-      </div>
-
       <!-- Profile sheet -->
       <div class="sheet" id="sheetProf">
         <div class="sheet-grip"></div>
@@ -485,7 +456,7 @@ function setProfile(name,initials,cls,el){
 const WALLET_META={
   RP:{name:'Range Practice Credits',sub:'Balance: 8 RP · Expires 31 Aug 2026'},
   JY:{name:'Junior Youth Credits',sub:'Balance: 8 JY · Expires 10 Jun 2026'},
-  MC:{name:'Masterclass Credits',sub:'Balance: −2 MC · Overdue'},
+  MC:{name:'Master Class Credits',sub:'Balance: −2 MC · Overdue'},
   CL:{name:'Club Credits (SDSC)',sub:'Balance: 12 CC · Expires 31 Dec 2026'},
 };
 const TXNS={
@@ -554,7 +525,7 @@ function openHistory(wallet){
       g.items.forEach(t=>{
         const ic=t.type==='credit'?'ti-credit':'ti-debit';
         const ico=t.type==='credit'?ICO_C:ICO_D;
-        const amtStr=(t.amt>0?'+':'')+t.amt+' '+unit;
+        const amtStr=(t.amt>0?'+':t.amt<0?'−':'')+Math.abs(t.amt)+' '+unit;
         const ac=t.amt>0?'txn-amt pos':'txn-amt';
         html+='<div class="txn-row"><span class="txn-ico '+ic+'">'+ico+'</span><div class="txn-body"><div class="txn-desc">'+t.desc+'</div><div class="txn-sub">'+t.sub+'</div></div><div class="txn-right"><div class="'+ac+'">'+amtStr+'</div></div></div>';
       });
@@ -562,31 +533,6 @@ function openHistory(wallet){
   }
   document.getElementById('histBody').innerHTML=html;
   document.getElementById('sheetHistory').classList.add('open');
-}
-const PKGS={
-  RP:[{c:'5 RP credits',p:'$25.00',d:'30-day validity'},{c:'10 RP credits',p:'$45.00',d:'30-day validity'},{c:'20 RP credits',p:'$80.00',d:'30-day validity'}],
-  JY:[{c:'5 JY credits',p:'$50.00',d:'30-day validity'},{c:'10 JY credits',p:'$90.00',d:'30-day validity'},{c:'20 JY credits',p:'$160.00',d:'30-day validity'}],
-  MC:[{c:'2 MC credits',p:'$40.00',d:'365-day validity'},{c:'5 MC credits',p:'$90.00',d:'30-day validity'},{c:'10 MC credits',p:'$160.00',d:'20-day validity'}],
-  PASS:[{c:'1-month Island Pass',p:'$45.00',d:'West Coast + Chai Chee'},{c:'3-month Island Pass',p:'$120.00',d:'West Coast + Chai Chee'},{c:'12-month Island Pass',p:'$420.00',d:'West Coast + Chai Chee'}],
-};
-const PN={RP:'Range Practice Credits',JY:'Junior Youth Credits',MC:'Masterclass Credits',PASS:'Island Pass'};
-const PS={RP:'Current balance: 8 RP',JY:'Current balance: 8 JY · Expires 10 Jun',MC:'Current balance: −2 MC · Balance overdue',PASS:'Active pass expires Mon, 8 Jun 2026'};
-const CHK='<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-let curW='';
-function openTopup(wallet){
-  curW=wallet;
-  document.getElementById('tuTitle').textContent=(wallet==='PASS'?'Renew ':'Top up ')+PN[wallet];
-  document.getElementById('tuSub').textContent=PS[wallet];
-  document.getElementById('pkgList').innerHTML=PKGS[wallet].map((p,i)=>'<button class="pkg-item" onclick="pickPkg('+i+')"><div class="pkg-ring" id="pkgRing'+i+'"></div><div class="pkg-info"><div class="pkg-credits">'+p.c+'</div><div class="pkg-price">'+p.p+' · '+p.d+'</div></div></button>').join('');
-  document.getElementById('tuBtn').disabled=true;
-  document.getElementById('tuBtn').textContent='Proceed to Checkout';
-  openSheet('sheetTopup');
-}
-function pickPkg(i){
-  document.querySelectorAll('.pkg-item').forEach((el,idx)=>{el.classList.toggle('sel',idx===i);document.getElementById('pkgRing'+idx).innerHTML=idx===i?CHK:'';});
-  const p=PKGS[curW][i];
-  document.getElementById('tuBtn').disabled=false;
-  document.getElementById('tuBtn').textContent=(curW==='PASS'?'Renew':'Checkout')+' · '+p.p;
 }
 </script>
 <script>

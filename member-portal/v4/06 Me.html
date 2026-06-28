@@ -376,7 +376,7 @@ svg{display:block;}
                 <span class="ir-val">+65 9123 4567</span>
               </div>
               <div class="irow">
-                <span class="ir-lbl">Secondary contact</span>
+                <span class="ir-lbl">Emergency contact</span>
                 <span class="ir-val" style="white-space:normal;overflow:visible;">
                   <div style="font-size:14px;font-weight:700;color:var(--color-text-primary);">Tan Siew Leng</div>
                   <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-top:2px;">+65 8765 4321 &middot; Mother</div>
@@ -437,10 +437,11 @@ svg{display:block;}
                 </div>
                 <div class="fgroup">
                   <span class="flabel">Gender</span>
-                  <div class="segctrl">
-                    <button class="on" onclick="pickSeg(this)">Male</button>
-                    <button onclick="pickSeg(this)">Female</button>
-                  </div>
+                  <select class="finput">
+                    <option value="male" selected>Male</option>
+                    <option value="female">Female</option>
+                    <option value="prefer_not_to_say">Prefer not to say</option>
+                  </select>
                 </div>
                 <div class="fgroup">
                   <span class="flabel">Draw hand</span>
@@ -457,7 +458,7 @@ svg{display:block;}
                   </div>
                 </div>
                 <div class="fgroup">
-                  <label class="flabel">Secondary contact</label>
+                  <label class="flabel">Emergency contact</label>
                   <label class="fhint" style="margin-bottom:4px;">First name</label>
                   <input type="text" class="finput" value="Siew Leng" placeholder="First name" style="margin-bottom:10px;">
                   <label class="fhint" style="margin-bottom:4px;">Last name</label>

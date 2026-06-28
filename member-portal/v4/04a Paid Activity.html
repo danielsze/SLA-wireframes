@@ -311,8 +311,8 @@ body.devmode .dev-sim{display:block;}
                 <div class="rv-row"><span class="rv-lbl">Location</span><span class="rv-val muted" id="rvLoc">—</span></div>
                 <div class="rv-row"><span class="rv-lbl">Date</span><span class="rv-val muted" id="rvDate">—</span></div>
                 <div class="rv-row"><span class="rv-lbl">Time</span><span class="rv-val muted" id="rvTime">—</span></div>
-                <div class="rv-row" id="rvVoucherRow" style="display:none"><span class="rv-lbl">Voucher discount</span><span class="rv-val" id="rvVoucherAmt" style="color:var(--color-success)">−$0</span></div>
-                <div class="rv-row total"><span class="rv-lbl">Total</span><span class="rv-val" id="rvTotal">$260</span></div>
+                <div class="rv-row" id="rvVoucherRow" style="display:none"><span class="rv-lbl">Voucher discount</span><span class="rv-val" id="rvVoucherAmt" style="color:var(--color-success)">−$0.00</span></div>
+                <div class="rv-row total"><span class="rv-lbl">Total</span><span class="rv-val" id="rvTotal">$260.00</span></div>
               </div>
             </div>
 
@@ -377,7 +377,7 @@ body.devmode .dev-sim{display:block;}
                   <button class="hp-dropin-close" onclick="dismissDropin()">Close</button>
                 </div>
                 <div class="hp-dropin-amt-lbl">Amount</div>
-                <div class="hp-dropin-amt-val" id="hpAmount">SGD 260.00</div>
+                <div class="hp-dropin-amt-val" id="hpAmount">$260.00</div>
                 <div class="hp-dropin-method">
                   <span class="hp-dropin-method-ico">
                     <svg width="16" height="11" viewBox="0 0 24 17" fill="none"><rect x="0.5" y="0.5" width="23" height="16" rx="2" fill="#3a8df0" stroke="#3a8df0"/><rect x="0.5" y="3.5" width="23" height="3" fill="#fff" fill-opacity=".6"/></svg>
@@ -422,8 +422,8 @@ body.devmode .dev-sim{display:block;}
                 <div class="rv-row"><span class="rv-lbl">Location</span><span class="rv-val" id="sucLoc">West Coast</span></div>
                 <div class="rv-row"><span class="rv-lbl">Date</span><span class="rv-val" id="sucDate">Sat, 20 Jun 2026</span></div>
                 <div class="rv-row"><span class="rv-lbl">Time</span><span class="rv-val" id="sucTime">1:00 – 3:00 PM</span></div>
-                <div class="rv-row" id="sucVoucherRow" style="display:none"><span class="rv-lbl">Voucher discount</span><span class="rv-val" style="color:var(--color-success)" id="sucVoucherAmt">−$0</span></div>
-                <div class="rv-row total"><span class="rv-lbl">Amount paid</span><span class="rv-val" id="sucTotal" style="color:var(--color-primary);font-size:18px">$260</span></div>
+                <div class="rv-row" id="sucVoucherRow" style="display:none"><span class="rv-lbl">Voucher discount</span><span class="rv-val" style="color:var(--color-success)" id="sucVoucherAmt">−$0.00</span></div>
+                <div class="rv-row total"><span class="rv-lbl">Amount paid</span><span class="rv-val" id="sucTotal" style="color:var(--color-primary);font-size:18px">$260.00</span></div>
               </div>
               <div class="term-actions">
                 <a class="btn btn-primary" href="01 Nav + Home.html">Back to Home</a>
@@ -512,11 +512,12 @@ const VOUCHERS = {
   SLA20:     { type: 'fixed', value: 20 },
   ARCHER5:   { type: 'fixed', value: 5  }
 };
+function money(n){ return Number(n).toFixed(2); }
 function voucherAmount(v, price){
   return v.type === 'pct' ? Math.round(price * v.value / 100) : v.value;
 }
 function voucherLabel(v){
-  return v.type === 'pct' ? `−${v.value}%` : `−$${v.value}`;
+  return v.type === 'pct' ? `−${v.value}%` : `−$${money(v.value)}`;
 }
 const state = {
   view: 'form',
@@ -543,7 +544,7 @@ function priceAfterVouchers(){
   document.getElementById('actTitle').textContent = act.title;
   document.getElementById('actDesc').textContent = act.desc;
   document.getElementById('rvAct').textContent = act.title;
-  document.getElementById('rvTotal').textContent = '$' + act.price;
+  document.getElementById('rvTotal').textContent = '$' + money(act.price);
 })();
 
 function closeFlow(){
@@ -581,8 +582,8 @@ function setView(v){
 }
 function populateHitpay(){
   const total = priceAfterVouchers();
-  document.getElementById('hpAmount').textContent = 'SGD ' + total + '.00';
-  document.getElementById('hpPayLbl').textContent = '$' + total + '.00';
+  document.getElementById('hpAmount').textContent = '$' + money(total);
+  document.getElementById('hpPayLbl').textContent = '$' + money(total);
   // Re-open the drop-in modal on (re)entry
   document.querySelector('#viewHitpay .hp-wrap').classList.remove('no-modal');
 }
@@ -595,12 +596,12 @@ function populateSuccess(){
   document.getElementById('sucLoc').textContent = state.loc || '—';
   document.getElementById('sucDate').textContent = state.dateLabel || '—';
   document.getElementById('sucTime').textContent = state.time || '—';
-  document.getElementById('sucTotal').textContent = '$' + priceAfterVouchers();
+  document.getElementById('sucTotal').textContent = '$' + money(priceAfterVouchers());
   const vRow = document.getElementById('sucVoucherRow');
   const discount = voucherTotal();
   if(discount > 0){
     vRow.style.display = '';
-    document.getElementById('sucVoucherAmt').textContent = '−$' + discount;
+    document.getElementById('sucVoucherAmt').textContent = '−$' + money(discount);
   } else {
     vRow.style.display = 'none';
   }
@@ -751,11 +752,11 @@ function refreshReview(){
   const discount = voucherTotal();
   if(discount > 0){
     vRow.style.display = '';
-    document.getElementById('rvVoucherAmt').textContent = '−$' + discount;
+    document.getElementById('rvVoucherAmt').textContent = '−$' + money(discount);
   } else {
     vRow.style.display = 'none';
   }
-  document.getElementById('rvTotal').textContent = '$' + priceAfterVouchers();
+  document.getElementById('rvTotal').textContent = '$' + money(priceAfterVouchers());
 }
 
 function updatePrimary(){
@@ -771,7 +772,7 @@ function setForm(m){
   frame.classList.toggle('desktop', m === 'desktop');
 }
 
-// Published v4 is locked to Client view.
+// ── Mode toggle (canonical) ──
 (function(){
   var KEY='wf-mode';
   var DEV='devmode';

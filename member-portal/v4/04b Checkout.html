@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:16px;width:100%;max-width:1180px;margin-bottom:28px;color:#E8DDD0;}
+.stage-bar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:7px 16px;border-radius:var(--radius-full);transition:all var(--duration-fast) ease;display:flex;align-items:center;gap:7px;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+
+/* ── Frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+
+/* ── App grid ── */
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;grid-template-areas:"header" "main" "foot";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+.app-foot{grid-area:foot;background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:12px var(--space-md);padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:var(--space-sm);}
+
+/* ── Status bar ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+
+/* ── Step header ── */
+.step-hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.step-back{width:38px;height:38px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);}
+.step-back:hover{background:var(--color-surface-variant);}
+.step-title-area{flex:1;text-align:center;}
+.step-eyebrow{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.step-name{font-size:16px;font-weight:700;margin-top:1px;}
+.step-spacer{width:38px;height:38px;flex-shrink:0;}
+
+/* ── Buttons ── */
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast) ease,transform var(--duration-fast) ease,opacity var(--duration-fast) ease;}
+.btn:active{transform:scale(.99);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover:not(:disabled){background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;transform:none;}
+
+/* ── Page layout ── */
+.scroll{padding:var(--space-md) var(--space-md) var(--space-lg);}
+
+/* ── Product hero ── */
+.prod-hero{display:flex;align-items:center;gap:14px;padding:var(--space-md) var(--space-md) 14px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
+.prod-hero-ico{width:48px;height:48px;border-radius:var(--radius-md);flex-shrink:0;display:grid;place-items:center;}
+.ic-credit{background:var(--color-warning-container);color:var(--color-primary);}
+.ic-pass{background:var(--color-success-container);color:var(--color-success);}
+.ic-locker{background:var(--color-surface-variant);color:var(--color-text-secondary);}
+.ic-combo{background:var(--color-warning-container);color:var(--color-warning);}
+.prod-hero-body{flex:1;min-width:0;}
+.prod-hero-name{font-size:18px;font-weight:700;line-height:1.25;}
+.prod-hero-price{font-size:24px;font-weight:800;color:var(--color-primary);letter-spacing:-.5px;margin-top:2px;}
+
+/* ── Description block ── */
+.desc-block{margin:var(--space-md) var(--space-md) 0;background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);padding:12px var(--space-md);}
+.desc-lbl{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--color-text-disabled);margin-bottom:5px;}
+.desc-text{font-size:13.5px;line-height:1.6;color:var(--color-text-primary);}
+
+/* ── Detail sections ── */
+.detail-area{padding:var(--space-md) var(--space-md) 0;}
+.detail-section{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);overflow:hidden;margin-bottom:10px;}
+.detail-section-head{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--color-text-disabled);padding:10px var(--space-md) 6px;}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px var(--space-md);border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.detail-lbl{font-size:13px;font-weight:600;color:var(--color-text-secondary);}
+.detail-val{font-size:13px;font-weight:700;text-align:right;max-width:62%;}
+
+/* ── Auto discount ── */
+.disc-area{padding:10px var(--space-md) 0;}
+.disc-row{display:flex;align-items:center;justify-content:space-between;background:var(--color-success-container);border-radius:var(--radius-sm);padding:10px 12px;}
+.disc-lbl{font-size:13px;font-weight:700;color:var(--color-success);}
+.disc-val{font-size:13px;font-weight:800;color:var(--color-success);}
+.toggle-link{font-family:inherit;font-size:12px;font-weight:700;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:6px 2px 0;display:block;text-align:left;}
+.toggle-link:hover{color:var(--color-text-primary);}
+
+/* ── Voucher ── */
+.voucher-area{padding:10px var(--space-md) 0;}
+.voucher-row{display:flex;gap:8px;}
+.voucher-input{flex:1;font-family:inherit;font-size:13px;font-weight:600;padding:10px 12px;background:var(--color-surface);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);outline:none;color:var(--color-text-primary);transition:border-color var(--duration-fast) ease;}
+.voucher-input:focus{border-color:var(--color-primary);}
+.voucher-input::placeholder{color:var(--color-text-disabled);font-weight:500;}
+.voucher-btn{font-family:inherit;font-size:12px;font-weight:700;padding:10px 16px;border-radius:var(--radius-sm);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);color:var(--color-text-primary);cursor:pointer;white-space:nowrap;transition:all var(--duration-fast) ease;}
+.voucher-btn:hover{border-color:var(--color-primary);color:var(--color-primary);}
+.voucher-msg{font-size:11.5px;font-weight:700;margin-top:5px;min-height:14px;padding-left:2px;}
+.voucher-msg.ok{color:var(--color-success);}
+.voucher-msg.err{color:var(--color-error);}
+
+/* ── Total ── */
+.total-row{display:flex;align-items:center;justify-content:space-between;padding:14px var(--space-md);border-top:var(--border-hairline) solid var(--color-border-subtle);margin-top:10px;}
+.total-lbl{font-size:14px;font-weight:700;}
+.total-amt{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--color-primary);}
+
+/* ── Payment method ── */
+.pay-head{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--color-text-disabled);padding:0 var(--space-md) 6px;}
+.pay-seg{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;gap:2px;margin:0 var(--space-md) var(--space-sm);}
+.pay-tab{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:9px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.pay-tab.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.privacy-note{font-size:11.5px;color:var(--color-text-disabled);text-align:center;line-height:1.55;padding:0 var(--space-md) var(--space-sm);}
+
+/* ── HitPay screen ── */
+.hp-screen{padding:var(--space-md);}
+.hp-item-row{display:flex;align-items:center;gap:12px;padding-bottom:var(--space-md);border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:var(--space-md);}
+.hp-ico{width:40px;height:40px;border-radius:var(--radius-sm);flex-shrink:0;display:grid;place-items:center;}
+.hp-name{font-size:15px;font-weight:700;flex:1;}
+.hp-price{font-size:18px;font-weight:800;letter-spacing:-.4px;}
+.hp-box{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-subtle) solid var(--color-border-subtle);padding:24px var(--space-md);text-align:center;margin-bottom:var(--space-md);}
+.hp-brand{font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
+.hp-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.55;margin-bottom:12px;}
+.hp-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 10px;border-radius:var(--radius-full);background:var(--color-surface-variant);color:var(--color-text-disabled);}
+
+/* ── Success terminal ── */
+.success-screen{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-lg) var(--space-md) var(--space-md);}
+.success-ico{width:72px;height:72px;border-radius:var(--radius-full);background:rgba(42,107,62,.12);display:grid;place-items:center;color:var(--color-success);margin-bottom:var(--space-md);}
+.success-title{font-size:22px;font-weight:700;}
+.success-sub{font-size:13.5px;color:var(--color-text-secondary);margin-top:6px;line-height:1.5;max-width:280px;}
+.success-ref{font-size:11px;color:var(--color-text-disabled);margin-top:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.success-card{background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);border-radius:var(--radius-md);padding:var(--space-md);width:100%;margin-top:var(--space-md);text-align:left;}
+.sc-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;}
+.sc-row+.sc-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.sc-lbl{color:var(--color-text-secondary);font-weight:600;}
+.sc-val{font-weight:700;}
+
+/* ── Dev note ── */
+.dev-note{display:none;background:rgba(139,94,21,.09);border-left:3px solid var(--color-primary);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:9px 12px;margin:var(--space-md) var(--space-md) 0;font-size:12px;line-height:1.6;color:var(--color-text-secondary);}
+body.devmode .dev-note{display:block;}
+code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;}
+
+/* ── Desktop ── */
+@container (min-width:760px){
+  .prod-hero{padding:24px 40px 18px;}
+  .desc-block{margin:20px 40px 0;}
+  .detail-area{padding:20px 40px 0;}
+  .disc-area{padding:10px 40px 0;}
+  .voucher-area{padding:10px 40px 0;}
+  .total-row{padding:14px 40px;}
+  .pay-head{padding-left:40px;}
+  .pay-seg{margin-left:40px;margin-right:40px;max-width:320px;}
+  .privacy-note{padding-left:40px;padding-right:40px;}
+  .hp-screen{max-width:560px;margin:0 auto;padding:24px 40px;}
+  .success-screen{padding-top:40px;}
+}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s ease;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 4b · Checkout</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.4" stroke="currentColor" stroke-width="2"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="8.5" y1="21" x2="15.5" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Desktop
+      </button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app" id="checkoutApp">
+
+        <!-- HEADER -->
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="step-hdr">
+            <button class="step-back" onclick="goBack()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="step-title-area">
+              <div class="step-eyebrow">Shop</div>
+              <div class="step-name">Checkout</div>
+            </div>
+            <div class="step-spacer"></div>
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="app-main" id="mainContent">
+          <!-- rendered by JS -->
+        </div>
+
+        <!-- FOOTER -->
+        <div class="app-foot" id="appFoot">
+          <button class="btn btn-primary" id="payBtn" onclick="goToPayment()">Proceed to Pay</button>
+        </div>
+
+      </div><!-- /app -->
+    </div><!-- /screen -->
+  </div><!-- /frame -->
+
+  <!-- Mode toggle -->
+</div><!-- /stage -->
+
+<script>
+/* ── Form factor ── */
+function setForm(m){
+  document.getElementById('frame').classList.toggle('desktop',m==='desktop');
+  document.getElementById('segPhone').classList.toggle('on',m==='phone');
+  document.getElementById('segDesktop').classList.toggle('on',m==='desktop');
+  localStorage.setItem('wf-form',m);
+}
+(function(){
+  const saved = localStorage.getItem('wf-form');
+  if(saved && saved!=='phone') setForm(saved);
+})();
+
+
+/* ── Icons ── */
+const ICO = {
+  credit:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`,
+  pass:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="2"/></svg>`,
+  locker:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  combo:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m21 16-4 4-4-4M17 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m3 8 4-4 4 4M7 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+
+/* ── Item data (mirrors 04 Shop.html SECTIONS) ── */
+const ITEM_MAP = {
+  /* Credits */
+  rp4:  {id:'rp4',  name:'4 RP Credits',   price:20,  ico:'credit', desc:'4 range practice sessions · valid 90 days',                    creditType:'Range Practice',   qty:4,  days:90, auto_discount:{saving:2.00, display:'10%'}},
+  rp8:  {id:'rp8',  name:'8 RP Credits',   price:36,  ico:'credit', desc:'8 range practice sessions · valid 90 days',                    creditType:'Range Practice',   qty:8,  days:90},
+  rp12: {id:'rp12', name:'12 RP Credits',  price:48,  ico:'credit', desc:'12 range practice sessions · valid 90 days',                   creditType:'Range Practice',   qty:12, days:90},
+  jy4:  {id:'jy4',  name:'4 JY Credits',   price:40,  ico:'credit', desc:'4 junior youth program sessions · valid 90 days',              creditType:'Junior Youth',     qty:4,  days:90},
+  jy8:  {id:'jy8',  name:'8 JY Credits',   price:72,  ico:'credit', desc:'8 junior youth program sessions · valid 90 days',              creditType:'Junior Youth',     qty:8,  days:90},
+  mc4:  {id:'mc4',  name:'4 MC Credits',   price:90,  ico:'credit', desc:'4 master class coaching sessions · valid 90 days',             creditType:'Master Class',     qty:4,  days:90},
+  mc12: {id:'mc12', name:'12 MC Credits',  price:200, ico:'credit', desc:'12 master class coaching sessions · valid 90 days',            creditType:'Master Class',     qty:12, days:90},
+  pc4:  {id:'pc4',  name:'4 PC Credits',   price:120, ico:'credit', desc:'4 private coaching sessions with instructor · valid 90 days',  creditType:'Private Coaching', qty:4,  days:90},
+  pc12: {id:'pc12', name:'12 PC Credits',  price:280, ico:'credit', desc:'12 private coaching sessions with instructor · valid 90 days', creditType:'Private Coaching', qty:12, days:90},
+  /* Passes */
+  wc30:   {id:'wc30',   name:'West Coast 30D Pass',  price:35,  ico:'pass', desc:'Unlimited range access at West Coast · 30 days',   passName:'West Coast 30D Range Pass',  locations:['West Coast'],             days:30, auto_discount:{saving:3.50}},
+  wc90:   {id:'wc90',   name:'West Coast 90D Pass',  price:90,  ico:'pass', desc:'Unlimited range access at West Coast · 90 days',   passName:'West Coast 90D Range Pass',  locations:['West Coast'],             days:90},
+  cc30:   {id:'cc30',   name:'Chai Chee 30D Pass',   price:35,  ico:'pass', desc:'Unlimited range access at Chai Chee · 30 days',    passName:'Chai Chee 30D Range Pass',   locations:['Chai Chee'],              days:30},
+  cc90:   {id:'cc90',   name:'Chai Chee 90D Pass',   price:90,  ico:'pass', desc:'Unlimited range access at Chai Chee · 90 days',    passName:'Chai Chee 90D Range Pass',   locations:['Chai Chee'],              days:90},
+  isl365: {id:'isl365', name:'Island 365D Pass',     price:299, ico:'pass', desc:'Unlimited access at all locations · 365 days',     passName:'Island 365D Range Pass',     locations:['West Coast','Chai Chee'], days:365},
+  /* Lockers */
+  lkcc30: {id:'lkcc30', name:'30D Chai Chee Locker Access',  price:15, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 30 days', lockerName:'30D Chai Chee Locker Access',  locations:['Chai Chee'],  days:30},
+  lkcc90: {id:'lkcc90', name:'90D Chai Chee Locker Access',  price:35, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 90 days', lockerName:'90D Chai Chee Locker Access',  locations:['Chai Chee'],  days:90},
+  lkwc30: {id:'lkwc30', name:'30D West Coast Locker Access', price:15, ico:'locker', desc:'Secure equipment storage at West Coast range · 30 days', lockerName:'30D West Coast Locker Access', locations:['West Coast'], days:30},
+  lkwc90: {id:'lkwc90', name:'90D West Coast Locker Access', price:35, ico:'locker', desc:'Secure equipment storage at West Coast range · 90 days', lockerName:'90D West Coast Locker Access', locations:['West Coast'], days:90},
+  /* Combos */
+  c1: {id:'c1', name:'4 JY Credits w/ Pass',          price:100, ico:'combo', desc:'Bundle: 4 JY credits + 30D all-location pass',            components:[{type:'credit',creditType:'Junior Youth',qty:4,days:90},{type:'pass',passName:'30D Range Pass',locations:['West Coast','Chai Chee'],days:30}]},
+  c2: {id:'c2', name:'12 JY Credits w/ Pass',         price:280, ico:'combo', desc:'Bundle: 12 JY credits + 90D all-location pass',           components:[{type:'credit',creditType:'Junior Youth',qty:12,days:90},{type:'pass',passName:'90D Range Pass',locations:['West Coast','Chai Chee'],days:90}]},
+  c3: {id:'c3', name:'4 MC Credits w/ Pass',          price:120, ico:'combo', desc:'Bundle: 4 MC credits + 30D all-location pass',            components:[{type:'credit',creditType:'Master Class',qty:4,days:90},{type:'pass',passName:'30D Range Pass',locations:['West Coast','Chai Chee'],days:30}]},
+  c4: {id:'c4', name:'12 MC Credits w/ Pass',         price:300, ico:'combo', desc:'Bundle: 12 MC credits + 90D all-location pass',           components:[{type:'credit',creditType:'Master Class',qty:12,days:90},{type:'pass',passName:'90D Range Pass',locations:['West Coast','Chai Chee'],days:90}]},
+  c5: {id:'c5', name:'24 MC Credits w/ Pass',         price:540, ico:'combo', desc:'Bundle: 24 MC credits + 365D all-location pass',          components:[{type:'credit',creditType:'Master Class',qty:24,days:90},{type:'pass',passName:'365D Range Pass',locations:['West Coast','Chai Chee'],days:365}]},
+  c6: {id:'c6', name:'4 PC Credits w/ Pass',          price:150, ico:'combo', desc:'Bundle: 4 PC credits + 30D all-location pass',            components:[{type:'credit',creditType:'Private Coaching',qty:4,days:90},{type:'pass',passName:'30D Range Pass',locations:['West Coast','Chai Chee'],days:30}]},
+  c7: {id:'c7', name:'4 JY Credits w/ Pass + Locker', price:110, ico:'combo', desc:'Bundle: 4 JY credits + 30D pass + 30D West Coast locker', components:[{type:'credit',creditType:'Junior Youth',qty:4,days:90},{type:'pass',passName:'30D Range Pass',locations:['West Coast','Chai Chee'],days:30},{type:'locker',lockerName:'30D West Coast Locker Access',locations:['West Coast'],days:30}]},
+};
+
+/* ── Helpers ── */
+function calcValidity(days){
+  const from = new Date(2026, 5, 10);
+  const till = new Date(from);
+  till.setDate(till.getDate() + days);
+  const fmt = d => d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  return `${fmt(from)} – ${fmt(till)}`;
+}
+
+function goBack(){
+  history.length > 1 ? history.back() : (location.href = '04%20Shop.html');
+}
+
+/* ── Render checkout ── */
+let currentItem = null;
+
+function render(it){
+  currentItem = it;
+
+  // Details HTML
+  let detailsHTML = '';
+  if(it.components){
+    detailsHTML = it.components.map(c=>{
+      if(c.type==='credit') return `
+        <div class="detail-section">
+          <div class="detail-section-head">Credits</div>
+          <div class="detail-row"><span class="detail-lbl">Credits</span><span class="detail-val">${c.qty} × ${c.creditType}</span></div>
+          <div class="detail-row"><span class="detail-lbl">Validity</span><span class="detail-val">${calcValidity(c.days)}</span></div>
+        </div>`;
+      if(c.type==='pass') return `
+        <div class="detail-section">
+          <div class="detail-section-head">Range Pass</div>
+          <div class="detail-row"><span class="detail-lbl">Pass Name</span><span class="detail-val">${c.passName}</span></div>
+          <div class="detail-row"><span class="detail-lbl">Location(s)</span><span class="detail-val">${c.locations.join(', ')}</span></div>
+          <div class="detail-row"><span class="detail-lbl">Validity</span><span class="detail-val">${calcValidity(c.days)}</span></div>
+        </div>`;
+      return `
+        <div class="detail-section">
+          <div class="detail-section-head">Locker Access</div>
+          <div class="detail-row"><span class="detail-lbl">Locker</span><span class="detail-val">${c.lockerName}</span></div>
+          <div class="detail-row"><span class="detail-lbl">Location(s)</span><span class="detail-val">${c.locations.join(', ')}</span></div>
+          <div class="detail-row"><span class="detail-lbl">Validity</span><span class="detail-val">${calcValidity(c.days)}</span></div>
+        </div>`;
+    }).join('');
+  } else if(it.ico==='pass'){
+    detailsHTML = `
+      <div class="detail-section">
+        <div class="detail-section-head">Range Pass</div>
+        <div class="detail-row"><span class="detail-lbl">Pass Name</span><span class="detail-val">${it.passName}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Location(s)</span><span class="detail-val">${it.locations.join(', ')}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Validity</span><span class="detail-val">${calcValidity(it.days)}</span></div>
+      </div>`;
+  } else if(it.ico==='locker'){
+    detailsHTML = `
+      <div class="detail-section">
+        <div class="detail-section-head">Locker Access</div>
+        <div class="detail-row"><span class="detail-lbl">Locker</span><span class="detail-val">${it.lockerName}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Location(s)</span><span class="detail-val">${it.locations.join(', ')}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Validity</span><span class="detail-val">${calcValidity(it.days)}</span></div>
+      </div>`;
+  } else {
+    detailsHTML = `
+      <div class="detail-section">
+        <div class="detail-section-head">Credits</div>
+        <div class="detail-row"><span class="detail-lbl">Credits</span><span class="detail-val">${it.qty} × ${it.creditType}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Validity</span><span class="detail-val">${calcValidity(it.days)}</span></div>
+      </div>`;
+  }
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="prod-hero">
+      <span class="prod-hero-ico ic-${it.ico}">${ICO[it.ico]}</span>
+      <div class="prod-hero-body">
+        <div class="prod-hero-name">${it.name}</div>
+        <div class="prod-hero-price">$${it.price}.00</div>
+      </div>
+    </div>
+
+    <div class="dev-note">🛠️ <strong>Description field</strong> — <code>it.desc</code> comes from the new <code>description</code> column on the credit-type / pass / locker / combo DB record (<code>sale_mgmt</code>). Set via admin config; returned in the shop API response.</div>
+
+    ${it.desc ? `<div class="desc-block"><div class="desc-lbl">About</div><div class="desc-text">${it.desc}</div></div>` : ''}
+
+    <div class="detail-area">
+      ${detailsHTML}
+    </div>
+
+    ${it.auto_discount ? `
+    <div id="discArea" class="disc-area">
+      <div class="disc-row">
+        <span class="disc-lbl">Renewal discount</span>
+        <span class="disc-val">–${it.auto_discount.display || '$'+it.auto_discount.saving.toFixed(2)}</span>
+      </div>
+      <button class="toggle-link" onclick="switchToVoucher()">Use a voucher instead →</button>
+    </div>
+    <div id="voucherArea" class="voucher-area" style="display:none;">
+      <div class="voucher-row">
+        <input class="voucher-input" type="text" placeholder="Voucher code" id="voucherInput" />
+        <button class="voucher-btn" onclick="applyVoucher()">Apply</button>
+      </div>
+      <div class="voucher-msg" id="voucherMsg"></div>
+      <button class="toggle-link" style="margin-top:6px;" onclick="switchToDiscount()">← Use renewal discount</button>
+    </div>
+    ` : `
+    <div class="voucher-area">
+      <div class="voucher-row">
+        <input class="voucher-input" type="text" placeholder="Voucher code" id="voucherInput" />
+        <button class="voucher-btn" onclick="applyVoucher()">Apply</button>
+      </div>
+      <div class="voucher-msg" id="voucherMsg"></div>
+    </div>
+    `}
+
+    <div class="total-row">
+      <span class="total-lbl">Total</span>
+      <span class="total-amt" id="totalAmt">$${it.auto_discount ? (it.price - it.auto_discount.saving).toFixed(2) : it.price.toFixed(2)}</span>
+    </div>
+
+    <div class="pay-head">Payment method</div>
+    <div class="pay-seg">
+      <button class="pay-tab on" onclick="setPayTab(this,'paynow')">PayNow</button>
+      <button class="pay-tab" onclick="setPayTab(this,'card')">Credit Card</button>
+    </div>
+    <p class="privacy-note">You'll be directed to HitPay, our secure payment gateway. Salt Light Archery does not collect or store any payment information.</p>
+  `;
+
+  document.getElementById('payBtn').textContent = 'Proceed to Pay';
+}
+
+function setPayTab(el, method){
+  el.parentElement.querySelectorAll('.pay-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function switchToVoucher(){
+  document.getElementById('discArea').style.display='none';
+  document.getElementById('voucherArea').style.display='';
+  document.getElementById('totalAmt').textContent='$'+currentItem.price.toFixed(2);
+}
+
+function switchToDiscount(){
+  document.getElementById('discArea').style.display='';
+  document.getElementById('voucherArea').style.display='none';
+  const ad=currentItem.auto_discount;
+  document.getElementById('totalAmt').textContent='$'+(currentItem.price-ad.saving).toFixed(2);
+}
+
+function applyVoucher(){
+  const input = document.getElementById('voucherInput');
+  const msg = document.getElementById('voucherMsg');
+  if(!input || !input.value.trim()) return;
+  input.style.borderColor = 'var(--color-success)';
+  const btn = input.nextElementSibling;
+  if(btn){ btn.textContent = '✓ Applied'; btn.style.color='var(--color-success)'; btn.disabled=true; }
+  if(msg) msg.textContent = 'Voucher applied — $5.00 off';
+  if(msg) msg.className = 'voucher-msg ok';
+  const totalEl = document.getElementById('totalAmt');
+  if(totalEl) totalEl.textContent = '$'+ Math.max(0, currentItem.price - 5).toFixed(2);
+}
+
+function goToPayment(){
+  const it = currentItem;
+  document.getElementById('mainContent').innerHTML = `
+    <div class="hp-screen">
+      <div class="hp-item-row">
+        <span class="hp-ico ic-${it.ico}">${ICO[it.ico]}</span>
+        <div class="hp-name">${it.name}</div>
+        <div class="hp-price">$${it.price}.00</div>
+      </div>
+      <div class="hp-box">
+        <div class="hp-brand">HitPay</div>
+        <div class="hp-desc">In the live app, a PayNow QR code or credit / debit card form will appear here.</div>
+        <div class="hp-badge">Wireframe placeholder — HitPay drop-in</div>
+      </div>
+      <button class="btn btn-primary" onclick="confirmPayment()">Simulate: Confirm Payment</button>
+    </div>`;
+  document.getElementById('appFoot').style.display = 'none';
+}
+
+function confirmPayment(){
+  const it = currentItem;
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const datePart = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+  const timePart = `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const prefixes = {credit:'RC', pass:'WC', locker:'LK', combo:'CB'};
+  const ref = `${prefixes[it.ico]||'SL'}${datePart}${timePart}`;
+  document.getElementById('mainContent').innerHTML = `
+    <div class="success-screen">
+      <div class="success-ico">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="success-title">Payment confirmed</div>
+      <div class="success-card">
+        <div class="sc-row"><span class="sc-lbl">Item</span><span class="sc-val">${it.name}</span></div>
+        <div class="sc-row"><span class="sc-lbl">Amount paid</span><span class="sc-val">$${it.price}.00</span></div>
+        <div class="sc-row"><span class="sc-lbl">Method</span><span class="sc-val">HitPay</span></div>
+        <div class="sc-row"><span class="sc-lbl">Date</span><span class="sc-val">10 Jun 2026</span></div>
+        <div class="sc-row"><span class="sc-lbl">Sale reference</span><span class="sc-val">${ref}</span></div>
+      </div>
+    </div>`;
+  const foot = document.getElementById('appFoot');
+  foot.style.display = '';
+  foot.innerHTML = `<button class="btn btn-primary" onclick="goBack()">Done</button>`;
+}
+
+// ── Mode toggle (canonical) ──
+(function(){
+  var KEY='wf-mode';
+  var DEV='devmode';
+  var LOFI='lofi';
+  document.body.classList.remove(DEV);
+  document.body.classList.add(LOFI);
+  localStorage.setItem(KEY,'client');
+})();
+
+/* ── Init ── */
+(function(){
+  const params = new URLSearchParams(location.search);
+  const id = params.get('item') || 'rp4';
+  const it = ITEM_MAP[id];
+  if(!it){
+    document.getElementById('mainContent').innerHTML = '<div style="padding:40px;text-align:center;color:var(--color-text-disabled);">Item not found.</div>';
+    return;
+  }
+  render(it);
+})();
+</script>
+</body>
+</html>
