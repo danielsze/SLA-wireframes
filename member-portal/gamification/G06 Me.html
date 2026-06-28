@@ -577,20 +577,7 @@ buildHeatmap();
 </script>
 <script>
 (function(){
-  var KEY='wf-mode';
-  var mode=localStorage.getItem(KEY)||'client';
-  if(mode==='dev'){document.body.classList.add('devmode');}else{document.body.classList.add('lofi');}
-  var btn=document.createElement('button');
-  btn.id='wf-lofi-toggle';
-  function update(){btn.textContent=document.body.classList.contains('devmode')?'⚙ Dev notes':'● Client view';}
-  btn.addEventListener('click',function(){
-    var isDev=document.body.classList.contains('devmode');
-    if(isDev){document.body.classList.remove('devmode');document.body.classList.add('lofi');localStorage.setItem(KEY,'client');}
-    else{document.body.classList.remove('lofi');document.body.classList.add('devmode');localStorage.setItem(KEY,'dev');}
-    update();
-  });
-  update();
-  document.body.appendChild(btn);
+  document.body.classList.add('lofi');
   setForm(localStorage.getItem('wf-form')||'phone');
 })();
 </script>
