@@ -245,14 +245,43 @@ svg{display:block;}
                     <div class="hof-name"><div class="hof-name-main">Sarah Ng</div></div>
                     <div class="hof-val-wrap"><div class="hof-val">22</div><div class="hof-val-sub">sessions</div></div>
                   </div>
+                  <div class="hof-row">
+                    <span class="hof-rank">4</span>
+                    <div class="hof-name"><div class="hof-name-main">Farhan Lee</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">21</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                  <div class="hof-row">
+                    <span class="hof-rank">5</span>
+                    <div class="hof-name"><div class="hof-name-main">Marcus Tan</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">20</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                  <div class="hof-row">
+                    <span class="hof-rank">6</span>
+                    <div class="hof-name"><div class="hof-name-main">Priya Menon</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">19</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                  <div class="hof-row">
+                    <span class="hof-rank">7</span>
+                    <div class="hof-name"><div class="hof-name-main">Natalie Koh</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">19</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
                   <div class="hof-row self">
                     <span class="hof-rank">8</span>
                     <div class="hof-name"><div class="hof-name-main">Caleb Tan</div><div class="hof-name-sub">You</div></div>
                     <div class="hof-val-wrap"><div class="hof-val">18</div><div class="hof-val-sub">sessions</div></div>
                   </div>
+                  <div class="hof-row">
+                    <span class="hof-rank">9</span>
+                    <div class="hof-name"><div class="hof-name-main">Danish Lim</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">17</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
+                  <div class="hof-row">
+                    <span class="hof-rank">10</span>
+                    <div class="hof-name"><div class="hof-name-main">Wei Ming Lim</div></div>
+                    <div class="hof-val-wrap"><div class="hof-val">16</div><div class="hof-val-sub">sessions</div></div>
+                  </div>
                 </div>
-                <div class="hof-more">+ 42 more members</div>
-                <div class="dev-note">💡 <strong>Training leaderboard</strong> — aggregated quarterly from <code>book_mgmt.Attendance</code> (attended=true) joined with <code>Access</code> for sign-in sessions. Shows top 3 + current user rank. Quarter derived from server date. New endpoint: <code>GET /api/leaderboard/behavioral?quarter=Q2-2026</code> returning <code>[{rank, name, session_count, is_self}]</code>.</div>
+                <div class="dev-note">💡 <strong>Training leaderboard</strong> — TOP 10 ∪ current user. Aggregated quarterly from <code>book_mgmt.Attendance</code> (attended=true) joined with <code>Access</code> for sign-in sessions. If current user is in top 10 they appear in their natural position (highlighted). If outside top 10 their row appends after rank 10 (highlighted, no separator). Quarter derived from server date. New endpoint: <code>GET /api/leaderboard/behavioral?quarter=Q2-2026</code> returning <code>[{rank, name, session_count, is_self}]</code>.</div>
               </div>
 
               <div class="scard" id="hofPerformance" style="display:none;">
@@ -267,6 +296,7 @@ svg{display:block;}
                   <button class="bow-chip" data-format="compound-18-40-inner" onclick="setFormat(this)"><span>Compound</span><small>18m · 40cm inner 10</small></button>
                   <button class="bow-chip" data-format="barebow-50-122" onclick="setFormat(this)"><span>Barebow</span><small>50m · 122cm</small></button>
                 </div>
+                <div class="hof-eyebrow" id="competitionEyebrow">Recurve · 70m · 122cm</div>
                 <div class="hof-list" id="competitionList">
                   <div class="hof-row">
                     <span class="hof-rank r1">1</span>
@@ -305,8 +335,7 @@ svg{display:block;}
                     <div class="hof-val-wrap"><div class="hof-val">589/720</div></div>
                   </div>
                 </div>
-                <div class="hof-more" id="competitionMore">+ 38 more verified scores</div>
-                <div class="dev-note">💡 <strong>Competition leaderboard</strong> — reads from new <code>user_mgmt.VerifiedScore</code> table (see data model). Format filter is mandatory because rankings are only comparable within the same bow style + distance + face-size format. Rows represent verified score records, not unique members, so the same archer can appear more than once. Rows show name, score, competition title, and date only because the selected filter provides the format context. This quarter is the default; All-time = all verified score records for the selected format and includes the archer's own ranking as the highlighted self row when present. Endpoint: <code>GET /api/leaderboard/performance?format_id=recurve-70-122&period=quarterly</code> → <code>[{rank, name, score, max_score, competition, date, is_self}]</code>.</div>
+                <div class="dev-note">💡 <strong>Competition leaderboard</strong> — TOP 10 ∪ current user (personal best per format). Reads from <code>user_mgmt.VerifiedScore</code>. Format filter mandatory (rankings only comparable within same bow/distance/face). Default dedup: one row per member (personal best). Exception: if a member's non-best scores rank in the global top positions, those rows are preserved (e.g. alltime Compound 50m — Ahmad Rashid holds ranks 2 AND 3). Current user appears in natural position when in top 10 (highlighted); appends after rank 10 when outside. Endpoint: <code>GET /api/leaderboard/performance?format_id=recurve-70-122&period=quarterly</code> → <code>[{rank, name, score, max_score, competition, date, is_self}]</code>.</div>
               </div>
             </div>
 
@@ -373,48 +402,74 @@ var competitionData={
       rows:[
         {rank:1,name:'Ahmad Rashid',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'634/720',medal:'r1'},
         {rank:2,name:'Mei Lin Tan',competition:'FISU World University Games',date:'2 May 2026',score:'621/720',medal:'r2'},
-        {rank:3,name:'Wei Ming Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'608/720',medal:'r3'}
+        {rank:3,name:'Wei Ming Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'608/720',medal:'r3'},
+        {rank:4,name:'Caleb Tan',competition:'Rhine-Ruhr FISU World University',date:'2 May 2026',score:'589/720',self:true},
+        {rank:5,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'576/720'},
+        {rank:6,name:'Danish Lim',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'571/720'},
+        {rank:7,name:'Marcus Tan',competition:'SLA Club Championship',date:'14 Mar 2026',score:'563/720'},
+        {rank:8,name:'Farhan Lee',competition:'FISU World University Games',date:'2 May 2026',score:'558/720'},
+        {rank:9,name:'Priya Menon',competition:'SLA Club Championship',date:'14 Mar 2026',score:'545/720'},
+        {rank:10,name:'Joanne Teo',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'538/720'}
       ],
-      self:{rank:4,name:'Caleb Tan',competition:'Rhine-Ruhr FISU World University',date:'2 May 2026',score:'589/720'},
-      more:'+ 38 more verified scores'
+      self:null
     },
     'recurve-18-40':{
       rows:[
         {rank:1,name:'Sarah Ng',competition:'SLA Indoor League',date:'8 Apr 2026',score:'292/300',medal:'r1'},
         {rank:2,name:'Mei Lin Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'289/300',medal:'r2'},
-        {rank:3,name:'Danish Lim',competition:'SLA Indoor League',date:'8 Apr 2026',score:'287/300',medal:'r3'}
+        {rank:3,name:'Danish Lim',competition:'SLA Indoor League',date:'8 Apr 2026',score:'287/300',medal:'r3'},
+        {rank:4,name:'Marcus Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'285/300'},
+        {rank:5,name:'Farhan Lee',competition:'SLA Indoor League',date:'8 Apr 2026',score:'283/300'},
+        {rank:6,name:'Wei Ming Lim',competition:'Club Postal Match',date:'25 Mar 2026',score:'281/300'},
+        {rank:7,name:'Natalie Koh',competition:'SLA Indoor League',date:'8 Apr 2026',score:'279/300'},
+        {rank:8,name:'Ahmad Rashid',competition:'Club Postal Match',date:'25 Mar 2026',score:'277/300'},
+        {rank:9,name:'Caleb Tan',competition:'SLA Indoor League',date:'8 Apr 2026',score:'274/300',self:true},
+        {rank:10,name:'Priya Menon',competition:'Club Postal Match',date:'25 Mar 2026',score:'271/300'}
       ],
-      self:{rank:9,name:'Caleb Tan',competition:'SLA Indoor League',date:'8 Apr 2026',score:'274/300'},
-      more:'+ 21 more verified scores'
+      self:null
     },
     'compound-50-80':{
       rows:[
         {rank:1,name:'Natalie Koh',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'357/360',medal:'r1'},
         {rank:2,name:'Ahmad Rashid',competition:'SLA Club Championship',date:'14 Mar 2026',score:'354/360',medal:'r2'},
-        {rank:3,name:'Caleb Tan',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'352/360',medal:'r3',self:true}
+        {rank:3,name:'Caleb Tan',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'352/360',medal:'r3',self:true},
+        {rank:4,name:'Farhan Lee',competition:'SLA Club Championship',date:'14 Mar 2026',score:'349/360'},
+        {rank:5,name:'Marcus Tan',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'347/360'},
+        {rank:6,name:'Joanne Teo',competition:'SLA Club Championship',date:'14 Mar 2026',score:'344/360'},
+        {rank:7,name:'Wei Ming Lim',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'341/360'},
+        {rank:8,name:'Priya Menon',competition:'SLA Club Championship',date:'14 Mar 2026',score:'338/360'},
+        {rank:9,name:'Sarah Ng',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'335/360'},
+        {rank:10,name:'Danish Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'332/360'}
       ],
-      self:null,
-      more:'+ 14 more verified scores'
+      self:null
     },
     'compound-18-40-inner':{
       rows:[
         {rank:1,name:'Natalie Koh',competition:'SLA Indoor League',date:'8 Apr 2026',score:'149/150',medal:'r1'},
         {rank:2,name:'Farhan Lee',competition:'Club Postal Match',date:'25 Mar 2026',score:'148/150',medal:'r2'},
-        {rank:3,name:'Joanne Teo',competition:'SLA Indoor League',date:'8 Apr 2026',score:'147/150',medal:'r3'}
+        {rank:3,name:'Joanne Teo',competition:'SLA Indoor League',date:'8 Apr 2026',score:'147/150',medal:'r3'},
+        {rank:4,name:'Marcus Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'146/150'},
+        {rank:5,name:'Ahmad Rashid',competition:'SLA Indoor League',date:'8 Apr 2026',score:'145/150'},
+        {rank:6,name:'Mei Lin Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'144/150'},
+        {rank:7,name:'Sarah Ng',competition:'SLA Indoor League',date:'8 Apr 2026',score:'143/150'},
+        {rank:8,name:'Wei Ming Lim',competition:'Club Postal Match',date:'25 Mar 2026',score:'142/150'},
+        {rank:9,name:'Priya Menon',competition:'SLA Indoor League',date:'8 Apr 2026',score:'141/150'},
+        {rank:10,name:'Danish Lim',competition:'Club Postal Match',date:'25 Mar 2026',score:'140/150'}
       ],
       self:null,
-      empty:'No verified score for this format yet',
-      more:'+ 9 more verified scores'
+      empty:'No verified score for this format yet'
     },
     'barebow-50-122':{
       rows:[
         {rank:1,name:'Priya Menon',competition:'SLA Club Championship',date:'14 Mar 2026',score:'562/720',medal:'r1'},
         {rank:2,name:'Marcus Tan',competition:'Barebow Open Series',date:'11 Apr 2026',score:'548/720',medal:'r2'},
-        {rank:3,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'531/720',medal:'r3'}
+        {rank:3,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'531/720',medal:'r3'},
+        {rank:4,name:'Farhan Lee',competition:'Barebow Open Series',date:'11 Apr 2026',score:'518/720'},
+        {rank:5,name:'Danish Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'505/720'}
       ],
       self:null,
       empty:'No verified score for this format yet',
-      more:'+ 17 more verified scores'
+      note:'Only 5 verified scores exist for this format this quarter'
     }
   },
   alltime:{
@@ -422,48 +477,77 @@ var competitionData={
       rows:[
         {rank:1,name:'Ahmad Rashid',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'634/720',medal:'r1'},
         {rank:2,name:'Mei Lin Tan',competition:'FISU World University Games',date:'2 May 2026',score:'621/720',medal:'r2'},
-        {rank:3,name:'Wei Ming Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'608/720',medal:'r3'}
+        {rank:3,name:'Wei Ming Lim',competition:'SLA Club Championship',date:'14 Mar 2026',score:'608/720',medal:'r3'},
+        {rank:4,name:'Caleb Tan',competition:'Rhine-Ruhr FISU World University',date:'2 May 2026',score:'589/720',self:true},
+        {rank:5,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'576/720'},
+        {rank:6,name:'Danish Lim',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'571/720'},
+        {rank:7,name:'Marcus Tan',competition:'SEA Games Qualifier',date:'10 Jan 2025',score:'567/720'},
+        {rank:8,name:'Farhan Lee',competition:'FISU World University Games',date:'2 May 2026',score:'558/720'},
+        {rank:9,name:'Priya Menon',competition:'SLA Club Championship',date:'14 Mar 2026',score:'545/720'},
+        {rank:10,name:'Joanne Teo',competition:'National Open 2025',date:'5 Nov 2025',score:'541/720'}
       ],
-      self:{rank:4,name:'Caleb Tan',competition:'Rhine-Ruhr FISU World University',date:'2 May 2026',score:'589/720'},
-      more:'+ 38 more verified scores'
+      self:null
     },
     'recurve-18-40':{
       rows:[
         {rank:1,name:'Sarah Ng',competition:'SLA Indoor League',date:'8 Apr 2026',score:'292/300',medal:'r1'},
         {rank:2,name:'Mei Lin Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'289/300',medal:'r2'},
-        {rank:3,name:'Danish Lim',competition:'SLA Indoor League',date:'8 Apr 2026',score:'287/300',medal:'r3'}
+        {rank:3,name:'Danish Lim',competition:'SLA Indoor League',date:'8 Apr 2026',score:'287/300',medal:'r3'},
+        {rank:4,name:'Marcus Tan',competition:'Indoor League 2025',date:'12 Apr 2025',score:'285/300'},
+        {rank:5,name:'Farhan Lee',competition:'Club Postal Match',date:'25 Mar 2026',score:'283/300'},
+        {rank:6,name:'Ahmad Rashid',competition:'Indoor League 2025',date:'12 Apr 2025',score:'282/300'},
+        {rank:7,name:'Caleb Tan',competition:'SLA Indoor League',date:'8 Apr 2026',score:'280/300',self:true},
+        {rank:8,name:'Natalie Koh',competition:'Club Postal Match',date:'25 Mar 2026',score:'278/300'},
+        {rank:9,name:'Wei Ming Lim',competition:'Indoor League 2025',date:'12 Apr 2025',score:'275/300'},
+        {rank:10,name:'Joanne Teo',competition:'Club Postal Match',date:'25 Mar 2026',score:'272/300'}
       ],
-      self:{rank:7,name:'Caleb Tan',competition:'SLA Indoor League',date:'8 Apr 2026',score:'282/300'},
-      more:'+ 24 more verified scores'
+      self:null
     },
     'compound-50-80':{
       rows:[
         {rank:1,name:'Natalie Koh',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'357/360',medal:'r1'},
         {rank:2,name:'Ahmad Rashid',competition:'SLA Club Championship',date:'14 Mar 2026',score:'354/360',medal:'r2'},
-        {rank:3,name:'Ahmad Rashid',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'353/360',medal:'r3'}
+        {rank:3,name:'Ahmad Rashid',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'353/360',medal:'r3'},
+        {rank:4,name:'Caleb Tan',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'352/360',self:true},
+        {rank:5,name:'Farhan Lee',competition:'SLA Club Championship',date:'14 Mar 2026',score:'349/360'},
+        {rank:6,name:'Marcus Tan',competition:'Compound Open 2025',date:'22 Sep 2025',score:'347/360'},
+        {rank:7,name:'Joanne Teo',competition:'SLA Club Championship',date:'14 Mar 2026',score:'344/360'},
+        {rank:8,name:'Wei Ming Lim',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'341/360'},
+        {rank:9,name:'Priya Menon',competition:'Compound Open 2025',date:'22 Sep 2025',score:'338/360'},
+        {rank:10,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'335/360'}
       ],
-      self:{rank:4,name:'Caleb Tan',competition:'Taipei Archery Open 2026',date:'18 Jun 2026',score:'352/360'},
-      more:'+ 15 more verified scores'
+      self:null
     },
     'compound-18-40-inner':{
       rows:[
         {rank:1,name:'Natalie Koh',competition:'SLA Indoor League',date:'8 Apr 2026',score:'149/150',medal:'r1'},
-        {rank:2,name:'Farhan Lee',competition:'Club Postal Match',date:'25 Mar 2026',score:'148/150',medal:'r2'},
-        {rank:3,name:'Joanne Teo',competition:'SLA Indoor League',date:'8 Apr 2026',score:'147/150',medal:'r3'}
+        {rank:2,name:'Natalie Koh',competition:'Indoor League 2025',date:'12 Apr 2025',score:'148/150',medal:'r2'},
+        {rank:3,name:'Farhan Lee',competition:'Club Postal Match',date:'25 Mar 2026',score:'147/150',medal:'r3'},
+        {rank:4,name:'Joanne Teo',competition:'SLA Indoor League',date:'8 Apr 2026',score:'146/150'},
+        {rank:5,name:'Marcus Tan',competition:'Indoor League 2025',date:'12 Apr 2025',score:'145/150'},
+        {rank:6,name:'Ahmad Rashid',competition:'SLA Indoor League',date:'8 Apr 2026',score:'144/150'},
+        {rank:7,name:'Mei Lin Tan',competition:'Club Postal Match',date:'25 Mar 2026',score:'143/150'},
+        {rank:8,name:'Sarah Ng',competition:'SLA Indoor League',date:'8 Apr 2026',score:'142/150'},
+        {rank:9,name:'Wei Ming Lim',competition:'Indoor League 2025',date:'12 Apr 2025',score:'141/150'},
+        {rank:10,name:'Priya Menon',competition:'Club Postal Match',date:'25 Mar 2026',score:'140/150'}
       ],
-      self:null,
-      empty:'No verified score for this format yet',
-      more:'+ 9 more verified scores'
+      self:{rank:12,name:'Caleb Tan',competition:'SLA Indoor League',date:'8 Apr 2026',score:'138/150'}
     },
     'barebow-50-122':{
       rows:[
         {rank:1,name:'Priya Menon',competition:'SLA Club Championship',date:'14 Mar 2026',score:'562/720',medal:'r1'},
         {rank:2,name:'Marcus Tan',competition:'Barebow Open Series',date:'11 Apr 2026',score:'548/720',medal:'r2'},
-        {rank:3,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'531/720',medal:'r3'}
+        {rank:3,name:'Sarah Ng',competition:'SLA Club Championship',date:'14 Mar 2026',score:'531/720',medal:'r3'},
+        {rank:4,name:'Farhan Lee',competition:'Barebow Open Series',date:'11 Apr 2026',score:'518/720'},
+        {rank:5,name:'Danish Lim',competition:'Barebow Open 2025',date:'8 Oct 2025',score:'505/720'},
+        {rank:6,name:'Mei Lin Tan',competition:'SLA Club Championship',date:'14 Mar 2026',score:'492/720'},
+        {rank:7,name:'Wei Ming Lim',competition:'Barebow Open Series',date:'11 Apr 2026',score:'479/720'},
+        {rank:8,name:'Joanne Teo',competition:'Barebow Open 2025',date:'8 Oct 2025',score:'466/720'},
+        {rank:9,name:'Ahmad Rashid',competition:'SLA Club Championship',date:'14 Mar 2026',score:'453/720'},
+        {rank:10,name:'Natalie Koh',competition:'Barebow Open Series',date:'11 Apr 2026',score:'441/720'}
       ],
       self:null,
-      empty:'No verified score for this format yet',
-      more:'+ 17 more verified scores'
+      empty:'No verified score for this format yet'
     }
   }
 };
@@ -484,7 +568,11 @@ function renderCompetition(){
   if(data.self) rows.push(rowHtml(Object.assign({},data.self,{self:true})));
   if(data.empty) rows.push(emptyHtml(data.empty));
   document.getElementById('competitionList').innerHTML=rows.join('');
-  document.getElementById('competitionMore').textContent=data.more;
+  var eyebrow=document.getElementById('competitionEyebrow');
+  if(eyebrow){
+    var base=active?(active.querySelector('span').textContent+' · '+(active.querySelector('small')?active.querySelector('small').textContent:'')):'Recurve · 70m · 122cm';
+    eyebrow.textContent=data.note?base+' · '+data.note:base;
+  }
 }
 function setFormat(btn){
   btn.closest('.bow-filter').querySelectorAll('.bow-chip').forEach(function(b){b.classList.remove('on');});
