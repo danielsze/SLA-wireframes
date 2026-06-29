@@ -398,11 +398,11 @@ const SECTIONS = [
     id:'passes', title:'Range Passes', col:'right',
     devNote:'🛠️ <strong>Backend:</strong> <code>description</code> field required on range-pass package DB records (<code>sale_mgmt</code>). Surfaced via shop API; set per pass type in admin config.',
     items:[
-      {id:'wc30',   name:'West Coast 30D Pass',  price:35,  ico:'pass', desc:'Unlimited range access at West Coast · 30 days',   passName:'West Coast 30D Range Pass',  locations:['West Coast'],            days:30},
-      {id:'wc90',   name:'West Coast 90D Pass',  price:90,  ico:'pass', desc:'Unlimited range access at West Coast · 90 days',   passName:'West Coast 90D Range Pass',  locations:['West Coast'],            days:90},
-      {id:'cc30',   name:'Chai Chee 30D Pass',   price:35,  ico:'pass', desc:'Unlimited range access at Chai Chee · 30 days',    passName:'Chai Chee 30D Range Pass',   locations:['Chai Chee'],             days:30},
-      {id:'cc90',   name:'Chai Chee 90D Pass',   price:90,  ico:'pass', desc:'Unlimited range access at Chai Chee · 90 days',    passName:'Chai Chee 90D Range Pass',   locations:['Chai Chee'],             days:90},
-      {id:'isl365', name:'Island 365D Pass',     price:299, ico:'pass', desc:'Unlimited access at all locations · 365 days',     passName:'Island 365D Range Pass',     locations:['West Coast','Chai Chee'], days:365},
+      {id:'wc30',   name:'30D West Coast Pass',  price:35,  ico:'pass', desc:'Unlimited range access at West Coast · 30 days',   passName:'30D West Coast Pass',  locations:['West Coast'],            days:30},
+      {id:'wc90',   name:'90D West Coast Pass',  price:90,  ico:'pass', desc:'Unlimited range access at West Coast · 90 days',   passName:'90D West Coast Pass',  locations:['West Coast'],            days:90},
+      {id:'cc30',   name:'30D Chai Chee Pass',   price:35,  ico:'pass', desc:'Unlimited range access at Chai Chee · 30 days',    passName:'30D Chai Chee Pass',   locations:['Chai Chee'],             days:30},
+      {id:'cc90',   name:'90D Chai Chee Pass',   price:90,  ico:'pass', desc:'Unlimited range access at Chai Chee · 90 days',    passName:'90D Chai Chee Pass',   locations:['Chai Chee'],             days:90},
+      {id:'isl365', name:'365D Island Pass',     price:299, ico:'pass', desc:'Unlimited access at all locations · 365 days',     passName:'365D Island Pass',     locations:['West Coast','Chai Chee'], days:365},
     ]
   },
   {
@@ -504,12 +504,12 @@ function openCheckout(id){
 const HISTORY = [
   {idx:0, date:'1 May 2026',  month:'2026-05', name:'90D West Coast Locker Access', type:'locker', price:35,  method:'PayNow', status:'active',  ref:'SY20260501143022',
    detail:{lockerName:'90D West Coast Locker Access', locations:['West Coast'], validity:'1 May 2026 – 30 Jul 2026'}},
-  {idx:1, date:'5 Apr 2026',  month:'2026-04', name:'West Coast 90D Pass',          type:'pass',   price:90,  method:'Card',   status:'active',  ref:'WC20260405092215',
-   detail:{passName:'West Coast 90D Range Pass', locations:['West Coast'], validity:'5 Apr 2026 – 4 Jul 2026'}},
+  {idx:1, date:'5 Apr 2026',  month:'2026-04', name:'90D West Coast Pass',          type:'pass',   price:90,  method:'Card',   status:'active',  ref:'WC20260405092215',
+   detail:{passName:'90D West Coast Pass', locations:['West Coast'], validity:'5 Apr 2026 – 4 Jul 2026'}},
   {idx:2, date:'5 Apr 2026',  month:'2026-04', name:'Intermediate Archery Course (Recurve)', type:'act', subtype:'prepaid',  price:240, method:'PayNow', ref:'SY20260405110034',
    detail:{bookingCodes:['BK-20260405-012']}},
   {idx:3, date:'12 Apr 2026', month:'2026-04', name:'Range Practice',               type:'act',    subtype:'postpaid', price:24,  method:'POS',    ref:'SY20260412180012',
-   detail:{venue:'West Coast Range 2', bowStyle:'Recurve', billedDuration:'2 hr', bookingCodes:['BK-20260412-027','BK-20260412-028'], voucherCode:'WELCOME10'}},
+   detail:{venue:'West Coast 2', bowStyle:'Recurve', billedDuration:'2 hr', bookingCodes:['BK-20260412-027','BK-20260412-028'], voucherCode:'WELCOME10'}},
   {idx:4, date:'20 Mar 2026', month:'2026-03', name:'12 RP Credits',                type:'credit', price:48,  method:'PayNow', status:'active',  ref:'SY20260320085641',
    detail:{credits:'12 × Range Practice', validity:'20 Mar 2026 – 18 Jun 2026'}},
   {idx:5, date:'5 Mar 2026',  month:'2026-03', name:'Basic Archery Course (Recurve)', type:'act', subtype:'prepaid', price:180, method:'PayNow', ref:'SY20260305093115',
@@ -517,7 +517,7 @@ const HISTORY = [
   {idx:6, date:'15 Feb 2026', month:'2026-02', name:'12 MC Credits w/ Pass',        type:'combo',  price:300, method:'Card',   status:'expired', ref:'SY20260215143328',
    detail:{components:[
      {head:'Credits',    rows:[{l:'Credits', v:'12 × Master Class'},{l:'Validity', v:'15 Feb 2026 – 16 May 2026'}]},
-     {head:'Range Pass', rows:[{l:'Pass Name', v:'West Coast 90D Range Pass'},{l:'Location(s)', v:'West Coast'},{l:'Validity', v:'15 Feb 2026 – 16 May 2026'}]}
+     {head:'Range Pass', rows:[{l:'Pass Name', v:'90D West Coast Pass'},{l:'Location(s)', v:'West Coast'},{l:'Validity', v:'15 Feb 2026 – 16 May 2026'}]}
    ]}},
 ];
 
@@ -645,17 +645,7 @@ renderCatalog();
 renderHistMonthBar();
 renderHistory();
 </script>
-<script>
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  document.body.classList.remove(DEV);
-  document.body.classList.add(LOFI);
-  localStorage.setItem(KEY,'client');
-  (function(){setForm(localStorage.getItem('wf-form')||'phone');})();
-})();
-</script>
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();

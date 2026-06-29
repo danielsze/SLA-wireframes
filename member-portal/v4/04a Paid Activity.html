@@ -772,15 +772,7 @@ function setForm(m){
   frame.classList.toggle('desktop', m === 'desktop');
 }
 
-// ── Mode toggle (canonical) ──
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  document.body.classList.remove(DEV);
-  document.body.classList.add(LOFI);
-  localStorage.setItem(KEY,'client');
-})();
+document.body.classList.add("lofi");
 </script>
 </body>
 </html>

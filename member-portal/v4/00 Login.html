@@ -316,7 +316,7 @@ body.lofi .login-inner{background:#f5f3f0;border:1px solid #ccc;}
                 <span class="avatar sm olive">CT</span>
                 <span class="psp-text">
                   <div class="psp-name">Caleb Tan</div>
-                  <div class="psp-meta">Master Class &middot; 16 y.o.</div>
+                  <div class="psp-meta">Master Class &middot; 16 yrs</div>
                 </span>
                 <span class="psp-chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               </button>
@@ -324,7 +324,7 @@ body.lofi .login-inner{background:#f5f3f0;border:1px solid #ccc;}
                 <span class="avatar sm slate">ML</span>
                 <span class="psp-text">
                   <div class="psp-name">Mei Lin Tan</div>
-                  <div class="psp-meta">Master Class &middot; 42 y.o.</div>
+                  <div class="psp-meta">Master Class &middot; 42 yrs</div>
                 </span>
                 <span class="psp-chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               </button>
@@ -402,16 +402,6 @@ function setForm(m) {
   localStorage.setItem('wf-form', m);
 }
 </script>
-<script>
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  document.body.classList.remove(DEV);
-  document.body.classList.add(LOFI);
-  localStorage.setItem(KEY,'client');
-  (function(){setForm(localStorage.getItem('wf-form')||'phone');})();
-})();
-</script>
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
 </body>
 </html>

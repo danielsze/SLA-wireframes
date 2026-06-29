@@ -180,6 +180,13 @@ svg{display:block;}
   .rf-sub{font-size:11px;color:var(--color-text-secondary);}
   .wlt-feed{max-width:640px;margin:0 auto;padding:32px 40px 48px;}
 }
+/* Club-role demo toggle (dev affordance, not a real app control) */
+.role-bar{display:flex;align-items:center;gap:10px;width:100%;max-width:1180px;margin:0 auto 14px;flex-wrap:wrap;}
+.role-bar .rb-lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#A89880;}
+.role-bar .pills{display:flex;gap:6px;flex-wrap:wrap;}
+.role-bar .pill-btn{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full,999px);padding:5px 13px;cursor:pointer;transition:all var(--duration-fast,.15s);white-space:nowrap;}
+.role-bar .pill-btn.on{background:var(--color-primary);border-color:var(--color-primary);color:#fff;}
+.txn-who{font-weight:700;color:var(--color-text-primary);}
 </style>
 <link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
 </head>
@@ -202,6 +209,14 @@ svg{display:block;}
         <svg width="15" height="12" viewBox="0 0 26 20" fill="none"><rect x="1" y="1" width="24" height="14" rx="2" stroke="currentColor" stroke-width="2"/><line x1="7" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         Desktop
       </button>
+    </div>
+  </div>
+
+  <div class="role-bar">
+    <span class="rb-lbl">Club credits</span>
+    <div class="pills">
+      <button class="pill-btn" onclick="setCredit(false,this)">No access · use_credit N</button>
+      <button class="pill-btn on" onclick="setCredit(true,this)">Can use credits · use_credit Y</button>
     </div>
   </div>
 
@@ -278,8 +293,10 @@ svg{display:block;}
               </div>
             </div>
 
-            <!-- Club Credits -->
-            <div class="wlt-card" onclick="openHistory('CL')">
+            <!-- Club Credits (access-gated) -->
+            <div class="client-note">💡 <strong>Club Credits (CC) card is access-gated</strong> — hidden for plain members; shown when the member can use club credits (<code>use_credit = Y</code>) or is a club admin.</div>
+            <div class="dev-note" id="ccDevNote">💡 The ledger shows the <strong>consuming archer's name</strong> on each debit, for anyone with access. Member-level visibility of the club balance is still TBC with the client.</div>
+            <div class="wlt-card" id="ccCard" onclick="openHistory('CL')">
               <div class="wc-top">
                 <span class="wc-ico info">CC</span>
                 <div class="wc-meta">
@@ -409,12 +426,12 @@ svg{display:block;}
         <div class="sheet-scroll">
           <button class="prof-item active" onclick="setProfile('Caleb Tan','CT','olive',this)">
             <span class="avatar olive">CT</span>
-            <span class="pi-text"><div class="pi-name">Caleb Tan</div><div class="pi-meta">Master Class &middot; 16 y.o.</div></span>
+            <span class="pi-text"><div class="pi-name">Caleb Tan</div><div class="pi-meta">Master Class &middot; 16 yrs</div></span>
             <span class="pi-chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </button>
           <button class="prof-item" onclick="setProfile('Mei Lin Tan','ML','slate',this)">
             <span class="avatar slate">ML</span>
-            <span class="pi-text"><div class="pi-name">Mei Lin Tan</div><div class="pi-meta">Master Class &middot; 42 y.o.</div></span>
+            <span class="pi-text"><div class="pi-name">Mei Lin Tan</div><div class="pi-meta">Master Class &middot; 42 yrs</div></span>
           </button>
         </div>
       </div>
@@ -461,28 +478,29 @@ const WALLET_META={
 };
 const TXNS={
   RP:[
-    {date:'Today, 5 Jun',type:'debit', desc:'Range Practice',           sub:'Booking for 6 Jun · West Coast',              amt:-2},
-    {date:'10 May',      type:'credit',desc:'Booking cancelled',        sub:'Booking for 11 May · West Coast',              amt:+2},
-    {date:'20 Apr',      type:'credit',desc:'RP credit top-up',        sub:'Online · ref TU-20260420-007',                  amt:+12},
-    {date:'15 Apr',      type:'credit',desc:'Admin adjustment',         sub:'Credit correction · ref ADJ-20260415-002',     amt:+2},
-    {date:'8 Apr',       type:'debit', desc:'Admin adjustment',         sub:'Duplicate charge reversed · ref ADJ-20260408-001', amt:-1},
+    {date:'Today, 5 Jun',type:'debit', desc:'Range Practice',     sub:'6 Jun · West Coast',        amt:-2},
+    {date:'10 May',      type:'credit',desc:'Booking cancelled',  sub:'11 May · West Coast',       amt:+2},
+    {date:'20 Apr',      type:'credit',desc:'Credit Top-up',      sub:'ref TU-20260420-007',       amt:+12},
+    {date:'15 Apr',      type:'credit',desc:'Admin adjustment',   sub:'Credit correction',         amt:+2},
+    {date:'8 Apr',       type:'debit', desc:'Admin adjustment',   sub:'Duplicate charge reversed', amt:-1},
   ],
   JY:[
-    {date:'Today, 5 Jun',type:'debit', desc:'Master Class lesson',      sub:'Booking for 21 Jun · West Coast',             amt:-1},
-    {date:'12 May',      type:'credit',desc:'Booking cancelled',        sub:'Booking for 13 May · West Coast',              amt:+1},
-    {date:'1 May',       type:'credit',desc:'JY credit top-up',        sub:'Online · ref TU-20260501-009',                  amt:+10},
-    {date:'20 Apr',      type:'credit',desc:'Admin adjustment',         sub:'Complimentary credit · ref ADJ-20260420-003',  amt:+1},
+    {date:'Today, 5 Jun',type:'debit', desc:'Junior Youth',       sub:'21 Jun · West Coast',       amt:-1},
+    {date:'12 May',      type:'credit',desc:'Booking cancelled',  sub:'13 May · West Coast',       amt:+1},
+    {date:'1 May',       type:'credit',desc:'Credit Top-up',      sub:'ref TU-20260501-009',       amt:+10},
+    {date:'20 Apr',      type:'credit',desc:'Admin adjustment',   sub:'Complimentary credit',      amt:+1},
   ],
   MC:[
-    {date:'Today, 5 Jun',type:'debit', desc:'Master Class',             sub:'Booking for 9 Jun · Chai Chee',               amt:-1},
-    {date:'8 Apr',       type:'debit', desc:'Admin adjustment',         sub:'Session charge applied · ref ADJ-20260408-005',amt:-1},
-    {date:'5 Apr',       type:'credit',desc:'MC credit top-up',        sub:'Online · ref TU-20260405-003',                  amt:+2},
+    {date:'Today, 5 Jun',type:'debit', desc:'Master Class',       sub:'9 Jun · Chai Chee',         amt:-1},
+    {date:'8 Apr',       type:'debit', desc:'Admin adjustment',   sub:'Session charge applied',    amt:-1},
+    {date:'5 Apr',       type:'credit',desc:'Credit Top-up',      sub:'ref TU-20260405-003',       amt:+2},
   ],
   CL:[
-    {date:'2 Jun',  type:'debit', desc:'Range Practice',                sub:'West Coast · allocated by SDSC',               amt:-1},
-    {date:'28 May', type:'debit', desc:'Range Practice',                sub:'West Coast · allocated by SDSC',               amt:-1},
-    {date:'20 May', type:'credit',desc:'Admin adjustment',              sub:'Allocation correction · ref ADJ-20260520-008', amt:+1},
-    {date:'1 May',  type:'credit',desc:'SDSC club allocation',         sub:'Monthly allocation · ref SDSC-MAY-2026',         amt:+14},
+    {date:'2 Jun',  type:'debit', desc:'Range Practice',  who:'Caleb Tan',    sub:'West Coast · 3 Jun',  amt:-1},
+    {date:'28 May', type:'debit', desc:'Range Practice',  who:'Mei Lin Tan',  sub:'West Coast · 29 May', amt:-1},
+    {date:'24 May', type:'debit', desc:'Range Practice',  who:'Jonas Lim',    sub:'Chai Chee · 25 May',  amt:-1},
+    {date:'20 May', type:'credit',desc:'Admin adjustment',                    sub:'Allocation correction', amt:+1},
+    {date:'1 May',  type:'credit',desc:'Credit Top-up',                       sub:'ref SDSC-MAY-2026',   amt:+15},
   ],
 };
 const ICO_D='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M8 12h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
@@ -527,25 +545,27 @@ function openHistory(wallet){
         const ico=t.type==='credit'?ICO_C:ICO_D;
         const amtStr=(t.amt>0?'+':t.amt<0?'−':'')+Math.abs(t.amt)+' '+unit;
         const ac=t.amt>0?'txn-amt pos':'txn-amt';
-        html+='<div class="txn-row"><span class="txn-ico '+ic+'">'+ico+'</span><div class="txn-body"><div class="txn-desc">'+t.desc+'</div><div class="txn-sub">'+t.sub+'</div></div><div class="txn-right"><div class="'+ac+'">'+amtStr+'</div></div></div>';
+        // Club ledger: always surface the consuming archer's name.
+        let sub=t.sub;
+        if(wallet==='CL' && t.who){ sub = '<span class="txn-who">'+t.who+'</span> · '+t.sub; }
+        html+='<div class="txn-row"><span class="txn-ico '+ic+'">'+ico+'</span><div class="txn-body"><div class="txn-desc">'+t.desc+'</div><div class="txn-sub">'+sub+'</div></div><div class="txn-right"><div class="'+ac+'">'+amtStr+'</div></div></div>';
       });
     });
   }
   document.getElementById('histBody').innerHTML=html;
   document.getElementById('sheetHistory').classList.add('open');
 }
+/* Club-credit demo: gates the CC wallet card on use_credit (Y/N). */
+function setCredit(canUse,el){
+  document.querySelectorAll('.role-bar .pill-btn').forEach(p=>p.classList.remove('on'));
+  if(el)el.classList.add('on');
+  const cc=document.getElementById('ccCard');
+  const note=document.getElementById('ccDevNote');
+  if(cc)cc.style.display=canUse?'':'none';
+  if(note)note.style.display=canUse?'':'none';
+}
 </script>
-<script>
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  document.body.classList.remove(DEV);
-  document.body.classList.add(LOFI);
-  localStorage.setItem(KEY,'client');
-  (function(){setForm(localStorage.getItem('wf-form')||'phone');})();
-})();
-</script>
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();

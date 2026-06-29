@@ -262,11 +262,11 @@ const ITEM_MAP = {
   pc4:  {id:'pc4',  name:'4 PC Credits',   price:120, ico:'credit', desc:'4 private coaching sessions with instructor · valid 90 days',  creditType:'Private Coaching', qty:4,  days:90},
   pc12: {id:'pc12', name:'12 PC Credits',  price:280, ico:'credit', desc:'12 private coaching sessions with instructor · valid 90 days', creditType:'Private Coaching', qty:12, days:90},
   /* Passes */
-  wc30:   {id:'wc30',   name:'West Coast 30D Pass',  price:35,  ico:'pass', desc:'Unlimited range access at West Coast · 30 days',   passName:'West Coast 30D Range Pass',  locations:['West Coast'],             days:30, auto_discount:{saving:3.50}},
-  wc90:   {id:'wc90',   name:'West Coast 90D Pass',  price:90,  ico:'pass', desc:'Unlimited range access at West Coast · 90 days',   passName:'West Coast 90D Range Pass',  locations:['West Coast'],             days:90},
-  cc30:   {id:'cc30',   name:'Chai Chee 30D Pass',   price:35,  ico:'pass', desc:'Unlimited range access at Chai Chee · 30 days',    passName:'Chai Chee 30D Range Pass',   locations:['Chai Chee'],              days:30},
-  cc90:   {id:'cc90',   name:'Chai Chee 90D Pass',   price:90,  ico:'pass', desc:'Unlimited range access at Chai Chee · 90 days',    passName:'Chai Chee 90D Range Pass',   locations:['Chai Chee'],              days:90},
-  isl365: {id:'isl365', name:'Island 365D Pass',     price:299, ico:'pass', desc:'Unlimited access at all locations · 365 days',     passName:'Island 365D Range Pass',     locations:['West Coast','Chai Chee'], days:365},
+  wc30:   {id:'wc30',   name:'30D West Coast Pass',  price:35,  ico:'pass', desc:'Unlimited range access at West Coast · 30 days',   passName:'30D West Coast Pass',  locations:['West Coast'],             days:30, auto_discount:{saving:3.50}},
+  wc90:   {id:'wc90',   name:'90D West Coast Pass',  price:90,  ico:'pass', desc:'Unlimited range access at West Coast · 90 days',   passName:'90D West Coast Pass',  locations:['West Coast'],             days:90},
+  cc30:   {id:'cc30',   name:'30D Chai Chee Pass',   price:35,  ico:'pass', desc:'Unlimited range access at Chai Chee · 30 days',    passName:'30D Chai Chee Pass',   locations:['Chai Chee'],              days:30},
+  cc90:   {id:'cc90',   name:'90D Chai Chee Pass',   price:90,  ico:'pass', desc:'Unlimited range access at Chai Chee · 90 days',    passName:'90D Chai Chee Pass',   locations:['Chai Chee'],              days:90},
+  isl365: {id:'isl365', name:'365D Island Pass',     price:299, ico:'pass', desc:'Unlimited access at all locations · 365 days',     passName:'365D Island Pass',     locations:['West Coast','Chai Chee'], days:365},
   /* Lockers */
   lkcc30: {id:'lkcc30', name:'30D Chai Chee Locker Access',  price:15, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 30 days', lockerName:'30D Chai Chee Locker Access',  locations:['Chai Chee'],  days:30},
   lkcc90: {id:'lkcc90', name:'90D Chai Chee Locker Access',  price:35, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 90 days', lockerName:'90D Chai Chee Locker Access',  locations:['Chai Chee'],  days:90},
@@ -487,15 +487,7 @@ function confirmPayment(){
   foot.innerHTML = `<button class="btn btn-primary" onclick="goBack()">Done</button>`;
 }
 
-// ── Mode toggle (canonical) ──
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  document.body.classList.remove(DEV);
-  document.body.classList.add(LOFI);
-  localStorage.setItem(KEY,'client');
-})();
+document.body.classList.add("lofi");
 
 /* ── Init ── */
 (function(){

@@ -484,7 +484,7 @@ svg{ display:block; }
                     <div class="ann-top">
                       <span class="ann-time">1h ago</span>
                     </div>
-                    <div class="ann-title">West Coast Range 1 reserved for event</div>
+                    <div class="ann-title">West Coast 1 reserved for event</div>
                     <div class="ann-text">6 lanes · 2:00 – 5:00 PM</div>
                   </div>
                 </div>
@@ -551,7 +551,7 @@ svg{ display:block; }
                   <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">6</div></div>
                   <div class="book-info">
                     <div class="bi-title">Range Practice <span class="tag tag-practice">Practice</span></div>
-                    <div class="bi-meta">Range 3 · West Coast · 9:00 – 11:00 AM</div>
+                    <div class="bi-meta">West Coast 3 · 9:00 – 11:00 AM</div>
                   </div>
                   <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 </div>
@@ -559,7 +559,7 @@ svg{ display:block; }
                   <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">9</div></div>
                   <div class="book-info">
                     <div class="bi-title">Private Coaching <span class="tag tag-private">Private</span></div>
-                    <div class="bi-meta">Range 1 · Chai Chee · 4:00 – 5:00 PM</div>
+                    <div class="bi-meta">Chai Chee 1 · 4:00 – 5:00 PM</div>
                   </div>
                   <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 </div>
@@ -632,11 +632,11 @@ svg{ display:block; }
         <div class="sh-sub">Bookings, credits & passes all change with the active profile.</div>
         <button class="prof-item active" onclick="setProfile('Caleb Tan','CT','olive','Master Class',this)">
           <span class="avatar olive">CT</span>
-          <span class="pi-text"><div class="pi-name">Caleb Tan</div><div class="pi-meta">Master Class · 8 yrs</div></span>
+          <span class="pi-text"><div class="pi-name">Caleb Tan</div><div class="pi-meta">Master Class · 16 yrs</div></span>
         </button>
         <button class="prof-item" onclick="setProfile('Mei Lin Tan','ML','slate','Master Class',this)">
           <span class="avatar slate">ML</span>
-          <span class="pi-text"><div class="pi-name">Mei Lin Tan</div><div class="pi-meta">Master Class · 11 yrs</div></span>
+          <span class="pi-text"><div class="pi-name">Mei Lin Tan</div><div class="pi-meta">Master Class · 42 yrs</div></span>
         </button>
       </div>
 
@@ -695,8 +695,8 @@ function setProfile(name,initials,cls,youth,el){
 
 /* ─── Booking detail modal ─── */
 const BOOKINGS={
-  'b1':{title:'Range Practice',date:'Sat, 6 Jun 2026',venue:'Range 3 · West Coast',time:'9:00 – 11:00 AM',status:'Confirmed',showCode:false,canCancel:false},
-  'b2':{title:'Private Coaching',date:'Tue, 9 Jun 2026',venue:'Range 1 · Chai Chee',time:'4:00 – 5:00 PM',status:'Confirmed',showCode:false,canCancel:false},
+  'b1':{title:'Range Practice',date:'Sat, 6 Jun 2026',venue:'West Coast 3',time:'9:00 – 11:00 AM',status:'Confirmed',showCode:false,canCancel:false},
+  'b2':{title:'Private Coaching',date:'Tue, 9 Jun 2026',venue:'Chai Chee 1',time:'4:00 – 5:00 PM',status:'Confirmed',showCode:false,canCancel:false},
 };
 function openBookingDetail(id){
   const b=BOOKINGS[id];
@@ -750,17 +750,7 @@ function goSignin(){if(selectedLoc)localStorage.setItem('wf-signin-loc',selected
 function goSigninCode(){if(selectedLoc)localStorage.setItem('wf-signin-loc',selectedLoc);localStorage.setItem('wf-signin-substep','code');location.href='05%20Sign-in%20%2B%20Sign-out.html'+(selectedLoc?'?loc='+encodeURIComponent(selectedLoc):'');}
 function goNewBooking(){localStorage.setItem('wf-open-booking','1');location.href='02%20Make%20a%20Booking.html?new=1';}
 </script>
-<script>
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  document.body.classList.remove(DEV);
-  document.body.classList.add(LOFI);
-  localStorage.setItem(KEY,'client');
-  (function(){setForm(localStorage.getItem('wf-form')||'phone');})();
-})();
-</script>
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();

@@ -75,6 +75,9 @@ svg{display:block;}
 
 /* ── Me feed ── */
 .me-feed{padding:var(--space-md) var(--space-md) 36px;display:flex;flex-direction:column;gap:var(--space-md);}
+/* While editing profile, show only the edit form — hide everything else */
+.me-feed.prof-editing > *{display:none!important;}
+.me-feed.prof-editing > #profileEditCard{display:block!important;}
 
 /* Hero */
 .me-hero{background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-1);padding:var(--space-lg) var(--space-md) var(--space-md);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
@@ -89,6 +92,8 @@ svg{display:block;}
 .chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:var(--radius-full);white-space:nowrap;}
 .chip-group{background:rgba(90,94,30,.13);color:#464a13;}
 .chip-bow{background:var(--color-surface-variant);color:var(--color-text-secondary);border:1px solid var(--color-border-subtle);}
+/* Club-admin entry row chevron */
+.club-chevron{color:var(--color-text-disabled);flex-shrink:0;}
 .ro-tag{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--color-surface-highest);color:var(--color-text-disabled);padding:2px 7px;border-radius:var(--radius-full);white-space:nowrap;}
 
 /* Settings card */
@@ -410,7 +415,16 @@ svg{display:block;}
               </div>
               <div class="irow">
                 <span class="ir-lbl">Student expiry</span>
-                <span class="ir-val">31 Dec 2025</span>
+                <span class="ir-val">31 Dec 2026</span>
+              </div>
+            </div>
+
+            <!-- ── Manage club (club admins only) ── -->
+            <div class="client-note">💡 <strong>"Manage Club" is visible to club admins only.</strong> Members without the admin role don't see this entry. Gated by <code>club_role = admin</code>.</div>
+            <div class="scard">
+              <div class="pw-nav-row" style="border-top:none;" onclick="location.href='06a%20Club.html'">
+                <span style="flex:1;font-size:14px;font-weight:700;color:var(--color-text-primary);">Manage Club</span>
+                <span class="club-chevron"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               </div>
             </div>
 
@@ -525,7 +539,7 @@ svg{display:block;}
                   <span class="avatar sm olive">CT</span>
                   <span class="pr-text">
                     <div class="pr-name">Caleb Tan</div>
-                    <div class="pr-meta">Master Class · 16 y.o.</div>
+                    <div class="pr-meta">Master Class · 16 yrs</div>
                   </span>
                   <button class="txt-btn sm danger" onclick="delinkProfile('CT','Caleb Tan','Master Class')">Delink</button>
                 </div>
@@ -533,7 +547,7 @@ svg{display:block;}
                   <span class="avatar sm slate">ML</span>
                   <span class="pr-text">
                     <div class="pr-name">Mei Lin Tan</div>
-                    <div class="pr-meta">Master Class · 42 y.o.</div>
+                    <div class="pr-meta">Master Class · 42 yrs</div>
                   </span>
                   <button class="txt-btn sm danger" onclick="delinkProfile('ML','Mei Lin Tan','Master Class')">Delink</button>
                 </div>
@@ -585,14 +599,14 @@ svg{display:block;}
           <span class="avatar sm olive">CT</span>
           <span class="psp-text">
             <div class="psp-name">Caleb Tan</div>
-            <div class="psp-meta">Master Class &middot; 16 y.o.</div>
+            <div class="psp-meta">Master Class &middot; 16 yrs</div>
           </span>
         </button>
         <button class="ps-prof-item" onclick="switchProfile('Mei Lin Tan','ML','slate',this)">
           <span class="avatar sm slate">ML</span>
           <span class="psp-text">
             <div class="psp-name">Mei Lin Tan</div>
-            <div class="psp-meta">Master Class &middot; 42 y.o.</div>
+            <div class="psp-meta">Master Class &middot; 42 yrs</div>
           </span>
         </button>
       </div>
@@ -815,6 +829,7 @@ function saveEmail(){
 let profEditing=false;
 function enterProfileEdit(){
   profEditing=true;
+  document.querySelector('.me-feed').classList.add('prof-editing');
   document.getElementById('profileViewCard').style.display='none';
   document.getElementById('characteristicsCard').style.display='none';
   document.getElementById('profileEditCard').style.display='';
@@ -822,6 +837,7 @@ function enterProfileEdit(){
 }
 function cancelProfileEdit(){
   profEditing=false;
+  document.querySelector('.me-feed').classList.remove('prof-editing');
   document.getElementById('profileViewCard').style.display='';
   document.getElementById('characteristicsCard').style.display='';
   document.getElementById('profileEditCard').style.display='none';
@@ -972,17 +988,7 @@ function applyState(state,pill){
   }
 }
 </script>
-<script>
-(function(){
-  var KEY='wf-mode';
-  var DEV='devmode';
-  var LOFI='lofi';
-  document.body.classList.remove(DEV);
-  document.body.classList.add(LOFI);
-  localStorage.setItem(KEY,'client');
-  (function(){setForm(localStorage.getItem('wf-form')||'phone');})();
-})();
-</script>
+<script>document.body.classList.add("lofi");if(typeof setForm==="function")setForm("phone");</script>
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();

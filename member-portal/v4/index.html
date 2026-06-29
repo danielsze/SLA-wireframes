@@ -41,7 +41,7 @@
   <div class="wrap">
     <p class="eyebrow">Salt Light Archery · Updated 27 Jun 2026</p>
     <h1>Member Portal</h1>
-    <p class="lede">Nine screens. This published version is locked to Client view for review.</p>
+    <p class="lede">Ten screens. Each opens in Client view by default; use the <strong>Client / Dev notes toggle</strong> (bottom-left of each screen) to flip between greyscale client review and annotated hi-fi review. Your choice persists across all screens.</p>
 
     <div class="grid">
       <a class="card" href="./00%20Login.html"><span class="num">00</span><span class="title">Login</span><span class="desc">Sign in + profile selector</span></a>
@@ -50,16 +50,15 @@
       <a class="card" href="./03%20Wallet.html"><span class="num">03</span><span class="title">Wallet</span><span class="desc">Credits, passes, transactions</span></a>
       <a class="card" href="./04%20Shop.html"><span class="num">04</span><span class="title">Shop</span><span class="desc">Packages, passes, HitPay checkout</span></a>
       <a class="card" href="./04a%20Paid%20Activity.html?act=basic-plus"><span class="num">04a</span><span class="title">Paid Activity</span><span class="desc">Activity detail · location · date/time · HitPay · success / failure / pending</span></a>
-      <a class="card" href="./04b%20Checkout.html?item=rp4"><span class="num">04b</span><span class="title">Checkout</span><span class="desc">Package / pass checkout · voucher · HitPay · payment confirmed</span></a>
+      <a class="card" href="./04b%20Checkout.html?item=rp4"><span class="num">04b</span><span class="title">Checkout</span><span class="desc">Credits · passes · lockers · combos · HitPay · success</span></a>
       <a class="card" href="./05%20Sign-in%20%2B%20Sign-out.html"><span class="num">05</span><span class="title">Sign-in + Sign-out</span><span class="desc">Range entry / exit</span></a>
       <a class="card" href="./06%20Me.html"><span class="num">06</span><span class="title">Me</span><span class="desc">Profile, settings, password</span></a>
+      <a class="card" href="./06a%20Club.html"><span class="num">06a</span><span class="title">Club Members</span><span class="desc">Club-admin only · member list, credit-access toggle, remove</span></a>
     </div>
 
     <div class="note">
-      <strong>Client review version:</strong> v4 is published in greyscale Client view only. Dev notes remain in the source wireframes for internal review.
+      <strong>Three style layers:</strong> <code>tokens.css</code> (shared values) · each screen's embedded styles (layout) · <code>wireframe-skin.css</code> (Client view override, scoped to <code>body.lofi</code>). Editing structure in a screen updates both Client and Dev notes views automatically.
     </div>
-
-    <p class="ref">← <a href="../../index.html">Back to all drafts</a></p>
   </div>
 </body>
 </html>
