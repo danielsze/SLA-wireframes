@@ -47,9 +47,8 @@ svg{display:block;}
 
 /* Range choice chips */
 .range-chips{display:flex;gap:8px;flex-wrap:wrap;}
-.range-chip{padding:8px 16px;border-radius:var(--radius-full);border:var(--border-subtle) solid var(--color-border-emphasis);font-size:13px;font-weight:700;background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;position:relative;}
+.range-chip{padding:8px 16px;border-radius:var(--radius-full);border:var(--border-subtle) solid var(--color-border-emphasis);font-size:13px;font-weight:700;background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;}
 .range-chip.sel{background:var(--color-primary);color:var(--color-on-primary);border-color:var(--color-primary);}
-.range-chip .count-badge{position:absolute;top:-6px;right:-6px;background:var(--color-primary);color:var(--color-on-primary);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;font-size:10px;font-weight:700;border:2px solid var(--color-surface);}
 
 /* Stats panel */
 .stats-row{display:flex;gap:16px;margin:16px 0;overflow-x:auto;padding-bottom:4px;}
@@ -77,8 +76,6 @@ table.access td{padding:10px 12px;border-bottom:var(--border-subtle) solid var(-
 table.access td.name{color:var(--color-info);font-weight:700;text-decoration:underline;cursor:pointer;text-transform:uppercase;}
 table.access td.comment{max-width:140px;white-space:normal;color:var(--color-text-secondary);}
 table.access td.pass{max-width:120px;white-space:normal;}
-.pass-with-badge{display:flex;align-items:center;gap:8px;}
-.pass-more-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-on-primary);font-size:11px;font-weight:700;}
 .row-out{opacity:.7;}
 .arrow-icon{font-size:15px;}
 .arrow-icon.ok{color:var(--color-text-secondary);}
@@ -114,14 +111,22 @@ table.access td.pass{max-width:120px;white-space:normal;}
 .dlg-btn.primary{background:var(--color-primary);color:var(--color-on-primary);}
 .textarea-mock{min-height:52px;}
 
-/* Bill table in settlement dialog */
-.bill-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px;}
-.bill-table th{text-align:left;font-weight:700;color:var(--color-text-secondary);padding:8px 10px;border-bottom:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface-variant);}
-.bill-table td{padding:8px 10px;border-bottom:var(--border-subtle) solid var(--color-border-subtle);vertical-align:top;}
-.bill-table td.amount{text-align:right;font-weight:700;color:var(--color-text-primary);}
-.bill-table td.unit{text-align:center;color:var(--color-text-secondary);}
+/* Settlement dialog: session summary strip */
 .settlement-summary{display:flex;flex-direction:column;gap:6px;padding:12px;background:var(--color-surface-variant);border-radius:var(--radius-sm);font-size:12px;}
 .summary-line{display:flex;justify-content:space-between;align-items:center;}
+
+/* Settlement dialog: per-sale-record bill sections (1 section = 1 sale record = 1 package) */
+.sale-section{border-radius:var(--radius-md);border:var(--border-subtle) solid var(--color-border-subtle);overflow:hidden;}
+.sale-section-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--color-surface-variant);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.sale-section-title{font-size:13px;font-weight:800;color:var(--color-text-primary);}
+.sale-section-body{padding:12px 14px;display:flex;flex-direction:column;gap:12px;}
+.sale-line-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:13px;}
+.sale-line-item{font-weight:700;color:var(--color-text-primary);}
+.sale-line-detail{color:var(--color-text-secondary);text-align:right;}
+.sale-total-row{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:var(--border-subtle) solid var(--color-border-subtle);}
+.sale-total-label{font-size:12px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.3px;}
+.sale-total-value{font-size:20px;font-weight:800;color:var(--color-text-primary);}
+.sale-total-value.waived{color:var(--color-success);}
 .settlement-bottom{display:flex;gap:16px;align-items:flex-end;}
 .settlement-bottom .field{flex:1;}
 .final-amount{text-align:right;}
@@ -131,10 +136,12 @@ table.access td.pass{max-width:120px;white-space:normal;}
 /* Phase 2 new element highlighting */
 .p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
 
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
 </head>
-<body class="lofi">
+<body>
 <div class="stage">
   <div class="stage-bar">
     <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
@@ -153,6 +160,7 @@ table.access td.pass{max-width:120px;white-space:normal;}
         <!-- NAV RAIL -->
         <div class="nav-rail">
           <div class="rail-logo">X</div>
+
           <div class="nav-item active"><span class="ic">◔</span><span class="lbl">Range<br>Overview</span></div>
           <div class="nav-item"><span class="ic">▦</span><span class="lbl">Range<br>Timetable</span></div>
           <div class="nav-item"><span class="ic">☰</span><span class="lbl">Bookings</span></div>
@@ -174,9 +182,9 @@ table.access td.pass{max-width:120px;white-space:normal;}
               </div>
             </div>
             <div class="range-chips">
-              <div class="range-chip sel p2-new">Range A<span class="count-badge">3</span></div>
-              <div class="range-chip p2-new">Range B<span class="count-badge">1</span></div>
-              <div class="range-chip p2-new">Range C<span class="count-badge">0</span></div>
+              <div class="range-chip sel p2-new">Range A · 3</div>
+              <div class="range-chip p2-new">Range B · 1</div>
+              <div class="range-chip p2-new">Range C · 0</div>
             </div>
           </div>
 
@@ -192,7 +200,6 @@ table.access td.pass{max-width:120px;white-space:normal;}
             <div class="data-hdr">
               <div class="data-title">Range A (3 Archers)</div>
               <div class="data-actions">
-                <button class="act-btn primary p2-new">+ Sign In</button>
                 <button class="act-btn">⎋ End All Sessions</button>
                 <button class="act-btn">⟳ Refresh</button>
                 <button class="act-btn">📅 5 Jul 2026</button>
@@ -225,7 +232,7 @@ table.access td.pass{max-width:120px;white-space:normal;}
                     <td>9:00 AM – 10:00 AM</td>
                     <td class="name">John Tan</td>
                     <td>9123 4567</td>
-                    <td class="pass"><div class="pass-with-badge p2-new">10-Session Pass<span class="pass-more-pill">+1 more</span></div></td>
+                    <td class="pass"><span class="p2-new">10-Session Pass (+1)</span></td>
                     <td>12 Aug 2026</td>
                     <td>9:02 AM</td>
                     <td>—</td>
@@ -370,40 +377,6 @@ table.access td.pass{max-width:120px;white-space:normal;}
     </div>
   </div>
 
-  <!-- SIGN-IN DIALOG (Phase 2 — NET-NEW) -->
-  <div class="section-divider">
-    <h2>Sign-in dialog (Phase 2 — NET-NEW)</h2>
-    <p>SoW 2.10 · opened from the new + Sign In action · staff-assisted sign-in incl. outside-hours</p>
-  </div>
-  <div class="dialog-mock narrow p2-new">
-    <div class="dlg-title">Range Sign-In</div>
-    <div class="dlg-body">
-      <div class="dlg-section-title">Archer</div>
-      <div class="field"><label>Archer *</label><div class="input editable">John Tan (9123 4567) ▾</div></div>
-
-      <div class="dlg-section-title">Booking</div>
-      <div class="field"><label>Booking</label><div class="input editable">BK-1042 · 9:00 AM – 10:00 AM · Practice ▾</div></div>
-      <div class="hint">Lists the archer's bookings for today within the sign-in window. Select 'Walk-in / outside hours — no booking' to sign in without one (access row created with booking_id = NULL).</div>
-
-      <div class="dlg-section-title">Time In/Out</div>
-      <div class="field-row">
-        <div class="field"><label>Time In (HH:MM)</label><div class="input">auto-generated</div></div>
-        <div class="field"><label>Arrow In *</label><div class="input editable">12</div></div>
-      </div>
-
-      <div class="dlg-section-title">Rental</div>
-      <div class="field"><label>Bow / Arrow Rental</label><div class="input editable">Recurve Set — Beginner ▾</div></div>
-      <div class="hint">Editable for practice activity, mirroring sign-out dialog's rental rule.</div>
-
-      <div class="field"><label>Comment</label><div class="input textarea-mock editable"></div></div>
-      <div class="hint">Multi-line (2 lines), max 120 characters, counter hidden.</div>
-    </div>
-    <div class="dlg-actions">
-      <button class="dlg-btn secondary">Cancel</button>
-      <button class="dlg-btn primary">Ok</button>
-    </div>
-  </div>
-
   <!-- SETTLEMENT DIALOG (Phase 2 — REBUILD of Confirm Sale Payment) -->
   <div class="section-divider">
     <h2>Settlement dialog (Phase 2 — REBUILD of Confirm Sale Payment)</h2>
@@ -418,68 +391,65 @@ table.access td.pass{max-width:120px;white-space:normal;}
         <div class="summary-line"><span>Covered by booking/pass: 1h 30m · Uncovered: 38m</span></div>
       </div>
 
-      <div class="dlg-section-title">Bill</div>
-      <table class="bill-table">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Detail</th>
-            <th>Qty/Hours</th>
-            <th>Unit</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Booked session (covered)</td>
-            <td>BK-1042 · 9:00–10:00 · 10-Session Pass</td>
-            <td>1h 00m</td>
-            <td class="unit">—</td>
-            <td class="amount">$0.00</td>
-          </tr>
-          <tr>
-            <td>Booked session (covered)</td>
-            <td>BK-1051 · 10:30–11:00 · paid booking</td>
-            <td>30m</td>
-            <td class="unit">—</td>
-            <td class="amount">$0.00</td>
-          </tr>
-          <tr>
-            <td>Walk-in gap</td>
-            <td>10:00–10:30 uncovered range time</td>
-            <td>30m</td>
-            <td>$10.00/h</td>
-            <td class="amount">$5.00</td>
-          </tr>
-          <tr>
-            <td>Walk-in gap</td>
-            <td>11:00–11:10 uncovered range time</td>
-            <td>8m</td>
-            <td>$10.00/h</td>
-            <td class="amount">$1.33</td>
-          </tr>
-          <tr>
-            <td>Equipment rental (once per session)</td>
-            <td>Recurve Set — Beginner</td>
-            <td>1</td>
-            <td>$5.00</td>
-            <td class="amount">$5.00</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="settlement-bottom">
-        <div class="field"><label>Discount Type</label><div class="input editable">Fixed ▾</div></div>
-        <div class="field"><label>Discount Value ($)</label><div class="input editable">0.00</div></div>
-        <div class="final-amount">
-          <div class="final-amount-label">Final Amount ($)</div>
-          <div class="final-amount-value">$11.33</div>
+      <div class="dlg-section-title">Range Practice Bill</div>
+      <div class="sale-section">
+        <div class="sale-section-head"><span class="sale-section-title">Range Practice</span></div>
+        <div class="sale-section-body">
+          <div class="sale-line-row">
+            <span class="sale-line-item">Range Practice</span>
+            <span class="sale-line-detail">9:02 AM – 11:10 AM · 2h 08m</span>
+          </div>
+          <div class="sale-total-row">
+            <span class="sale-total-label">2h 08m = </span>
+            <span class="sale-total-value">$11.33</span>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Discount Type</label><div class="input editable">Fixed ▾</div></div>
+            <div class="field"><label>Discount Value ($)</label><div class="input editable">0.00</div></div>
+          </div>
+          <div class="field"><label>Sale Remarks</label><div class="input textarea-mock editable"></div></div>
+          <div class="hint">Multi-line (2 lines), max 120 characters, counter hidden.</div>
         </div>
       </div>
 
-      <div class="dlg-section-title">Sale Remarks</div>
-      <div class="field"><label>Remarks</label><div class="input textarea-mock editable"></div></div>
-      <div class="hint">Multi-line (2 lines), max 120 characters, counter hidden. Always shown regardless of activity/rental sections.</div>
+      <div class="dlg-section-title">Range Practice Bill — variant: fully covered by valid range pass</div>
+      <div class="sale-section">
+        <div class="sale-section-head"><span class="sale-section-title">Range Practice</span></div>
+        <div class="sale-section-body">
+          <div class="sale-line-row">
+            <span class="sale-line-item">Range Practice</span>
+            <span class="sale-line-detail">8:03 AM – 9:10 AM · 1h 07m</span>
+          </div>
+          <div class="sale-total-row">
+            <span class="sale-total-label">1h 07m = </span>
+            <span class="sale-total-value waived">Waived</span>
+          </div>
+          <div class="hint">10-Session Pass fully covers this session — Discount Type/Value and Sale Remarks fields still shown, amount displays "Waived" instead of a dollar figure.</div>
+        </div>
+      </div>
+
+      <div class="dlg-section-title">Equipment Rental Bill</div>
+      <div class="sale-section">
+        <div class="sale-section-head"><span class="sale-section-title">Equipment Rental</span></div>
+        <div class="sale-section-body">
+          <div class="field"><label>Bow / Arrow Rental</label><div class="input editable">Recurve Set — Beginner ▾</div></div>
+          <div class="sale-line-row">
+            <span class="sale-line-item">Rental Price</span>
+            <span class="sale-line-detail">$5.00</span>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Discount Type</label><div class="input editable">Fixed ▾</div></div>
+            <div class="field"><label>Discount Value ($)</label><div class="input editable">0.00</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settlement-bottom">
+        <div class="final-amount">
+          <div class="final-amount-label">Final Amount ($)</div>
+          <div class="final-amount-value">$16.33</div>
+        </div>
+      </div>
     </div>
     <div class="dlg-actions">
       <button class="dlg-btn secondary">Cancel</button>

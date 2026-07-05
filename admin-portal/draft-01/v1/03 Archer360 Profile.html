@@ -90,14 +90,17 @@ svg{display:block;}
 .secondary-section{margin-top:32px;padding-top:20px;border-top:2px dashed var(--color-border-emphasis);}
 .secondary-label{font-size:12px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--color-primary);margin-bottom:10px;}
 
+/* Dev notes */
 
 /* Phase 2 new elements marker */
 .p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
 
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
 </head>
-<body class="lofi">
+<body>
 <div class="stage">
   <div class="stage-bar">
     <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
@@ -142,6 +145,7 @@ svg{display:block;}
                 <span class="chip">Sales</span>
                 <span class="chip">Credits</span>
                 <span class="chip p2-new">Scores</span>
+                <span class="chip p2-new">Passes/Locker</span>
               </div>
             </div>
             <div class="title-btm">
@@ -195,82 +199,11 @@ svg{display:block;}
               </div>
               <div class="info-col">
                 <div class="col-title">Range Pass</div>
-                <div class="ro-field p2-new" style="padding:8px;background:rgba(139,94,21,.08);border-radius:var(--radius-sm);">See Range Pass Holdings below</div>
+                <div class="ro-field p2-new" style="padding:8px;background:rgba(139,94,21,.08);border-radius:var(--radius-sm);">See Passes/Locker tab</div>
                 <div class="ro-field"><label>Certificate(s)</label><div class="val">CERT-2024-0031</div></div>
               </div>
             </div>
-          </div>
 
-          <!-- SECTION A.2: Range Pass Holdings (Phase 2 NET-NEW) -->
-          <div class="data-area p2-new">
-            <div class="data-area-hdr">
-              <div class="data-area-title">Range Pass Holdings</div>
-            </div>
-            <div style="overflow-x:auto;">
-              <table class="dt">
-                <thead>
-                  <tr>
-                    <th>Range Pass</th>
-                    <th>Location(s)</th>
-                    <th>Valid Till</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>10-Session Pass</td>
-                    <td>Bishan, Kallang</td>
-                    <td>12 Aug 2026</td>
-                    <td><span class="icon-btn">✎</span></td>
-                  </tr>
-                  <tr style="background:var(--color-surface-variant);">
-                    <td>10-Session Pass</td>
-                    <td>Bishan, Kallang</td>
-                    <td>5 Oct 2026</td>
-                    <td><span class="icon-btn">✎</span></td>
-                  </tr>
-                  <tr>
-                    <td>Indoor Pass</td>
-                    <td>Kallang</td>
-                    <td>30 Jul 2026</td>
-                    <td><span class="icon-btn">✎</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- SECTION B: Locker Holdings (Phase 2 NET-NEW) -->
-          <div class="data-area p2-new">
-            <div class="data-area-hdr">
-              <div class="data-area-title">Locker Holdings</div>
-            </div>
-            <div style="overflow-x:auto;">
-              <table class="dt">
-                <thead>
-                  <tr>
-                    <th>Locker Package</th>
-                    <th>Location(s)</th>
-                    <th>Valid Till</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Locker — 3 Months</td>
-                    <td>Bishan, Kallang</td>
-                    <td>30 Sep 2026</td>
-                    <td><span class="icon-btn">✎</span></td>
-                  </tr>
-                  <tr style="background:var(--color-surface-variant);">
-                    <td>Locker — 3 Months</td>
-                    <td>Bishan</td>
-                    <td>28 Dec 2026</td>
-                    <td><span class="icon-btn">✎</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
 
           <!-- SECONDARY: Edit Archer Profile dialog — Range Pass section (profile_range_pass.dart) -->
@@ -295,6 +228,8 @@ svg{display:block;}
                 <label>Range Pass Valid Till *</label>
                 <div class="input">02/08/2026</div>
               </div>
+
+
             </div>
           </div>
 
@@ -332,6 +267,7 @@ svg{display:block;}
                   </tbody>
                 </table>
               </div>
+
             </div>
 
             <div class="data-area">
@@ -375,12 +311,14 @@ svg{display:block;}
                 </table>
               </div>
               <div class="pagination">1 - 2 of 2 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
+
             </div>
           </div>
 
           <!-- Reference: other tabs not rendered in full (secondary tabs, code order) -->
           <div class="secondary-section">
             <div class="secondary-label">Other tabs (not rendered here — reference only)</div>
+
           </div>
 
           <!-- SECTION C: Scores tab (Phase 2 NET-NEW) -->
@@ -431,6 +369,7 @@ svg{display:block;}
                   </tbody>
                 </table>
               </div>
+
             </div>
 
             <!-- Add Verified Score dialog mock -->
@@ -438,7 +377,13 @@ svg{display:block;}
               <div class="data-area-title" style="margin-bottom:16px;">Add Verified Score (dialog mock)</div>
               <div class="field">
                 <label>Format *</label>
-                <div class="input" style="background:var(--color-surface-variant);color:var(--color-text-primary);padding:9px 10px;font-size:13px;">WA 18m (60 arrows)</div>
+                <select class="input" style="font-family:inherit;">
+                  <option>WA 18m (60 arrows)</option>
+                  <option>WA 70m (72 arrows)</option>
+                  <option>WA 50m (72 arrows)</option>
+                  <option>Indoor 25m</option>
+                  <option>Training — 30m</option>
+                </select>
               </div>
               <div class="field-row" style="margin-top:12px;">
                 <div class="field">
@@ -459,6 +404,94 @@ svg{display:block;}
                 <button class="btn-text" style="flex:0;">Cancel</button>
                 <button class="btn-text" style="flex:0;">Save</button>
               </div>
+
+            </div>
+          </div>
+
+          <!-- PRIMARY TAB: Passes/Locker (Phase 2 NET-NEW — new ProfileTab enum value) -->
+          <div class="secondary-section">
+            <div class="secondary-label">Passes/Locker tab (Phase 2 — NET-NEW)</div>
+            <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px;">SoW 2.7 · Range Pass Holdings + Locker Holdings, moved here from the Archer tab</div>
+
+            <!-- SECTION A.2: Range Pass Holdings (Phase 2 NET-NEW) -->
+            <div class="data-area p2-new">
+              <div class="data-area-hdr">
+                <div class="data-area-title">Range Pass Holdings</div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Range Pass</th>
+                      <th>Location(s)</th>
+                      <th>Valid From</th>
+                      <th>Valid Till</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>10-Session Pass</td>
+                      <td>Bishan, Kallang</td>
+                      <td>13 Jun 2026</td>
+                      <td>12 Aug 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>10-Session Pass</td>
+                      <td>Bishan, Kallang</td>
+                      <td>6 Aug 2026</td>
+                      <td>5 Oct 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                    <tr>
+                      <td>Indoor Pass</td>
+                      <td>Kallang</td>
+                      <td>1 Jul 2026</td>
+                      <td>30 Jul 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+            <!-- SECTION B: Locker Holdings (Phase 2 NET-NEW) -->
+            <div class="data-area p2-new">
+              <div class="data-area-hdr">
+                <div class="data-area-title">Locker Holdings</div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Locker Package</th>
+                      <th>Location(s)</th>
+                      <th>Valid From</th>
+                      <th>Valid Till</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Locker — 3 Months</td>
+                      <td>Bishan, Kallang</td>
+                      <td>1 Jul 2026</td>
+                      <td>30 Sep 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>Locker — 3 Months</td>
+                      <td>Bishan</td>
+                      <td>29 Sep 2026</td>
+                      <td>28 Dec 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
             </div>
           </div>
 
