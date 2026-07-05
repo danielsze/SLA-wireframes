@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Admin — Range Overview (Phase 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* Stage chrome */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1320px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+
+/* Desktop device frame (no phone notch / statusbar — admin is desktop-only) */
+.frame{position:relative;background:#0f0d0b;border-radius:22px;padding:0;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:1280px;max-width:100%;flex-shrink:0;}
+.screen{position:relative;width:100%;overflow:hidden;border-radius:22px;background:var(--color-surface-lowest);}
+
+/* App shell: nav rail + main area */
+.app{display:flex;align-items:stretch;min-height:800px;}
+
+/* Nav rail */
+.nav-rail{width:96px;flex-shrink:0;background:var(--color-surface);border-right:var(--border-subtle) solid var(--color-border-subtle);padding:20px 0;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.nav-rail .rail-logo{width:36px;height:36px;border-radius:var(--radius-md);background:var(--color-primary);display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;margin-bottom:20px;}
+.nav-item{width:76px;padding:8px 4px;border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--color-text-secondary);}
+.nav-item .ic{width:24px;height:24px;display:grid;place-items:center;font-size:16px;}
+.nav-item .lbl{font-size:10px;font-weight:600;text-align:center;line-height:1.2;}
+.nav-item.active{background:var(--color-surface-variant);color:var(--color-primary);}
+.nav-item.active .lbl{color:var(--color-text-primary);font-weight:700;}
+.nav-item.disabled{opacity:.4;cursor:not-allowed;}
+
+/* Main area */
+.main-area{flex:1;min-width:0;padding:20px 24px 32px;overflow-x:auto;}
+.pg-title{font-size:26px;font-weight:800;letter-spacing:-.2px;color:var(--color-text-primary);}
+.hdr-row{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:4px;}
+.hdr-left .welcome{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--color-text-secondary);margin-top:8px;}
+.loc-dd{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:var(--border-subtle) solid var(--color-border-emphasis);border-radius:var(--radius-sm);font-size:13px;font-weight:700;background:var(--color-surface);}
+
+/* Range choice chips */
+.range-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.range-chip{padding:8px 16px;border-radius:var(--radius-full);border:var(--border-subtle) solid var(--color-border-emphasis);font-size:13px;font-weight:700;background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;position:relative;}
+.range-chip.sel{background:var(--color-primary);color:var(--color-on-primary);border-color:var(--color-primary);}
+.range-chip .count-badge{position:absolute;top:-6px;right:-6px;background:var(--color-primary);color:var(--color-on-primary);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;font-size:10px;font-weight:700;border:2px solid var(--color-surface);}
+
+/* Stats panel */
+.stats-row{display:flex;gap:16px;margin:16px 0;overflow-x:auto;padding-bottom:4px;}
+.stat-card{width:240px;flex-shrink:0;background:var(--color-surface);border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-1);padding:12px 16px;}
+.stat-card .t{font-size:13px;font-weight:700;color:var(--color-text-secondary);margin-bottom:6px;}
+.stat-card .v{font-size:28px;font-weight:800;color:var(--color-text-primary);}
+
+/* Data area card */
+.data-area{background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-1);padding:16px;}
+.data-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.data-title{font-size:18px;font-weight:800;color:var(--color-text-primary);}
+.data-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.act-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;color:var(--color-text-secondary);background:transparent;border:none;cursor:pointer;}
+.act-btn:hover{background:var(--color-surface-variant);}
+.act-btn.primary{color:var(--color-primary);}
+.search-box{display:flex;align-items:center;gap:6px;padding:8px 12px;border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-full);font-size:13px;color:var(--color-text-disabled);min-width:180px;}
+
+/* Access table */
+.tbl-wrap{overflow-x:auto;}
+table.access{width:100%;border-collapse:collapse;font-size:13px;}
+table.access th{text-align:left;font-weight:700;color:var(--color-text-secondary);padding:10px 12px;border-bottom:var(--border-emphasis) solid var(--color-border-subtle);white-space:nowrap;}
+table.access th.sortable{cursor:pointer;}
+table.access th.sortable::after{content:" ▾";font-size:10px;color:var(--color-text-disabled);}
+table.access td{padding:10px 12px;border-bottom:var(--border-subtle) solid var(--color-border-subtle);vertical-align:middle;white-space:nowrap;}
+table.access td.name{color:var(--color-info);font-weight:700;text-decoration:underline;cursor:pointer;text-transform:uppercase;}
+table.access td.comment{max-width:140px;white-space:normal;color:var(--color-text-secondary);}
+table.access td.pass{max-width:120px;white-space:normal;}
+.pass-with-badge{display:flex;align-items:center;gap:8px;}
+.pass-more-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-on-primary);font-size:11px;font-weight:700;}
+.row-out{opacity:.7;}
+.arrow-icon{font-size:15px;}
+.arrow-icon.ok{color:var(--color-text-secondary);}
+.arrow-icon.mismatch{color:var(--color-warning);}
+.row-actions{display:flex;gap:6px;}
+.icon-btn{width:36px;height:34px;border-radius:var(--radius-sm);border:var(--border-subtle) solid var(--color-border-emphasis);background:#fff;display:grid;place-items:center;cursor:pointer;font-size:14px;}
+.icon-btn.solid{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+.icon-btn.disabled{opacity:.35;cursor:not-allowed;}
+.pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:12px;font-size:13px;color:var(--color-text-secondary);}
+.pg-btn{width:28px;height:28px;border-radius:var(--radius-sm);border:var(--border-subtle) solid var(--color-border-subtle);background:#fff;display:grid;place-items:center;cursor:pointer;}
+.pg-btn.disabled{opacity:.35;cursor:not-allowed;}
+
+/* Dialog mocks (secondary panels below the frame) */
+.section-divider{width:100%;max-width:1320px;margin:40px 0 16px;color:#E8DDD0;}
+.section-divider h2{font-size:18px;font-weight:800;}
+.section-divider p{font-size:12.5px;color:#A89880;margin-top:4px;}
+.dialog-mock{width:100%;max-width:1320px;background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-3);overflow:hidden;margin-bottom:16px;}
+.dialog-mock.narrow{max-width:460px;}
+.dialog-mock.wide{max-width:900px;}
+.dlg-title{padding:16px 16px 12px;font-size:17px;font-weight:800;border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.dlg-body{padding:16px;display:flex;flex-direction:column;gap:16px;}
+.dlg-section-title{font-size:14px;font-weight:700;color:var(--color-text-secondary);}
+.field-row{display:flex;gap:16px;}
+.field-row>*{flex:1;min-width:0;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.3px;}
+.field .input{border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:9px 10px;font-size:13px;background:var(--color-surface-variant);color:var(--color-text-primary);}
+.field .input.editable{background:#fff;border-color:var(--color-border-emphasis);}
+.field .hint{font-size:10.5px;color:var(--color-text-disabled);}
+.dlg-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:var(--border-subtle) solid var(--color-border-subtle);}
+.dlg-btn{padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;border:none;}
+.dlg-btn.secondary{background:transparent;color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);}
+.dlg-btn.primary{background:var(--color-primary);color:var(--color-on-primary);}
+.textarea-mock{min-height:52px;}
+
+/* Bill table in settlement dialog */
+.bill-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px;}
+.bill-table th{text-align:left;font-weight:700;color:var(--color-text-secondary);padding:8px 10px;border-bottom:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface-variant);}
+.bill-table td{padding:8px 10px;border-bottom:var(--border-subtle) solid var(--color-border-subtle);vertical-align:top;}
+.bill-table td.amount{text-align:right;font-weight:700;color:var(--color-text-primary);}
+.bill-table td.unit{text-align:center;color:var(--color-text-secondary);}
+.settlement-summary{display:flex;flex-direction:column;gap:6px;padding:12px;background:var(--color-surface-variant);border-radius:var(--radius-sm);font-size:12px;}
+.summary-line{display:flex;justify-content:space-between;align-items:center;}
+.settlement-bottom{display:flex;gap:16px;align-items:flex-end;}
+.settlement-bottom .field{flex:1;}
+.final-amount{text-align:right;}
+.final-amount-label{font-size:11px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;}
+.final-amount-value{font-size:24px;font-weight:800;color:var(--color-text-primary);}
+
+/* Phase 2 new element highlighting */
+.p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+
+</style>
+<link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
+</head>
+<body class="lofi">
+<div class="stage">
+  <div class="stage-bar">
+    <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Admin
+    </div>
+    <span class="crumb">Phase 2 · 02 Range Overview</span>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="screen">
+      <div class="app">
+
+        <!-- NAV RAIL -->
+        <div class="nav-rail">
+          <div class="rail-logo">X</div>
+          <div class="nav-item active"><span class="ic">◔</span><span class="lbl">Range<br>Overview</span></div>
+          <div class="nav-item"><span class="ic">▦</span><span class="lbl">Range<br>Timetable</span></div>
+          <div class="nav-item"><span class="ic">☰</span><span class="lbl">Bookings</span></div>
+          <div class="nav-item"><span class="ic">$</span><span class="lbl">Sales</span></div>
+          <div class="nav-item"><span class="ic">☺</span><span class="lbl">Archer 360</span></div>
+          <div class="nav-item disabled"><span class="ic">▢</span><span class="lbl">Events</span></div>
+          <div class="nav-item"><span class="ic">⚙</span><span class="lbl">Config</span></div>
+          <div class="nav-item"><span class="ic">▤</span><span class="lbl">Reports</span></div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="main-area">
+
+          <div class="hdr-row">
+            <div class="hdr-left">
+              <div class="pg-title">Range Overview</div>
+              <div class="welcome">Welcome Sarah, you are in
+                <span class="loc-dd">Bishan ▾</span>
+              </div>
+            </div>
+            <div class="range-chips">
+              <div class="range-chip sel p2-new">Range A<span class="count-badge">3</span></div>
+              <div class="range-chip p2-new">Range B<span class="count-badge">1</span></div>
+              <div class="range-chip p2-new">Range C<span class="count-badge">0</span></div>
+            </div>
+          </div>
+
+          <!-- STATS PANEL -->
+          <div class="stats-row">
+            <div class="stat-card"><div class="t">Current Sign-Ins</div><div class="v">3</div></div>
+            <div class="stat-card"><div class="t">Total Archers</div><div class="v">9</div></div>
+            <div class="stat-card"><div class="t">Payment Verified</div><div class="v">$184.00</div></div>
+          </div>
+
+          <!-- DATA AREA -->
+          <div class="data-area">
+            <div class="data-hdr">
+              <div class="data-title">Range A (3 Archers)</div>
+              <div class="data-actions">
+                <button class="act-btn primary p2-new">+ Sign In</button>
+                <button class="act-btn">⎋ End All Sessions</button>
+                <button class="act-btn">⟳ Refresh</button>
+                <button class="act-btn">📅 5 Jul 2026</button>
+                <span class="search-box">🔍 Search booking code, name, phone, comment…</span>
+              </div>
+            </div>
+
+            <div class="tbl-wrap">
+              <table class="access">
+                <thead>
+                  <tr>
+                    <th class="sortable">Booking Code</th>
+                    <th class="sortable">Time</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Range Pass</th>
+                    <th>Valid Till</th>
+                    <th class="sortable">Time In</th>
+                    <th>Time Out</th>
+                    <th class="sortable">Payable</th>
+                    <th>Arrows</th>
+                    <th>Comments</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Signed-in rows first (timeOut == null) -->
+                  <tr>
+                    <td>BK-1042</td>
+                    <td>9:00 AM – 10:00 AM</td>
+                    <td class="name">John Tan</td>
+                    <td>9123 4567</td>
+                    <td class="pass"><div class="pass-with-badge p2-new">10-Session Pass<span class="pass-more-pill">+1 more</span></div></td>
+                    <td>12 Aug 2026</td>
+                    <td>9:02 AM</td>
+                    <td>—</td>
+                    <td>$0.00</td>
+                    <td><span class="arrow-icon">12</span></td>
+                    <td class="comment">—</td>
+                    <td><div class="row-actions">
+                      <span class="icon-btn solid" title="Sign Out">⎋</span>
+                      <span class="icon-btn disabled" title="Verify Payment (disabled — no payable)">$</span>
+                    </div></td>
+                  </tr>
+                  <tr>
+                    <td>BK-1043</td>
+                    <td>9:00 AM – 10:00 AM</td>
+                    <td class="name">Mei Lin Koh</td>
+                    <td>9876 5432</td>
+                    <td class="pass">Practice Drop-in</td>
+                    <td>—</td>
+                    <td>9:05 AM</td>
+                    <td>—</td>
+                    <td>$15.00</td>
+                    <td><span class="arrow-icon">6</span></td>
+                    <td class="comment">Left-handed, needs left tab</td>
+                    <td><div class="row-actions">
+                      <span class="icon-btn solid" title="Sign Out">⎋</span>
+                      <span class="icon-btn disabled" title="Verify Payment (disabled — still signed in)">$</span>
+                    </div></td>
+                  </tr>
+                  <tr>
+                    <td>BK-1044</td>
+                    <td>10:00 AM – 11:00 AM</td>
+                    <td class="name">Farah Abdullah</td>
+                    <td>9333 2211</td>
+                    <td class="pass">Guest Pass (1 Day)</td>
+                    <td>5 Jul 2026</td>
+                    <td>10:01 AM</td>
+                    <td>—</td>
+                    <td>$20.00</td>
+                    <td><span class="arrow-icon">8</span></td>
+                    <td class="comment">—</td>
+                    <td><div class="row-actions">
+                      <span class="icon-btn solid" title="Sign Out">⎋</span>
+                      <span class="icon-btn disabled" title="Verify Payment (disabled — still signed in)">$</span>
+                    </div></td>
+                  </tr>
+                  <!-- Signed-out rows -->
+                  <tr class="row-out">
+                    <td>BK-1040</td>
+                    <td>8:00 AM – 9:00 AM</td>
+                    <td class="name">Desmond Ong</td>
+                    <td>9654 3210</td>
+                    <td class="pass">10-Session Pass</td>
+                    <td>5 Sep 2026</td>
+                    <td>8:03 AM</td>
+                    <td>9:10 AM</td>
+                    <td>$8.00</td>
+                    <td><span class="arrow-icon mismatch" title="10 In, 8 Out">⚠</span></td>
+                    <td class="comment">Broke 2 arrows on target 3</td>
+                    <td><div class="row-actions">
+                      <span class="icon-btn" title="Sign Out">⎋</span>
+                      <span class="icon-btn" title="Verify Payment (enabled — unpaid)">$</span>
+                    </div></td>
+                  </tr>
+                  <tr class="row-out">
+                    <td>BK-1039</td>
+                    <td>8:00 AM – 9:00 AM</td>
+                    <td class="name">Ravi Kumar</td>
+                    <td>9001 1223</td>
+                    <td class="pass">Monthly Unlimited</td>
+                    <td>30 Jul 2026</td>
+                    <td>8:01 AM</td>
+                    <td>9:03 AM</td>
+                    <td>$0.00</td>
+                    <td><span class="arrow-icon ok" title="12 In, 12 Out">✓</span></td>
+                    <td class="comment">—</td>
+                    <td><div class="row-actions">
+                      <span class="icon-btn" title="Sign Out">⎋</span>
+                      <span class="icon-btn disabled" title="Verify Payment (disabled — already paid)">$</span>
+                    </div></td>
+                  </tr>
+                  <tr class="row-out">
+                    <td>BK-1035</td>
+                    <td>7:00 AM – 8:00 AM</td>
+                    <td class="name">Amos Lim</td>
+                    <td>9112 2334</td>
+                    <td class="pass">10-Session Pass</td>
+                    <td>20 Jun 2026</td>
+                    <td>7:02 AM</td>
+                    <td>8:05 AM</td>
+                    <td>$0.00</td>
+                    <td><span class="arrow-icon ok" title="10 In, 10 Out">✓</span></td>
+                    <td class="comment">—</td>
+                    <td><div class="row-actions">
+                      <span class="icon-btn" title="Sign Out">⎋</span>
+                      <span class="icon-btn disabled" title="Verify Payment (disabled — no payable)">$</span>
+                    </div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination">
+              <span>1 – 6 of 6</span>
+              <span class="pg-btn disabled">‹</span>
+              <span class="pg-btn disabled">›</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGN-OUT DIALOG -->
+  <div class="section-divider">
+    <h2>Sign-out dialog (AS-IS)</h2>
+    <p>Source: presentation/dialog/signout_dialog.dart — opened from the row's Sign Out action. BaseDialog.action, width 400–440.</p>
+  </div>
+  <div class="dialog-mock narrow">
+    <div class="dlg-title">Range Access</div>
+    <div class="dlg-body">
+      <div class="dlg-section-title">Time In/Out</div>
+      <div class="field-row">
+        <div class="field"><label>Time In (HH:MM)</label><div class="input">9:02 AM</div></div>
+        <div class="field"><label>Arrow In</label><div class="input">12</div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Time Out (HH:MM)</label><div class="input">auto-generated</div></div>
+        <div class="field"><label>Arrow Out *</label><div class="input editable">12</div></div>
+      </div>
+
+      <div class="dlg-section-title">Rental</div>
+      <div class="field"><label>Bow / Arrow Rental</label><div class="input editable">Recurve Set — Beginner ▾</div></div>
+      <div class="hint">Only rendered as an editable search-dropdown when the archer is still signed in AND activityType == practice. Otherwise it's a read-only field showing the existing rental package name, or "No Rental Required".</div>
+
+      <div class="field"><label>Comment</label><div class="input textarea-mock">Left-handed, needs left tab</div></div>
+      <div class="hint">Multi-line (2 lines), max 120 characters, counter hidden.</div>
+    </div>
+    <div class="dlg-actions">
+      <button class="dlg-btn secondary">Cancel</button>
+      <button class="dlg-btn primary">Ok</button>
+    </div>
+  </div>
+
+  <!-- SIGN-IN DIALOG (Phase 2 — NET-NEW) -->
+  <div class="section-divider">
+    <h2>Sign-in dialog (Phase 2 — NET-NEW)</h2>
+    <p>SoW 2.10 · opened from the new + Sign In action · staff-assisted sign-in incl. outside-hours</p>
+  </div>
+  <div class="dialog-mock narrow p2-new">
+    <div class="dlg-title">Range Sign-In</div>
+    <div class="dlg-body">
+      <div class="dlg-section-title">Archer</div>
+      <div class="field"><label>Archer *</label><div class="input editable">John Tan (9123 4567) ▾</div></div>
+
+      <div class="dlg-section-title">Booking</div>
+      <div class="field"><label>Booking</label><div class="input editable">BK-1042 · 9:00 AM – 10:00 AM · Practice ▾</div></div>
+      <div class="hint">Lists the archer's bookings for today within the sign-in window. Select 'Walk-in / outside hours — no booking' to sign in without one (access row created with booking_id = NULL).</div>
+
+      <div class="dlg-section-title">Time In/Out</div>
+      <div class="field-row">
+        <div class="field"><label>Time In (HH:MM)</label><div class="input">auto-generated</div></div>
+        <div class="field"><label>Arrow In *</label><div class="input editable">12</div></div>
+      </div>
+
+      <div class="dlg-section-title">Rental</div>
+      <div class="field"><label>Bow / Arrow Rental</label><div class="input editable">Recurve Set — Beginner ▾</div></div>
+      <div class="hint">Editable for practice activity, mirroring sign-out dialog's rental rule.</div>
+
+      <div class="field"><label>Comment</label><div class="input textarea-mock editable"></div></div>
+      <div class="hint">Multi-line (2 lines), max 120 characters, counter hidden.</div>
+    </div>
+    <div class="dlg-actions">
+      <button class="dlg-btn secondary">Cancel</button>
+      <button class="dlg-btn primary">Ok</button>
+    </div>
+  </div>
+
+  <!-- SETTLEMENT DIALOG (Phase 2 — REBUILD of Confirm Sale Payment) -->
+  <div class="section-divider">
+    <h2>Settlement dialog (Phase 2 — REBUILD of Confirm Sale Payment)</h2>
+    <p>SoW 2.10 · per-booking today → session-level bill</p>
+  </div>
+  <div class="dialog-mock wide p2-new">
+    <div class="dlg-title">Session Settlement</div>
+    <div class="dlg-body">
+      <div class="dlg-section-title">Session</div>
+      <div class="settlement-summary">
+        <div class="summary-line"><span>Sign In 9:02 AM · Sign Out 11:10 AM · Total 2h 08m</span></div>
+        <div class="summary-line"><span>Covered by booking/pass: 1h 30m · Uncovered: 38m</span></div>
+      </div>
+
+      <div class="dlg-section-title">Bill</div>
+      <table class="bill-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Detail</th>
+            <th>Qty/Hours</th>
+            <th>Unit</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Booked session (covered)</td>
+            <td>BK-1042 · 9:00–10:00 · 10-Session Pass</td>
+            <td>1h 00m</td>
+            <td class="unit">—</td>
+            <td class="amount">$0.00</td>
+          </tr>
+          <tr>
+            <td>Booked session (covered)</td>
+            <td>BK-1051 · 10:30–11:00 · paid booking</td>
+            <td>30m</td>
+            <td class="unit">—</td>
+            <td class="amount">$0.00</td>
+          </tr>
+          <tr>
+            <td>Walk-in gap</td>
+            <td>10:00–10:30 uncovered range time</td>
+            <td>30m</td>
+            <td>$10.00/h</td>
+            <td class="amount">$5.00</td>
+          </tr>
+          <tr>
+            <td>Walk-in gap</td>
+            <td>11:00–11:10 uncovered range time</td>
+            <td>8m</td>
+            <td>$10.00/h</td>
+            <td class="amount">$1.33</td>
+          </tr>
+          <tr>
+            <td>Equipment rental (once per session)</td>
+            <td>Recurve Set — Beginner</td>
+            <td>1</td>
+            <td>$5.00</td>
+            <td class="amount">$5.00</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="settlement-bottom">
+        <div class="field"><label>Discount Type</label><div class="input editable">Fixed ▾</div></div>
+        <div class="field"><label>Discount Value ($)</label><div class="input editable">0.00</div></div>
+        <div class="final-amount">
+          <div class="final-amount-label">Final Amount ($)</div>
+          <div class="final-amount-value">$11.33</div>
+        </div>
+      </div>
+
+      <div class="dlg-section-title">Sale Remarks</div>
+      <div class="field"><label>Remarks</label><div class="input textarea-mock editable"></div></div>
+      <div class="hint">Multi-line (2 lines), max 120 characters, counter hidden. Always shown regardless of activity/rental sections.</div>
+    </div>
+    <div class="dlg-actions">
+      <button class="dlg-btn secondary">Cancel</button>
+      <button class="dlg-btn primary">Settle</button>
+    </div>
+  </div>
+
+</div>
+
+<script>document.body.classList.add("lofi");</script>
+</body>
+</html>

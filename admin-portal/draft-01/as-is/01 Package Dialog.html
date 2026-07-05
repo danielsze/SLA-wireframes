@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Admin — Config &gt; Package (AS-IS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1320px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+
+/* ── Desktop frame (dashboard, ~1280px stage — no phone chrome/notch) ── */
+.frame{position:relative;background:#0f0d0b;border-radius:22px;padding:0;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:1280px;max-width:100%;flex-shrink:0;}
+.screen{position:relative;width:100%;overflow:hidden;border-radius:22px;background:var(--color-surface-lowest);}
+
+/* ── Dashboard layout: nav rail + content ── */
+.app{width:100%;display:grid;grid-template-columns:220px 1fr;min-height:780px;}
+.nav-rail{background:var(--color-surface);border-right:var(--border-subtle) solid var(--color-border-subtle);padding:20px 0;display:flex;flex-direction:column;gap:2px;}
+.nav-rail-brand{display:flex;align-items:center;gap:8px;padding:0 20px 20px;font-weight:800;font-size:14px;color:var(--color-text-primary);}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;font-size:13px;font-weight:600;color:var(--color-text-secondary);cursor:pointer;border-left:3px solid transparent;}
+.nav-item .ic{width:20px;height:20px;border-radius:5px;background:var(--color-surface-variant);flex-shrink:0;display:grid;place-items:center;font-size:11px;color:var(--color-text-disabled);}
+.nav-item.selected{background:var(--color-surface-variant);color:var(--color-primary);border-left-color:var(--color-primary);font-weight:700;}
+.nav-item.selected .ic{background:var(--color-primary);color:#fff;}
+.nav-item.disabled{opacity:.4;cursor:not-allowed;}
+
+.content{padding:24px 28px;overflow-x:auto;}
+
+/* Main area header */
+.main-hdr{padding:0 0 16px;}
+.main-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:var(--color-text-primary);}
+.config-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.chip{font-size:12px;font-weight:700;padding:7px 14px;border-radius:var(--radius-full);background:var(--color-surface-variant);color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);cursor:pointer;}
+.chip.on{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+
+/* Data area card */
+.data-area{background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-1);padding:20px;}
+.data-area-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.data-area-title{font-size:20px;font-weight:800;color:var(--color-text-primary);}
+.data-area-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-text{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--color-primary);background:transparent;border:none;cursor:pointer;padding:8px 12px;border-radius:var(--radius-sm);}
+.btn-text:hover{background:var(--color-surface-variant);}
+.search-box{display:flex;align-items:center;gap:6px;border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:7px 12px;font-size:13px;color:var(--color-text-disabled);min-width:180px;}
+
+/* Table */
+.pkg-table{width:100%;border-collapse:collapse;font-size:13px;}
+.pkg-table th{text-align:left;font-weight:700;color:var(--color-text-secondary);padding:10px 12px;border-bottom:var(--border-emphasis) solid var(--color-border-subtle);white-space:nowrap;}
+.pkg-table th .sort{color:var(--color-text-disabled);font-size:10px;margin-left:4px;}
+.pkg-table td{padding:12px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);color:var(--color-text-primary);vertical-align:top;}
+.pkg-table td.actions-cell{display:flex;gap:6px;}
+.icon-btn{width:28px;height:28px;border-radius:var(--radius-sm);border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);display:grid;place-items:center;cursor:pointer;color:var(--color-text-secondary);}
+.pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px;font-size:12px;color:var(--color-text-secondary);}
+.pg-btn{width:26px;height:26px;border-radius:50%;border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);cursor:pointer;}
+
+/* ── Modal overlay + Package Dialog ── */
+.modal-overlay{position:absolute;inset:0;background:rgba(20,16,10,.55);display:flex;align-items:flex-start;justify-content:center;padding:36px 20px;overflow-y:auto;z-index:50;}
+.dialog{background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-5);width:840px;max-width:100%;}
+.dialog-title{font-size:18px;font-weight:800;padding:16px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);color:var(--color-text-primary);}
+.dialog-content{padding:16px;display:flex;flex-direction:column;gap:12px;}
+.section-title{font-size:14px;font-weight:800;color:var(--color-text-secondary);margin-top:4px;}
+.subsection-title{font-size:12px;font-weight:700;color:var(--color-text-secondary);padding:0 8px;}
+.field-row{display:flex;gap:12px;}
+.field-row > *{flex:1;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11px;font-weight:700;color:var(--color-text-secondary);}
+.field .input{border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-xs);padding:9px 10px;font-size:13px;color:var(--color-text-primary);background:var(--color-surface);}
+.field .input.readonly{background:var(--color-surface-variant);color:var(--color-text-disabled);}
+.field .input.dropdown{display:flex;align-items:center;justify-content:space-between;}
+.field .input.dropdown::after{content:'▾';color:var(--color-text-disabled);font-size:10px;}
+.field .input.multiselect{display:flex;flex-wrap:wrap;gap:6px;min-height:38px;}
+.mini-chip{font-size:11px;font-weight:600;background:var(--color-surface-variant);border-radius:var(--radius-full);padding:3px 9px;color:var(--color-text-secondary);}
+.checkbox-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--color-text-primary);}
+.checkbox-row .box{width:18px;height:18px;border:var(--border-subtle) solid var(--color-border-emphasis);border-radius:3px;display:grid;place-items:center;background:var(--color-surface);flex-shrink:0;}
+.checkbox-row .box.checked{background:var(--color-primary);border-color:var(--color-primary);color:#fff;font-size:12px;}
+.additional-row{display:flex;gap:8px;align-items:flex-start;}
+.additional-settings-block{display:flex;flex-direction:column;gap:12px;flex:1;}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px 16px;}
+.btn{font-size:13px;font-weight:700;padding:9px 18px;border-radius:var(--radius-sm);cursor:pointer;border:none;}
+.btn-primary{background:var(--color-primary);color:#fff;}
+.btn-secondary{background:transparent;color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);}
+
+
+</style>
+<link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
+</head>
+<body class="lofi">
+<div class="stage">
+  <div class="stage-bar">
+    <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Admin
+    </div>
+    <span class="crumb">AS-IS · Config &gt; Package &middot; Package Dialog (Edit mode)</span>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="screen">
+      <div class="app" style="position:relative;">
+
+        <!-- NAV RAIL — order + labels from admin/lib/app/routes.dart Module enum -->
+        <div class="nav-rail">
+          <div class="nav-rail-brand">
+            <span class="logo" style="width:22px;height:22px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+            x10s Admin
+          </div>
+          <div class="nav-item"><span class="ic">◔</span>Range Overview</div>
+          <div class="nav-item"><span class="ic">▦</span>Range Timetable</div>
+          <div class="nav-item"><span class="ic">☰</span>Bookings</div>
+          <div class="nav-item"><span class="ic">$</span>Sales</div>
+          <div class="nav-item"><span class="ic">☺</span>Archer 360</div>
+          <div class="nav-item disabled"><span class="ic">◷</span>Events</div>
+          <div class="nav-item selected"><span class="ic">⚙</span>Config</div>
+          <div class="nav-item"><span class="ic">▤</span>Reports</div>
+        </div>
+
+        <!-- CONTENT — Config dashboard: MainAreaHeader + ConfigTab chips (config_dashboard.dart) -->
+        <div class="content">
+          <div class="main-hdr">
+            <div class="main-title">Configurations</div>
+            <div class="config-tabs">
+              <span class="chip">Activity</span>
+              <span class="chip">Activity Schedule</span>
+              <span class="chip">Instructor Schedule</span>
+              <span class="chip">Voucher</span>
+              <span class="chip on">Package</span>
+              <span class="chip">Club</span>
+            </div>
+          </div>
+
+
+          <!-- DataArea (package_data_area.dart) -->
+          <div class="data-area" style="margin-top:16px;">
+            <div class="data-area-hdr">
+              <div class="data-area-title">Package</div>
+              <div class="data-area-actions">
+                <button class="btn-text">+ Create</button>
+                <button class="btn-text">⚲ Filter</button>
+                <div class="search-box">🔍 Search</div>
+              </div>
+            </div>
+
+            <!-- Table columns — packages_table.dart columnDefinitions -->
+            <div style="overflow-x:auto;">
+              <table class="pkg-table">
+                <thead>
+                  <tr>
+                    <th>Package Name<span class="sort">↕</span></th>
+                    <th>Package Type<span class="sort">↕</span></th>
+                    <th>Price Type</th>
+                    <th>Price<span class="sort">↕</span></th>
+                    <th>Package Remarks</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>10-Lesson Beginner Pass</td>
+                    <td>Activity</td>
+                    <td>REGULAR</td>
+                    <td>$250.00</td>
+                    <td>Includes equipment rental</td>
+                    <td class="actions-cell"><span class="icon-btn">✎</span><span class="icon-btn">🗑</span></td>
+                  </tr>
+                  <tr style="background:var(--color-surface-variant);">
+                    <td>Range Pass + Credit Bundle</td>
+                    <td>Range Pass / Credit</td>
+                    <td>STUDENT</td>
+                    <td>$180.00</td>
+                    <td>20 sessions, 90 days validity</td>
+                    <td class="actions-cell"><span class="icon-btn">✎</span><span class="icon-btn">🗑</span></td>
+                  </tr>
+                  <tr>
+                    <td>Recurve Bow Rental (Half-Day)</td>
+                    <td>Equipment Rental</td>
+                    <td>AFFILIATE</td>
+                    <td>$15.00</td>
+                    <td>&mdash;</td>
+                    <td class="actions-cell"><span class="icon-btn">✎</span><span class="icon-btn">🗑</span></td>
+                  </tr>
+                  <tr>
+                    <td>Advanced Coaching &ndash; 5 Sessions</td>
+                    <td>Activity</td>
+                    <td>REGULAR</td>
+                    <td>$400.00</td>
+                    <td>&mdash;</td>
+                    <td class="actions-cell"><span class="icon-btn">✎</span><span class="icon-btn">🗑</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">1 - 4 of 4 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
+          </div>
+        </div>
+
+        <!-- MODAL OVERLAY — package_dialog.dart, opened via row "edit" action (isCreate:false) -->
+        <div class="modal-overlay">
+          <div class="dialog">
+            <div class="dialog-title">Edit Package</div>
+            <div class="dialog-content">
+
+              <div class="section-title">General</div>
+
+              <div class="field">
+                <label>Package Name *</label>
+                <div class="input">Range Pass + Credit Bundle</div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label>Price Type *</label>
+                  <div class="input dropdown">Student</div>
+                </div>
+                <div class="field">
+                  <label>Package Type</label>
+                  <div class="input readonly">Range Pass / Credit</div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Price ($) *</label>
+                <div class="input">180.00</div>
+              </div>
+
+              <div class="field">
+                <label>Remarks</label>
+                <div class="input">20 sessions, 90 days validity</div>
+              </div>
+
+              <div class="section-title">Additional Settings</div>
+
+              <div class="additional-row">
+                <div class="field" style="flex:1;">
+                  <label>Member Display *</label>
+                  <div class="input dropdown">Active</div>
+                </div>
+                <div class="checkbox-row" style="flex:1;"><span class="box checked">✓</span>Range Pass</div>
+                <div class="checkbox-row" style="flex:1;"><span class="box checked">✓</span>Credit</div>
+              </div>
+
+              <div class="additional-row">
+                <div class="additional-settings-block">
+                  <div class="subsection-title">Range Pass Settings</div>
+                  <div class="field">
+                    <label>Range Pass Name *</label>
+                    <div class="input">7-Day Access Pass</div>
+                  </div>
+                  <div class="field">
+                    <label>Range Pass Validity (days) *</label>
+                    <div class="input">90</div>
+                  </div>
+                  <div class="field">
+                    <label>Range Pass Location(s)</label>
+                    <div class="input multiselect">
+                      <span class="mini-chip">Main Range</span>
+                      <span class="mini-chip">Indoor Range</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="additional-settings-block">
+                  <div class="subsection-title">Credit Settings</div>
+                  <div class="field">
+                    <label>Credit Type *</label>
+                    <div class="input dropdown">Arrow Credit</div>
+                  </div>
+                  <div class="field">
+                    <label>Credit Validity (days) *</label>
+                    <div class="input">90</div>
+                  </div>
+                  <div class="field">
+                    <label>Credit Quantity *</label>
+                    <div class="input">20</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="dialog-actions">
+              <button class="btn btn-secondary">Cancel</button>
+              <button class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>document.body.classList.add("lofi");</script>
+</body>
+</html>

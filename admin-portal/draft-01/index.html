@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLA Admin Portal — Phase 2 Wireframes</title>
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+  body{
+    font-family:var(--font-primary, system-ui, sans-serif);
+    background:var(--color-surface-lowest, #faf7f2);
+    color:var(--color-text-primary, #1c1611);
+    margin:0; padding:48px 32px 80px;
+  }
+  .wrap{ max-width:920px; margin:0 auto; }
+  .eyebrow{ font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--color-text-secondary, #5c4f3d); font-weight:700; margin:0 0 6px; }
+  h1{ font-size:32px; margin:0 0 8px; letter-spacing:-.3px; }
+  h2{ font-size:20px; margin:40px 0 14px; letter-spacing:-.2px; }
+  .lede{ font-size:15px; color:var(--color-text-secondary, #5c4f3d); margin:0 0 36px; line-height:1.6; max-width:620px; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
+  a.card{
+    display:flex; flex-direction:column; gap:6px; text-decoration:none;
+    background:var(--color-surface, #fffdf7);
+    border:1px solid var(--color-border-subtle, #e2d9cc);
+    border-radius:var(--radius-md, 12px); padding:20px 22px;
+    box-shadow:var(--shadow-1, 0 1px 2px rgba(0,0,0,.1)); transition:transform .12s, box-shadow .12s;
+  }
+  a.card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-2, 0 2px 6px rgba(0,0,0,.12)); }
+  .num{ font-size:11px; font-weight:700; letter-spacing:1px; color:var(--color-primary, #8b5e15); }
+  .title{ font-size:17px; font-weight:700; }
+  .desc{ font-size:13px; color:var(--color-text-secondary, #5c4f3d); line-height:1.5; }
+  .note{ margin-top:40px; padding:16px 20px; border-left:3px solid var(--color-info, #1a5276);
+    background:var(--color-surface-variant, #f2ebe0); border-radius:6px; font-size:13px; line-height:1.6;
+    color:var(--color-text-secondary, #5c4f3d); }
+  .ref{ margin-top:24px; font-size:13px; }
+  .ref a{ color:var(--color-primary, #8b5e15); }
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Salt Light Archery · Admin Portal · Phase 2 Delta · Updated 5 Jul 2026</p>
+    <h1>Admin Portal — Phase 2 Wireframes</h1>
+    <p class="lede">Six screens touched by the Admin Phase 2 Delta. Each screen exists in two versions: a frozen <strong>AS-IS</strong> baseline reconstructed from the live Flutter code, and a <strong>v1</strong> working copy with the Phase 2 changes applied. In v1, every Phase 2 addition is marked with a dashed outline; the <strong>Client / Dev notes toggle</strong> (bottom-left of each screen) reveals rationale notes with SoW and gate references.</p>
+
+    <h2>v1 — Phase 2 delta applied</h2>
+    <div class="grid">
+      <a class="card" href="./v1/01%20Package%20Dialog.html"><span class="num">01</span><span class="title">Package Dialog</span><span class="desc">2.5 group + style eligibility, description, renewal discount · 2.7 locker settings</span></a>
+      <a class="card" href="./v1/02%20Range%20Overview.html"><span class="num">02</span><span class="title">Range Overview</span><span class="desc">2.7 location-valid pass · 2.10 staff sign-in + session settlement · 2.11 chip badges</span></a>
+      <a class="card" href="./v1/03%20Archer360%20Profile.html"><span class="num">03</span><span class="title">Archer360 Profile</span><span class="desc">2.7 pass holdings rebuild + locker view · 2.14 Verified-Score entry</span></a>
+      <a class="card" href="./v1/04%20Sales%20Dialog.html"><span class="num">04</span><span class="title">Sales Dialog</span><span class="desc">2.7 locker branch beside pass/credit</span></a>
+      <a class="card" href="./v1/05%20Config%20Club.html"><span class="num">05</span><span class="title">Config &gt; Club</span><span class="desc">2.15 CC balance, ledger, top-up, roles · soft-deactivate · usage report entry</span></a>
+      <a class="card" href="./v1/06%20Range%20Timetable.html"><span class="num">06</span><span class="title">Range Timetable</span><span class="desc">2.11 instructor-booking-count badges on range chips</span></a>
+    </div>
+
+    <h2>AS-IS — frozen baseline (no edits)</h2>
+    <div class="grid">
+      <a class="card" href="./as-is/01%20Package%20Dialog.html"><span class="num">01</span><span class="title">Package Dialog</span><span class="desc">From package_dialog.dart · edit-mode pass/credit branch</span></a>
+      <a class="card" href="./as-is/02%20Range%20Overview.html"><span class="num">02</span><span class="title">Range Overview</span><span class="desc">Access table + sign-out and payment dialogs</span></a>
+      <a class="card" href="./as-is/03%20Archer360%20Profile.html"><span class="num">03</span><span class="title">Archer360 Profile</span><span class="desc">Archer tab, single-pass form, credit tables</span></a>
+      <a class="card" href="./as-is/04%20Sales%20Dialog.html"><span class="num">04</span><span class="title">Sales Dialog</span><span class="desc">Create-sale dialog · pass + credit side-by-side</span></a>
+      <a class="card" href="./as-is/05%20Config%20Club.html"><span class="num">05</span><span class="title">Config &gt; Club</span><span class="desc">Clubs table (hard delete) + 3-field club dialog</span></a>
+      <a class="card" href="./as-is/06%20Range%20Timetable.html"><span class="num">06</span><span class="title">Range Timetable</span><span class="desc">Timetable grid, lanes, availability, booking cells</span></a>
+    </div>
+
+    <div class="note">
+      <strong>Scope authority:</strong> Admin Phase 2 Delta table in <code>docs/plans/phase2-execution-plan.md</code> · surface index in <code>README.md</code> · change tracking in <code>CHANGELOG.md</code>. 2.12 DOB picker is a standard widget swap — no wireframe. Same style layers as the member wireframes: <code>tokens.css</code> · per-screen embedded styles · <code>wireframe-skin.css</code>.
+    </div>
+    <p class="ref"><a href="../../member-portal/v5/index.html">← Member Portal wireframes (v5)</a></p>
+  </div>
+</body>
+</html>
