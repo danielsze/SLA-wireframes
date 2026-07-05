@@ -67,11 +67,7 @@ svg{display:block;}
 .pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px;font-size:12px;color:var(--color-text-secondary);}
 .pg-btn{width:26px;height:26px;border-radius:50%;border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);cursor:pointer;}
 
-/* ── Modal overlay + Club Dialog (BaseDialog.action → fixed width 400-440) ── */
-.modal-overlay{position:absolute;inset:0;background:rgba(20,16,10,.55);display:flex;align-items:flex-start;justify-content:center;padding:36px 20px;overflow-y:auto;z-index:50;}
-.dialog{background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-5);width:440px;max-width:100%;}
-.dialog-title{font-size:18px;font-weight:800;padding:16px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);color:var(--color-text-primary);}
-.dialog-content{padding:16px;display:flex;flex-direction:column;gap:12px;}
+/* ── Form fields (shared by dialog mocks + dashboard) ── */
 .field{display:flex;flex-direction:column;gap:4px;}
 .field label{font-size:11px;font-weight:700;color:var(--color-text-secondary);}
 .field label .req{color:var(--color-primary);}
@@ -79,11 +75,8 @@ svg{display:block;}
 .field .input.dropdown{display:flex;align-items:center;justify-content:space-between;}
 .field .input.dropdown::after{content:'▾';color:var(--color-text-disabled);font-size:10px;}
 .field .hint{font-size:10.5px;color:var(--color-text-disabled);}
-.dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px 16px;}
-.btn{font-size:13px;font-weight:700;padding:9px 18px;border-radius:var(--radius-sm);cursor:pointer;border:none;}
-.btn-primary{background:var(--color-primary);color:#fff;}
-.btn-secondary{background:transparent;color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);}
 
+/* Dev notes */
 
 /* Phase 2 new elements */
 .p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
@@ -114,10 +107,12 @@ svg{display:block;}
 .btn-icon{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface-variant);border:var(--border-subtle) solid var(--color-border-subtle);cursor:pointer;}
 .muted-row{opacity:.6;}
 
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
 </head>
-<body class="lofi">
+<body>
 <div class="stage">
   <div class="stage-bar">
     <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
@@ -163,7 +158,6 @@ svg{display:block;}
             </div>
           </div>
 
-
           <!-- DataArea (club_data_area.dart) -->
           <div class="data-area" style="margin-top:16px;">
             <div class="data-area-hdr">
@@ -183,7 +177,6 @@ svg{display:block;}
                     <th>Affiliated</th>
                     <th>Remarks</th>
                     <th class="p2-new">CC Balance</th>
-                    <th class="p2-new">Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -193,67 +186,35 @@ svg{display:block;}
                     <td class="bool-cell">✔</td>
                     <td>Home club, main range</td>
                     <td class="p2-new">240 CC</td>
-                    <td class="p2-new"><span class="pill active">Active</span></td>
-                    <td class="actions-cell"><span class="icon-btn p2-new" title="Club Credits">◎</span><span class="icon-btn">✎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
+                    <td class="actions-cell"><span class="icon-btn p2-new" title="Open Club Dashboard">◎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
                   </tr>
                   <tr style="background:var(--color-surface-variant);">
                     <td>Woodlands Archers</td>
                     <td class="bool-cell">✔</td>
                     <td>&mdash;</td>
                     <td class="p2-new">1,180 CC</td>
-                    <td class="p2-new"><span class="pill active">Active</span></td>
-                    <td class="actions-cell"><span class="icon-btn p2-new" title="Club Credits">◎</span><span class="icon-btn">✎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
+                    <td class="actions-cell"><span class="icon-btn p2-new" title="Open Club Dashboard">◎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
                   </tr>
                   <tr class="muted-row">
                     <td>Tampines Bowmen</td>
                     <td class="bool-cell">✘</td>
                     <td>Non-affiliate, walk-in only</td>
                     <td class="p2-new">0 CC</td>
-                    <td class="p2-new"><span class="pill deactivated">Deactivated</span></td>
-                    <td class="actions-cell"><span class="icon-btn p2-new" title="Club Credits">◎</span><span class="icon-btn">✎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
+                    <td class="actions-cell"><span class="icon-btn p2-new" title="Open Club Dashboard">◎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
                   </tr>
                   <tr>
                     <td>Independent (No Club)</td>
                     <td class="bool-cell">✘</td>
                     <td>Default fallback entry</td>
                     <td class="p2-new">&mdash;</td>
-                    <td class="p2-new"><span class="pill active">Active</span></td>
-                    <td class="actions-cell"><span class="icon-btn p2-new" title="Club Credits">◎</span><span class="icon-btn">✎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
+                    <td class="actions-cell"><span class="icon-btn p2-new" title="Open Club Dashboard">◎</span><span class="icon-btn p2-new" title="Deactivate Club">🗑</span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div class="pagination">1 - 4 of 4 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
-          </div>
-        </div>
 
-        <!-- MODAL OVERLAY — club_dialog.dart, opened via row "edit" action (isCreate:false) -->
-        <div class="modal-overlay">
-          <div class="dialog">
-            <div class="dialog-title">Edit Club</div>
-            <div class="dialog-content">
 
-              <div class="field">
-                <label>Club Name <span class="req">*</span></label>
-                <div class="input">Woodlands Archers</div>
-                <div class="hint">Max 60 characters</div>
-              </div>
-
-              <div class="field">
-                <label>Affiliation <span class="req">*</span></label>
-                <div class="input dropdown">Yes</div>
-              </div>
-
-              <div class="field">
-                <label>Remarks</label>
-                <div class="input" style="min-height:52px;">&nbsp;</div>
-              </div>
-
-            </div>
-            <div class="dialog-actions">
-              <button class="btn btn-secondary">Cancel</button>
-              <button class="btn btn-primary">Ok</button>
-            </div>
           </div>
         </div>
 
@@ -261,42 +222,65 @@ svg{display:block;}
     </div>
   </div>
 
-  <!-- CLUB CREDITS DETAIL — Phase 2 Section B (NET-NEW) -->
+  <!-- CLUB DASHBOARD — Phase 2 restructure (2026-07-05), replaces the old Club Credits detail modal -->
+  <!-- Ticket: "[Phase 2] 2.15 Individual Credits & Club Credits for Range Practice" — GET /club is planned as exactly this dashboard: admin(s) + wallet + member list -->
   <div class="section-divider p2-new">
-    <h2>Club Credits detail (Phase 2 — NET-NEW)</h2>
-    <p>SoW 2.15 · opened from the new Club Credits row action · Salt Light Archery Club</p>
+    <h2>Club Dashboard (Phase 2 — replaces Club Credits dialog)</h2>
+    <p>SoW 2.15 · opened from the clubs table's dashboard icon (◎) · full page, mirrors the Archer360 profile-page pattern · Salt Light Archery Club</p>
   </div>
 
-  <!-- Summary row with stat tiles + action buttons -->
+  <!-- Dashboard header: back button + title, mirrors Archer360 profile-page main-hdr pattern -->
   <div class="dialog-mock p2-new">
-    <div class="dlg-body">
-      <div class="summary-row">
-        <div class="summary-tile"><div class="t">CC Balance</div><div class="v">240 CC</div></div>
-        <div class="summary-tile"><div class="t">Status</div><div class="v"><span class="pill active">Active</span></div></div>
+    <div class="dlg-body" style="gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="icon-btn p2-new" title="Back to Club list" style="border-radius:50%;">‹</span>
+        <div style="font-size:20px;font-weight:800;color:var(--color-text-primary);">Salt Light Archery Club</div>
       </div>
-      <div class="button-row">
-        <button class="btn-icon p2-new">⬆ Top Up</button>
-        <button class="btn-icon p2-new">⬇ Usage Report</button>
-      </div>
+
     </div>
   </div>
 
-  <!-- Top Up dialog mock -->
-  <div class="dialog-mock narrow p2-new">
-    <div class="dlg-title">Top Up</div>
+  <!-- SECTION A: Basic info (inline, + Edit button opening the relocated Edit Club dialog) -->
+  <div class="dialog-mock p2-new">
+    <div class="dlg-title" style="display:flex;align-items:center;justify-content:space-between;">
+      Basic Info
+      <button class="btn-icon p2-new">✎ Edit</button>
+    </div>
     <div class="dlg-body">
-      <div class="field">
-        <label>Top-Up Amount (CC) <span class="req">*</span></label>
-        <div class="input editable">100</div>
-      </div>
-      <div class="field">
-        <label>Payment Reference</label>
-        <div class="input editable">INV-2026-0705</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Club Name</label>
+          <div class="input readonly">Salt Light Archery Club</div>
+        </div>
+        <div class="field">
+          <label>Affiliation</label>
+          <div class="input readonly">Yes</div>
+        </div>
       </div>
       <div class="field">
         <label>Remarks</label>
-        <div class="input editable textarea-mock" style="height:60px;">Manual top-up for Q3 campaign</div>
-        <div class="hint">Max 120 characters</div>
+        <div class="input readonly" style="min-height:52px;">Home club, main range</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Edit Club dialog mock (relocated from table row action; same fields as AS-IS club_dialog.dart) -->
+  <div class="dialog-mock narrow p2-new">
+    <div class="dlg-title">Edit Club</div>
+    <div class="dlg-body">
+      <div class="field">
+        <label>Club Name <span class="req">*</span></label>
+        <div class="input editable">Salt Light Archery Club</div>
+        <div class="hint">Max 60 characters</div>
+      </div>
+      <div class="field">
+        <label>Affiliation <span class="req">*</span></label>
+        <div class="input dropdown editable">Yes</div>
+      </div>
+      <div class="field">
+        <label>Remarks</label>
+        <div class="input editable textarea-mock" style="height:52px;">Home club, main range</div>
       </div>
     </div>
     <div class="dlg-actions">
@@ -305,9 +289,56 @@ svg{display:block;}
     </div>
   </div>
 
-  <!-- Ledger table -->
+  <!-- SECTION B: Club Credits — wallet tiles + adjustment dialog + Transactions table -->
+  <div class="dialog-mock p2-new">
+    <div class="dlg-title" style="display:flex;align-items:center;justify-content:space-between;">
+      Club Credits
+      <button class="btn-icon p2-new">+ Create</button>
+    </div>
+    <div class="dlg-body">
+      <div class="summary-row">
+        <div class="summary-tile"><div class="t">CC Balance</div><div class="v">240 CC</div></div>
+        <div class="summary-tile"><div class="t">Expiry</div><div class="v">31 Dec 2026</div></div>
+      </div>
+      <div class="button-row">
+        <button class="btn-icon p2-new">⬇ Usage Report</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Credit adjustment dialog mock (replaces the old Top-Up-only dialog) -->
+  <div class="dialog-mock narrow p2-new">
+    <div class="dlg-title">Credit Adjustment</div>
+    <div class="dlg-body">
+      <div class="field">
+        <label>Amount (CC) <span class="req">*</span></label>
+        <div class="input editable">+100</div>
+        <div class="hint">Signed: + = top-up, − = deduction</div>
+      </div>
+      <div class="field">
+        <label>Reason <span class="req">*</span></label>
+        <div class="input dropdown editable">admin</div>
+        <div class="hint">Defaults to "admin"</div>
+      </div>
+      <div class="field">
+        <label>Remark <span class="req">*</span></label>
+        <div class="input editable textarea-mock" style="height:52px;">Manual top-up for Q3 campaign</div>
+      </div>
+      <div class="field">
+        <label>Payment Reference</label>
+        <div class="input editable">INV-2026-0705</div>
+      </div>
+    </div>
+    <div class="dlg-actions">
+      <button class="dlg-btn secondary">Cancel</button>
+      <button class="dlg-btn primary">Ok</button>
+    </div>
+  </div>
+
+  <!-- Transactions table (titled "Transactions", NOT "Ledger") -->
   <div class="dialog-mock wide p2-new">
-    <div class="dlg-title">Ledger</div>
+    <div class="dlg-title">Transactions</div>
     <div class="dlg-body">
       <div style="overflow-x:auto;">
         <table class="pkg-table">
@@ -315,44 +346,39 @@ svg{display:block;}
             <tr>
               <th>Date</th>
               <th>Type</th>
-              <th>Detail</th>
-              <th>Change (CC)</th>
-              <th>Balance (CC)</th>
-              <th>By</th>
+              <th>Info</th>
+              <th>Quantity</th>
+              <th>Remarks</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>5 Jul 2026</td>
-              <td>Top-up</td>
-              <td>INV-2026-0705</td>
+              <td>admin</td>
+              <td>&mdash;</td>
               <td style="color:var(--color-success);">+100</td>
-              <td>240</td>
-              <td>Sarah (staff)</td>
+              <td>Manual top-up for Q3 campaign</td>
             </tr>
             <tr>
               <td>2 Jul 2026</td>
-              <td>Booking</td>
-              <td>BK-1042 · John Tan (club role)</td>
+              <td>booking</td>
+              <td>BK-1042 · John Tan</td>
               <td style="color:var(--color-error);">−20</td>
-              <td>140</td>
-              <td>system</td>
+              <td>&mdash;</td>
             </tr>
             <tr>
               <td>28 Jun 2026</td>
-              <td>Refund</td>
-              <td>BK-1017 cancelled</td>
+              <td>refund</td>
+              <td>BK-1017 · John Tan</td>
               <td style="color:var(--color-success);">+20</td>
-              <td>160</td>
-              <td>system</td>
+              <td>Booking cancelled</td>
             </tr>
             <tr>
               <td>20 Jun 2026</td>
-              <td>Top-up</td>
-              <td>INV-2026-0621</td>
+              <td>admin</td>
+              <td>&mdash;</td>
               <td style="color:var(--color-success);">+140</td>
-              <td>140</td>
-              <td>Sarah (staff)</td>
+              <td>Manual top-up for Q2 campaign</td>
             </tr>
           </tbody>
         </table>
@@ -360,20 +386,19 @@ svg{display:block;}
     </div>
   </div>
 
-  <!-- Club Roles table -->
+  <!-- SECTION C: Club Members -->
   <div class="dialog-mock wide p2-new">
-    <div class="dlg-title">Club Roles</div>
+    <div class="dlg-title">Club Members</div>
     <div class="dlg-body">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
-        <button class="btn-icon p2-new">+ Add Member</button>
-      </div>
+
       <div style="overflow-x:auto;">
         <table class="pkg-table">
           <thead>
             <tr>
               <th>Member</th>
               <th>Phone</th>
-              <th>Role</th>
+              <th class="p2-new">Club Admin</th>
+              <th class="p2-new">Credit Access</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -381,26 +406,47 @@ svg{display:block;}
             <tr>
               <td>John Tan</td>
               <td>9123 4567</td>
-              <td>Club Manager</td>
-              <td class="actions-cell"><span class="icon-btn">✎</span><span class="icon-btn">✕</span></td>
+              <td class="p2-new" style="text-align:center;"><input type="checkbox" checked disabled></td>
+              <td class="p2-new"><span class="pill active">On</span></td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
-            <tr>
+            <tr style="background:var(--color-surface-variant);">
               <td>Mei Lin Koh</td>
               <td>9876 5432</td>
-              <td>Club Member</td>
-              <td class="actions-cell"><span class="icon-btn">✎</span><span class="icon-btn">✕</span></td>
+              <td class="p2-new" style="text-align:center;"><input type="checkbox" disabled></td>
+              <td class="p2-new"><span class="pill active">On</span></td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
             <tr>
               <td>Ravi Kumar</td>
               <td>9001 1223</td>
-              <td>Club Member</td>
-              <td class="actions-cell"><span class="icon-btn">✎</span><span class="icon-btn">✕</span></td>
+              <td class="p2-new" style="text-align:center;"><input type="checkbox" disabled></td>
+              <td class="p2-new"><span class="pill deactivated">Off</span></td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
+            </tr>
+            <tr>
+              <td>Priya Nair</td>
+              <td>9456 7890</td>
+              <td class="p2-new" style="text-align:center;"><input type="checkbox" checked disabled></td>
+              <td class="p2-new"><span class="pill deactivated">Off</span></td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
+            </tr>
+            <tr style="background:var(--color-surface-variant);">
+              <td>Wei Jie Ong</td>
+              <td>9234 5678</td>
+              <td class="p2-new" style="text-align:center;"><input type="checkbox" disabled></td>
+              <td class="p2-new"><span class="pill active">On</span></td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
+
+  <!-- Data-model reference for backend alignment -->
+
 
 </div>
 
