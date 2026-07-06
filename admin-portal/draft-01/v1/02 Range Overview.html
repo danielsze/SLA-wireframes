@@ -135,9 +135,8 @@ table.access td.pass{max-width:120px;white-space:normal;}
 
 /* Phase 2 new element highlighting */
 .p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+td.p2-new,th.p2-new{outline-offset:-2px;}
 
-/* Lofi toggle button */
-#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
 </head>
@@ -160,7 +159,6 @@ table.access td.pass{max-width:120px;white-space:normal;}
         <!-- NAV RAIL -->
         <div class="nav-rail">
           <div class="rail-logo">X</div>
-
           <div class="nav-item active"><span class="ic">◔</span><span class="lbl">Range<br>Overview</span></div>
           <div class="nav-item"><span class="ic">▦</span><span class="lbl">Range<br>Timetable</span></div>
           <div class="nav-item"><span class="ic">☰</span><span class="lbl">Bookings</span></div>
@@ -376,6 +374,7 @@ table.access td.pass{max-width:120px;white-space:normal;}
       <button class="dlg-btn primary">Ok</button>
     </div>
   </div>
+
 
   <!-- SETTLEMENT DIALOG (Phase 2 — REBUILD of Confirm Sale Payment) -->
   <div class="section-divider">

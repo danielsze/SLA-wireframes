@@ -69,7 +69,9 @@ svg{display:block;}
 .dialog-title{font-size:18px;font-weight:800;padding:16px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);color:var(--color-text-primary);}
 .dialog-content{padding:16px;display:flex;flex-direction:column;gap:12px;}
 .section-title{font-size:14px;font-weight:800;color:var(--color-text-secondary);margin-top:4px;}
-.subsection-title{font-size:12px;font-weight:700;color:var(--color-text-secondary);padding:0 8px;}
+.subsection-title{font-size:12px;font-weight:700;color:var(--color-text-secondary);padding:0 8px;display:flex;align-items:center;gap:8px;}
+.subsection-title .box{width:18px;height:18px;border:var(--border-subtle) solid var(--color-border-emphasis);border-radius:3px;display:grid;place-items:center;background:var(--color-surface);flex-shrink:0;}
+.subsection-title .box.checked{background:var(--color-primary);border-color:var(--color-primary);color:#fff;font-size:12px;}
 .field-row{display:flex;gap:12px;}
 .field-row > *{flex:1;}
 .field{display:flex;flex-direction:column;gap:4px;}
@@ -80,9 +82,6 @@ svg{display:block;}
 .field .input.dropdown::after{content:'▾';color:var(--color-text-disabled);font-size:10px;}
 .field .input.multiselect{display:flex;flex-wrap:wrap;gap:6px;min-height:38px;}
 .mini-chip{font-size:11px;font-weight:600;background:var(--color-surface-variant);border-radius:var(--radius-full);padding:3px 9px;color:var(--color-text-secondary);}
-.checkbox-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--color-text-primary);}
-.checkbox-row .box{width:18px;height:18px;border:var(--border-subtle) solid var(--color-border-emphasis);border-radius:3px;display:grid;place-items:center;background:var(--color-surface);flex-shrink:0;}
-.checkbox-row .box.checked{background:var(--color-primary);border-color:var(--color-primary);color:#fff;font-size:12px;}
 .additional-row{display:flex;flex-direction:column;gap:8px;align-items:stretch;}
 .additional-settings-block{display:flex;flex-direction:column;gap:12px;width:100%;}
 .dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px 16px;}
@@ -90,13 +89,11 @@ svg{display:block;}
 .btn-primary{background:var(--color-primary);color:#fff;}
 .btn-secondary{background:transparent;color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);}
 
-/* Dev notes */
 
 /* Phase 2 new elements */
 .p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+td.p2-new,th.p2-new{outline-offset:-2px;}
 
-/* Lofi toggle button */
-#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
 </head>
@@ -145,6 +142,7 @@ svg{display:block;}
               <span class="chip">Club</span>
             </div>
           </div>
+
 
           <!-- DataArea (package_data_area.dart) -->
           <div class="data-area" style="margin-top:16px;">
@@ -207,7 +205,6 @@ svg{display:block;}
               </table>
             </div>
             <div class="pagination">1 - 4 of 4 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
-
           </div>
         </div>
 
@@ -262,7 +259,6 @@ svg{display:block;}
                   </div>
                 </div>
               </div>
-
               <div style="font-size:11px;color:var(--color-text-secondary);padding:0 8px;" class="p2-new">Leave blank to show this package to all members.</div>
 
               <!-- SECTION B: 2.5 description field -->
@@ -272,6 +268,7 @@ svg{display:block;}
               </div>
               <div style="font-size:11px;color:var(--color-text-secondary);padding:0 8px;" class="p2-new">Member-facing — shown in the member portal shop. Remarks above stays internal-only.</div>
 
+
               <div class="section-title">Additional Settings</div>
 
               <div class="additional-row">
@@ -279,15 +276,11 @@ svg{display:block;}
                   <label>Member Display *</label>
                   <div class="input dropdown">Active</div>
                 </div>
-                <div class="checkbox-row"><span class="box checked">✓</span>Range Pass</div>
-                <div class="checkbox-row"><span class="box checked">✓</span>Credit</div>
-                <div class="checkbox-row p2-new"><span class="box checked">✓</span>Locker</div>
               </div>
-
 
               <div class="additional-row">
                 <div class="additional-settings-block">
-                  <div class="subsection-title">Range Pass Settings</div>
+                  <div class="subsection-title"><span class="box checked">✓</span>Range Pass Settings</div>
                   <div class="field">
                     <label>Range Pass Name *</label>
                     <div class="input">7-Day Access Pass</div>
@@ -305,7 +298,7 @@ svg{display:block;}
                   </div>
                 </div>
                 <div class="additional-settings-block">
-                  <div class="subsection-title">Credit Settings</div>
+                  <div class="subsection-title"><span class="box checked">✓</span>Credit Settings</div>
                   <div class="field">
                     <label>Credit Type *</label>
                     <div class="input dropdown">Arrow Credit</div>
@@ -321,7 +314,7 @@ svg{display:block;}
                 </div>
                 <!-- SECTION D: 2.7 locker settings branch -->
                 <div class="additional-settings-block p2-new">
-                  <div class="subsection-title">Locker Settings</div>
+                  <div class="subsection-title"><span class="box checked">✓</span>Locker Settings</div>
                   <div class="field">
                     <label>Locker Access Name *</label>
                     <div class="input">Bishan Locker Access</div>
@@ -340,14 +333,12 @@ svg{display:block;}
                 </div>
               </div>
 
-
             </div>
             <div class="dialog-actions">
               <button class="btn btn-secondary">Cancel</button>
               <button class="btn btn-primary">Save</button>
             </div>
           </div>
-
         </div>
 
       </div>

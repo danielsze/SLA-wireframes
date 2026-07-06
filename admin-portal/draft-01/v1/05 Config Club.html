@@ -75,14 +75,15 @@ svg{display:block;}
 .field label{font-size:11px;font-weight:700;color:var(--color-text-secondary);}
 .field label .req{color:var(--color-primary);}
 .field .input{border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-xs);padding:9px 10px;font-size:13px;color:var(--color-text-primary);background:var(--color-surface);}
+.field .input.readonly{border:none;background:transparent;color:var(--color-text-primary);}
 .field .input.dropdown{display:flex;align-items:center;justify-content:space-between;}
 .field .input.dropdown::after{content:'▾';color:var(--color-text-disabled);font-size:10px;}
 .field .hint{font-size:10.5px;color:var(--color-text-disabled);}
 
-/* Dev notes */
 
 /* Phase 2 new elements */
 .p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+td.p2-new,th.p2-new{outline-offset:-2px;}
 
 /* Dialog mocks (secondary panels below the frame) — copied from 02 Range Overview */
 .section-divider{width:100%;max-width:1320px;margin:40px 0 16px;color:#E8DDD0;}
@@ -110,8 +111,6 @@ svg{display:block;}
 .btn-icon{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface-variant);border:var(--border-subtle) solid var(--color-border-subtle);cursor:pointer;}
 .muted-row{opacity:.6;}
 
-/* Lofi toggle button */
-#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
 </head>
@@ -160,6 +159,7 @@ svg{display:block;}
               <span class="chip on">Club</span>
             </div>
           </div>
+
 
           <!-- DataArea (club_data_area.dart) -->
           <div class="data-area" style="margin-top:16px;">
@@ -216,10 +216,9 @@ svg{display:block;}
               </table>
             </div>
             <div class="pagination">1 - 4 of 4 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
-
-
           </div>
         </div>
+
 
       </div>
     </div>
@@ -239,7 +238,6 @@ svg{display:block;}
         <span class="icon-btn p2-new" title="Back to Club list" style="border-radius:50%;">‹</span>
         <div style="font-size:20px;font-weight:800;color:var(--color-text-primary);">Salt Light Archery Club</div>
       </div>
-
     </div>
   </div>
 
@@ -264,7 +262,6 @@ svg{display:block;}
         <label>Remarks</label>
         <div class="input readonly" style="min-height:52px;">Home club, main range</div>
       </div>
-
     </div>
   </div>
 
@@ -306,7 +303,6 @@ svg{display:block;}
       <div class="button-row">
         <button class="btn-icon p2-new">⬇ Usage Report</button>
       </div>
-
     </div>
   </div>
 
@@ -393,7 +389,6 @@ svg{display:block;}
   <div class="dialog-mock wide p2-new">
     <div class="dlg-title">Club Members</div>
     <div class="dlg-body">
-
       <div style="overflow-x:auto;">
         <table class="pkg-table">
           <thead>
@@ -444,11 +439,8 @@ svg{display:block;}
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
-
-  <!-- Data-model reference for backend alignment -->
 
 
 </div>

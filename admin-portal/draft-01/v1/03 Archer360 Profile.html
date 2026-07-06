@@ -90,13 +90,11 @@ svg{display:block;}
 .secondary-section{margin-top:32px;padding-top:20px;border-top:2px dashed var(--color-border-emphasis);}
 .secondary-label{font-size:12px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--color-primary);margin-bottom:10px;}
 
-/* Dev notes */
 
 /* Phase 2 new elements marker */
 .p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+td.p2-new,th.p2-new{outline-offset:-2px;}
 
-/* Lofi toggle button */
-#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="../../../assets/css/wireframe-skin.css">
 </head>
@@ -143,9 +141,9 @@ svg{display:block;}
                 <span class="chip on">Archer</span>
                 <span class="chip">Bookings</span>
                 <span class="chip">Sales</span>
+                <span class="chip p2-new">Passes/Locker</span>
                 <span class="chip">Credits</span>
                 <span class="chip p2-new">Scores</span>
-                <span class="chip p2-new">Passes/Locker</span>
               </div>
             </div>
             <div class="title-btm">
@@ -193,6 +191,8 @@ svg{display:block;}
                 <div class="ro-field"><label>Group</label><div class="val">Youth Squad</div></div>
                 <div class="ro-field"><label>Style(s)</label><div class="val">Recurve, Barebow</div></div>
                 <div class="ro-field"><label>Archery Club</label><div class="val">Salt Light Archery Club</div></div>
+                <div class="ro-field p2-new"><label>Club Role</label><div class="val">Admin</div></div>
+                <div class="ro-field p2-new"><label>Credit Access</label><div class="val">Yes</div></div>
                 <div class="ro-field"><label>Special Needs</label><div class="val">No</div></div>
                 <div class="ro-field"><label>Student Expiry Date</label><div class="val">31/12/2026</div></div>
                 <div class="ro-field"><label>Internal Remarks</label><div class="val">-</div></div>
@@ -202,7 +202,6 @@ svg{display:block;}
                 <div class="ro-field"><label>Certificate(s)</label><div class="val">CERT-2024-0031</div></div>
               </div>
             </div>
-
           </div>
 
           <!-- SECONDARY: Edit Archer Profile dialog — Range Pass section (profile_range_pass.dart) -->
@@ -227,8 +226,6 @@ svg{display:block;}
                 <label>Range Pass Valid Till *</label>
                 <div class="input">02/08/2026</div>
               </div>
-
-
             </div>
           </div>
 
@@ -266,7 +263,6 @@ svg{display:block;}
                   </tbody>
                 </table>
               </div>
-
             </div>
 
             <div class="data-area">
@@ -310,14 +306,12 @@ svg{display:block;}
                 </table>
               </div>
               <div class="pagination">1 - 2 of 2 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
-
             </div>
           </div>
 
           <!-- Reference: other tabs not rendered in full (secondary tabs, code order) -->
           <div class="secondary-section">
             <div class="secondary-label">Other tabs (not rendered here — reference only)</div>
-
           </div>
 
           <!-- PRIMARY TAB: Bookings (bookings_tab.dart + bookings_tab_table.dart) -->
@@ -400,8 +394,6 @@ svg{display:block;}
                 </table>
               </div>
               <div class="pagination">1 - 5 of 5 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
-
-
             </div>
           </div>
 
@@ -453,7 +445,6 @@ svg{display:block;}
                   </tbody>
                 </table>
               </div>
-
             </div>
 
             <!-- Add Verified Score dialog mock -->
@@ -503,7 +494,6 @@ svg{display:block;}
                 <button class="btn-text" style="flex:0;">Cancel</button>
                 <button class="btn-text" style="flex:0;">Save</button>
               </div>
-
             </div>
           </div>
 
@@ -553,7 +543,6 @@ svg{display:block;}
                   </tbody>
                 </table>
               </div>
-
             </div>
 
             <!-- SECTION B: Locker Holdings (Phase 2 NET-NEW) -->
@@ -590,7 +579,6 @@ svg{display:block;}
                   </tbody>
                 </table>
               </div>
-
             </div>
           </div>
 
