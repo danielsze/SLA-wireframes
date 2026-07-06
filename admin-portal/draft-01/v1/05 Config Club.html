@@ -61,10 +61,13 @@ svg{display:block;}
 .pkg-table td.actions-cell{display:flex;gap:6px;}
 .icon-btn{width:28px;height:28px;border-radius:var(--radius-sm);border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);display:grid;place-items:center;cursor:pointer;color:var(--color-text-secondary);}
 .bool-cell{display:flex;align-items:center;}
-.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--radius-full);font-size:12px;font-weight:700;}
-.pill.active{background:var(--color-success);color:var(--color-on-success);}
-.pill.deactivated{background:var(--color-surface-variant);color:var(--color-text-disabled);}
 .pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px;font-size:12px;color:var(--color-text-secondary);}
+
+/* Toggle switch (Club Admin / Credit Access mock controls — pure CSS, no real <input>) */
+.switch{position:relative;display:inline-block;width:34px;height:18px;border-radius:var(--radius-full);background:var(--color-surface-variant);border:var(--border-subtle) solid var(--color-border-subtle);flex-shrink:0;}
+.switch::after{content:'';position:absolute;top:1px;left:1px;width:14px;height:14px;border-radius:50%;background:var(--color-text-disabled);transition:left .15s ease;}
+.switch.on{background:var(--color-primary);border-color:var(--color-primary);}
+.switch.on::after{left:17px;background:#fff;}
 .pg-btn{width:26px;height:26px;border-radius:50%;border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);cursor:pointer;}
 
 /* ── Form fields (shared by dialog mocks + dashboard) ── */
@@ -406,36 +409,36 @@ svg{display:block;}
             <tr>
               <td>John Tan</td>
               <td>9123 4567</td>
-              <td class="p2-new" style="text-align:center;"><input type="checkbox" checked disabled></td>
-              <td class="p2-new"><span class="pill active">On</span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch on"></span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch on"></span></td>
               <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
             <tr style="background:var(--color-surface-variant);">
               <td>Mei Lin Koh</td>
               <td>9876 5432</td>
-              <td class="p2-new" style="text-align:center;"><input type="checkbox" disabled></td>
-              <td class="p2-new"><span class="pill active">On</span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch"></span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch on"></span></td>
               <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
             <tr>
               <td>Ravi Kumar</td>
               <td>9001 1223</td>
-              <td class="p2-new" style="text-align:center;"><input type="checkbox" disabled></td>
-              <td class="p2-new"><span class="pill deactivated">Off</span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch"></span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch"></span></td>
               <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
             <tr>
               <td>Priya Nair</td>
               <td>9456 7890</td>
-              <td class="p2-new" style="text-align:center;"><input type="checkbox" checked disabled></td>
-              <td class="p2-new"><span class="pill deactivated">Off</span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch on"></span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch"></span></td>
               <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
             <tr style="background:var(--color-surface-variant);">
               <td>Wei Jie Ong</td>
               <td>9234 5678</td>
-              <td class="p2-new" style="text-align:center;"><input type="checkbox" disabled></td>
-              <td class="p2-new"><span class="pill active">On</span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch"></span></td>
+              <td class="p2-new" style="text-align:center;"><span class="switch on"></span></td>
               <td class="actions-cell"><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
             </tr>
           </tbody>
