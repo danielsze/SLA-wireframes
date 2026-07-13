@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
+svg{display:block;}
+
+/* ── Stage ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:16px;width:100%;max-width:1180px;margin-bottom:28px;color:#E8DDD0;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:7px 16px;border-radius:var(--radius-full);transition:all var(--duration-fast) ease;display:flex;align-items:center;gap:7px;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+
+/* ── Frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+
+/* ── App grid ── */
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;grid-template-areas:"header" "main" "nav";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+.app-nav{grid-area:nav;}
+
+/* ── Status bar ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+
+/* ── Header ── */
+.hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.profile-switch{display:flex;align-items:center;gap:10px;flex:1;min-width:0;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:var(--radius-sm);transition:background var(--duration-fast) ease;}
+.profile-switch:hover{background:var(--color-surface-variant);}
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);flex-shrink:0;}
+.avatar.sm{width:30px;height:30px;font-size:12px;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.avatar.slate{background:linear-gradient(135deg,#3d5168,#2E4055);}
+.ps-text{text-align:left;min-width:0;}
+.ps-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.ps-name{font-size:15px;font-weight:700;color:var(--color-text-primary);display:flex;align-items:center;gap:4px;}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);transition:background var(--duration-fast) ease;}
+.icon-btn:hover{background:var(--color-surface-variant);}
+
+/* ── Nav ── */
+.nav{display:flex;align-items:stretch;background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:6px 4px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:7px 2px 12px;color:var(--color-text-disabled);transition:color var(--duration-fast) ease;}
+.nav-item .ni-label{font-size:10.5px;font-weight:700;}
+.nav-item.on{color:var(--color-primary);}
+.rail-brand{display:none;}
+.rail-foot{display:none;}
+
+/* ── Shared ── */
+.card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--color-text-secondary);}
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast) ease,transform var(--duration-fast) ease;}
+.btn:active{transform:scale(.99);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;transform:none;}
+.btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
+
+/* ── View toggle (Catalog / Purchases) ── */
+.view-seg{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;margin:var(--space-md) var(--space-md) 0;gap:2px;}
+.vt{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:9px 4px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.vt.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+
+/* ── Catalog feed ── */
+.shop-feed{padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-md);}
+.gc-left,.gc-right,.gc-bottom{display:flex;flex-direction:column;gap:var(--space-md);}
+
+/* ── Product rows ── */
+.prod-list{display:flex;flex-direction:column;background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;}
+.prod-row{display:flex;align-items:center;gap:12px;padding:12px var(--space-md);cursor:pointer;transition:background var(--duration-fast) ease;}
+.prod-row:hover{background:var(--color-surface-lowest);}
+.prod-row+.prod-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.prod-ico{width:36px;height:36px;border-radius:var(--radius-sm);flex-shrink:0;display:grid;place-items:center;}
+.ic-credit{background:var(--color-warning-container);color:var(--color-primary);}
+.ic-pass{background:var(--color-success-container);color:var(--color-success);}
+.ic-locker{background:var(--color-surface-variant);color:var(--color-text-secondary);}
+.ic-combo{background:var(--color-warning-container);color:var(--color-warning);}
+.ic-act{background:var(--color-error-container);color:var(--color-error);}
+.prod-info{flex:1;min-width:0;}
+.prod-name{font-size:14px;font-weight:700;line-height:1.2;}
+.prod-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prod-save{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);background:var(--color-success-container);color:var(--color-success);margin-top:5px;}
+.prod-save.sv-warn{background:var(--color-warning-container);color:var(--color-warning);}
+.prod-save.sv-lim{background:var(--color-error-container);color:var(--color-error);}
+.prod-action{flex-shrink:0;display:flex;align-items:center;gap:10px;}
+.prod-price{font-size:16px;font-weight:800;color:var(--color-text-primary);letter-spacing:-.3px;white-space:nowrap;}
+.buy-btn{font-family:inherit;font-size:12px;font-weight:700;border:none;cursor:pointer;padding:6px 14px;border-radius:var(--radius-sm);background:var(--color-primary);color:#fff;white-space:nowrap;transition:background var(--duration-fast) ease;}
+.buy-btn:hover{background:var(--color-primary-hover);}
+
+/* ── Purchase history ── */
+.hist-view{padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-md);}
+.hist-filter{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;gap:2px;}
+.ht{flex:1;font-family:inherit;font-size:12px;font-weight:700;border:none;cursor:pointer;padding:7px 2px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;white-space:nowrap;}
+.ht.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.hist-group-head{padding:9px var(--space-md) 4px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-disabled);background:var(--color-surface-lowest);}
+.hist-row{display:flex;align-items:center;gap:12px;padding:12px var(--space-md);cursor:pointer;transition:background var(--duration-fast) ease;}
+.hist-row:hover{background:var(--color-surface-lowest);}
+.hist-row+.hist-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.hi-ico{width:34px;height:34px;border-radius:var(--radius-full);flex-shrink:0;display:grid;place-items:center;}
+.hi-body{flex:1;min-width:0;}
+.hi-name{font-size:14px;font-weight:700;}
+.hi-sub{font-size:11.5px;color:var(--color-text-secondary);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hi-right{text-align:right;flex-shrink:0;}
+.hi-price{font-size:14px;font-weight:700;white-space:nowrap;}
+.st-chip{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);margin-top:4px;display:inline-block;white-space:nowrap;}
+.st-active{background:rgba(42,107,62,.12);color:var(--color-success);}
+.st-pending{background:rgba(155,79,0,.1);color:var(--color-warning);}
+.st-expired,.st-used{background:var(--color-surface-variant);color:var(--color-text-disabled);}
+.st-upcoming{background:rgba(42,107,62,.12);color:var(--color-success);}
+.hist-empty{padding:32px var(--space-md);text-align:center;color:var(--color-text-disabled);font-size:13px;font-weight:600;}
+
+/* ── Month filter bar (purchases) ── */
+.month-bar{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch;}
+.month-bar::-webkit-scrollbar{display:none;}
+.month-pill{font-family:inherit;font-size:13px;font-weight:700;padding:7px 16px;border-radius:var(--radius-full);border:none;cursor:pointer;white-space:nowrap;background:var(--color-surface-variant);color:var(--color-text-secondary);transition:all var(--duration-fast) ease;flex-shrink:0;}
+.month-pill.on{background:var(--color-primary);color:#fff;}
+.month-pill.empty{opacity:.45;}
+
+/* ── Purchase detail sheet ── */
+.det-sheet{max-height:80%;overflow-y:auto;padding-bottom:calc(28px + env(safe-area-inset-bottom));}
+.det-header{display:flex;align-items:center;gap:12px;padding:10px 0 14px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:4px;}
+.det-ico{width:44px;height:44px;border-radius:var(--radius-sm);flex-shrink:0;display:grid;place-items:center;}
+.det-title-block{flex:1;min-width:0;}
+.det-name{font-size:16px;font-weight:700;line-height:1.2;}
+.det-date{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+.det-price-block{text-align:right;flex-shrink:0;}
+.det-price{font-size:18px;font-weight:800;letter-spacing:-.4px;}
+.det-body{display:flex;flex-direction:column;}
+.det-section{margin-bottom:2px;}
+.det-section+.det-section{border-top:var(--border-subtle) solid var(--color-border-subtle);margin-top:10px;padding-top:10px;}
+.det-section-head{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--color-text-disabled);margin-bottom:6px;}
+.det-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:var(--border-hairline) solid var(--color-border-subtle);}
+.det-row.det-row-last{border-bottom:none;}
+.det-lbl{font-size:13px;font-weight:600;color:var(--color-text-secondary);}
+.det-val{font-size:13px;font-weight:700;text-align:right;max-width:60%;}
+.det-ref{font-family:monospace;font-size:12px;color:var(--color-text-disabled);}
+
+/* ── Sheets ── */
+.scrim{position:absolute;inset:0;background:rgba(28,22,17,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity var(--duration-normal) ease;}
+.scrim.open{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--color-surface);border-radius:var(--radius-xl) var(--radius-xl) 0 0;box-shadow:var(--shadow-5);padding:8px var(--space-md) calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);}
+.sheet.open{transform:translateY(0);}
+.sheet-grip{width:38px;height:4px;border-radius:99px;background:var(--color-border-emphasis);margin:8px auto 6px;}
+.sheet-title{font-size:17px;font-weight:700;padding:5px 0 3px;}
+
+/* Profile sheet */
+.prof-item{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;font-family:inherit;padding:12px;border-radius:var(--radius-md);background:transparent;border:1.5px solid transparent;transition:background var(--duration-fast) ease;}
+.prof-item:hover{background:var(--color-surface-lowest);}
+.prof-item.active{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.pi-text{flex:1;}.pi-name{font-size:15px;font-weight:700;}.pi-meta{font-size:12px;color:var(--color-text-secondary);}
+.pi-chk{margin-left:auto;color:var(--color-primary);}
+.sheet-sub{font-size:12.5px;color:var(--color-text-secondary);padding:0 2px 12px;}
+
+
+/* ── Desktop ── */
+@container (min-width:760px){
+  .app{grid-template-columns:248px 1fr;grid-template-rows:69px 1fr;grid-template-areas:"nav header" "nav main";}
+  .app-main{background:var(--color-surface-lowest);}
+  .hdr{padding:14px 40px;}
+  .nav{flex-direction:column;align-items:stretch;justify-content:flex-start;border-top:none;border-right:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface-variant);padding:0;gap:4px;}
+  .rail-brand{display:flex;align-items:center;gap:11px;padding:22px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:8px;}
+  .rail-brand .logo{width:36px;height:36px;border-radius:11px;background:var(--color-primary);display:grid;place-items:center;}
+  .rail-brand .rb-name{font-size:16px;font-weight:800;}
+  .rail-brand .rb-sub{font-size:10.5px;color:var(--color-text-secondary);font-weight:600;}
+  .nav-item{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 22px;margin:0 12px;border-radius:var(--radius-sm);}
+  .nav-item .ni-label{font-size:14px;}
+  .nav-item.on{background:var(--color-surface-highest);color:var(--color-primary);}
+  .rail-foot{display:flex;align-items:center;gap:10px;margin-top:auto;padding:16px 20px;border-top:var(--border-hairline) solid var(--color-border-subtle);}
+  .rf-name{font-size:13px;font-weight:700;}.rf-sub{font-size:11px;color:var(--color-text-secondary);}
+  .view-seg{margin:32px 40px 0;max-width:320px;}
+  .shop-feed{max-width:1040px;margin:0 auto;padding:20px 40px 48px;display:grid;grid-template-columns:1fr 1fr;gap:20px 28px;align-items:start;}
+  .gc-left,.gc-right{gap:20px;}
+  .gc-bottom{grid-column:1 / -1;}
+  .hist-view{max-width:1040px;margin:0 auto;padding:20px 40px 48px;}
+}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s ease;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 4 · Shop</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.4" stroke="currentColor" stroke-width="2"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="8.5" y1="21" x2="15.5" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Desktop
+      </button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <!-- HEADER -->
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="hdr">
+            <button class="profile-switch" onclick="openProfSheet()">
+              <span class="avatar olive" id="hdrAvatar">CT</span>
+              <span class="ps-text">
+                <span class="ps-label">Active profile</span>
+                <span class="ps-name" id="hdrName">Caleb Tan
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="app-main">
+
+          <!-- View toggle -->
+          <div class="view-seg">
+            <button class="vt on" id="vtCatalog" onclick="setView('catalog')">Catalog</button>
+            <button class="vt" id="vtPurchases" onclick="setView('purchases')">Purchases</button>
+          </div>
+
+          <!-- CATALOG VIEW -->
+          <div id="catalogView">
+<div class="shop-feed" id="shopFeed"></div>
+          </div>
+
+          <!-- PURCHASES VIEW -->
+          <div id="purchasesView" style="display:none;">
+            <div class="hist-view">
+              <div class="month-bar" id="histMonthBar"></div>
+              <div class="card" id="histCard"></div>
+            </div>
+          </div>
+
+        </div><!-- /main -->
+
+        <!-- NAV -->
+        <nav class="nav">
+          <div class="rail-brand">
+            <span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+            <span><div class="rb-name">x10s</div><div class="rb-sub">Salt Light Archery</div></span>
+          </div>
+          <button class="nav-item">
+            <span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="ni-label">Home</span>
+          </button>
+          <button class="nav-item">
+            <span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4M8 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <span class="ni-label">Booking</span>
+          </button>
+          <button class="nav-item">
+            <span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <span class="ni-label">Wallet</span>
+          </button>
+          <button class="nav-item on">
+            <span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <span class="ni-label">Shop</span>
+          </button>
+          <button class="nav-item">
+            <span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <span class="ni-label">Me</span>
+          </button>
+          <div class="rail-foot">
+            <span class="avatar sm olive" id="railAvatar">CT</span>
+            <span><div class="rf-name" id="railName">Caleb Tan</div><div class="rf-sub">Master Class</div></span>
+          </div>
+        </nav>
+
+      </div><!-- /app -->
+
+      <!-- SCRIM -->
+      <div class="scrim" id="scrim" onclick="closeAll()"></div>
+
+      <!-- PROFILE SHEET -->
+      <div class="sheet" id="profSheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-title">Switch profile</div>
+        <div class="sheet-sub">Credits and passes change with the active profile.</div>
+        <button class="prof-item active" onclick="setProfile('Caleb Tan','CT','olive','Master Class',this)">
+          <span class="avatar olive">CT</span>
+          <span class="pi-text"><div class="pi-name">Caleb Tan</div><div class="pi-meta">Master Class</div></span>
+          <span class="pi-chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <button class="prof-item" onclick="setProfile('Mei Lin Tan','ML','slate','Intermediate',this)">
+          <span class="avatar slate">ML</span>
+          <span class="pi-text"><div class="pi-name">Mei Lin Tan</div><div class="pi-meta">Intermediate</div></span>
+        </button>
+      </div>
+
+      <!-- PURCHASE DETAIL SHEET -->
+      <div class="sheet det-sheet" id="histDetSheet">
+        <div id="histDetBody"></div>
+      </div>
+
+    </div><!-- /screen -->
+  </div><!-- /frame -->
+</div><!-- /stage -->
+
+<script>
+/* ── Form factor ── */
+function setForm(m){
+  document.getElementById('frame').classList.toggle('desktop',m==='desktop');
+  document.getElementById('segPhone').classList.toggle('on',m==='phone');
+  document.getElementById('segDesktop').classList.toggle('on',m==='desktop');
+  localStorage.setItem('wf-form',m);
+}
+
+/* ── View toggle ── */
+function setView(v){
+  document.getElementById('vtCatalog').classList.toggle('on',v==='catalog');
+  document.getElementById('vtPurchases').classList.toggle('on',v==='purchases');
+  document.getElementById('catalogView').style.display = v==='catalog' ? '' : 'none';
+  document.getElementById('purchasesView').style.display = v==='purchases' ? '' : 'none';
+}
+
+/* ── Profile sheet ── */
+function openProfSheet(){
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('profSheet').classList.add('open');
+}
+function closeAll(){
+  document.getElementById('scrim').classList.remove('open');
+  document.getElementById('profSheet').classList.remove('open');
+  document.getElementById('histDetSheet').classList.remove('open');
+}
+function setProfile(name,initials,cls,squad,el){
+  document.querySelectorAll('.prof-item').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const ha=document.getElementById('hdrAvatar');
+  ha.textContent=initials; ha.className='avatar '+cls;
+  document.getElementById('hdrName').childNodes[0].textContent=name+' ';
+  const ra=document.getElementById('railAvatar');
+  ra.textContent=initials; ra.className='avatar sm '+cls;
+  document.getElementById('railName').textContent=name;
+  setTimeout(closeAll,180);
+}
+
+/* ── Catalog data ── */
+const ICO = {
+  credit:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`,
+  pass:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="2"/></svg>`,
+  locker:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  combo:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m21 16-4 4-4-4M17 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m3 8 4-4 4 4M7 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  act:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+
+const SECTIONS = [
+  {
+    id:'credits', title:'Credits', col:'left',
+    devNote:'✅ <strong>Credit package visibility</strong> — Decided (2026-07-04): per-package group eligibility via an <code>eligible_group_ids</code> array inside <code>package.info</code> JSONB (sibling of <code>member_display</code>); absent/empty = visible to all groups. No DB migration. Filter applies to the Shop catalogue only — never to Wallet holdings or credit spending. Admin Config package dialog gains a group multi-select.<br><br>🛠️ <strong>Backend:</strong> <code>description</code> field required on credit-type DB records (<code>sale_mgmt</code>). Surfaced via shop API; set per credit type in admin config.',
+    items:[
+      {id:'rp4',   name:'4 RP Credits',   price:20,  ico:'credit', desc:'4 range practice sessions · valid 90 days',                    creditType:'Range Practice',   qty:4,  days:90},
+      {id:'rp8',   name:'8 RP Credits',   price:36,  ico:'credit', desc:'8 range practice sessions · valid 90 days',                    creditType:'Range Practice',   qty:8,  days:90},
+      {id:'rp12',  name:'12 RP Credits',  price:48,  ico:'credit', desc:'12 range practice sessions · valid 90 days',                   creditType:'Range Practice',   qty:12, days:90},
+      {id:'jy4',   name:'4 JY Credits',   price:40,  ico:'credit', desc:'4 junior youth program sessions · valid 90 days',              creditType:'Junior Youth',     qty:4,  days:90},
+      {id:'jy8',   name:'8 JY Credits',   price:72,  ico:'credit', desc:'8 junior youth program sessions · valid 90 days',              creditType:'Junior Youth',     qty:8,  days:90},
+      {id:'mc4',   name:'4 MC Credits',   price:90,  ico:'credit', desc:'4 master class coaching sessions · valid 90 days',             creditType:'Master Class',     qty:4,  days:90},
+      {id:'mc12',  name:'12 MC Credits',  price:200, ico:'credit', desc:'12 master class coaching sessions · valid 90 days',            creditType:'Master Class',     qty:12, days:90},
+      {id:'pc4',   name:'4 PC Credits',   price:120, ico:'credit', desc:'4 private coaching sessions with instructor · valid 90 days',  creditType:'Private Coaching', qty:4,  days:90},
+      {id:'pc12',  name:'12 PC Credits',  price:280, ico:'credit', desc:'12 private coaching sessions with instructor · valid 90 days', creditType:'Private Coaching', qty:12, days:90},
+    ]
+  },
+  {
+    id:'passes', title:'Range Passes', col:'right',
+    devNote:'🛠️ <strong>Backend:</strong> <code>description</code> field required on range-pass package DB records (<code>sale_mgmt</code>). Surfaced via shop API; set per pass type in admin config.',
+    items:[
+      {id:'wc30',   name:'30D West Coast Pass',  price:35,  ico:'pass', desc:'Unlimited range access at West Coast · 30 days',   passName:'30D West Coast Pass',  locations:['West Coast'],            days:30},
+      {id:'wc90',   name:'90D West Coast Pass',  price:90,  ico:'pass', desc:'Unlimited range access at West Coast · 90 days',   passName:'90D West Coast Pass',  locations:['West Coast'],            days:90},
+      {id:'cc30',   name:'30D Chai Chee Pass',   price:35,  ico:'pass', desc:'Unlimited range access at Chai Chee · 30 days',    passName:'30D Chai Chee Pass',   locations:['Chai Chee'],             days:30},
+      {id:'cc90',   name:'90D Chai Chee Pass',   price:90,  ico:'pass', desc:'Unlimited range access at Chai Chee · 90 days',    passName:'90D Chai Chee Pass',   locations:['Chai Chee'],             days:90},
+      {id:'isl365', name:'365D Island Pass',     price:299, ico:'pass', desc:'Unlimited access at all locations · 365 days',     passName:'365D Island Pass',     locations:['West Coast','Chai Chee'], days:365},
+    ]
+  },
+  {
+    id:'locker', title:'Locker Access', col:'left',
+    devNote:'🛠️ <strong>Backend:</strong> <code>description</code> field required on locker package DB records (<code>sale_mgmt</code>). Surfaced via shop API; set per locker type in admin config.',
+    items:[
+      {id:'lkcc30', name:'30D Chai Chee Locker Access',  price:15, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 30 days', lockerName:'30D Chai Chee Locker Access',  locations:['Chai Chee'],  days:30},
+      {id:'lkcc90', name:'90D Chai Chee Locker Access',  price:35, ico:'locker', desc:'Secure equipment storage at Chai Chee range · 90 days', lockerName:'90D Chai Chee Locker Access',  locations:['Chai Chee'],  days:90},
+      {id:'lkwc30', name:'30D West Coast Locker Access', price:15, ico:'locker', desc:'Secure equipment storage at West Coast range · 30 days', lockerName:'30D West Coast Locker Access', locations:['West Coast'], days:30},
+      {id:'lkwc90', name:'90D West Coast Locker Access', price:35, ico:'locker', desc:'Secure equipment storage at West Coast range · 90 days', lockerName:'90D West Coast Locker Access', locations:['West Coast'], days:90},
+    ]
+  },
+  {
+    id:'combos', title:'Combo Packages', col:'right',
+    devNote:'🛠️ <strong>Backend:</strong> Combo packages can include credit, pass, and/or locker components. <code>description</code> field required on combo package DB records. Surfaced via shop API; set per combo in admin config.',
+    items:[
+      {id:'c1', name:'4 JY Credits w/ Pass',           price:100, ico:'combo', desc:'Bundle: 4 JY credits + 30D all-location pass',            components:[
+        {type:'credit', creditType:'Junior Youth', qty:4,  days:90},
+        {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30}
+      ]},
+      {id:'c2', name:'12 JY Credits w/ Pass',          price:280, ico:'combo', desc:'Bundle: 12 JY credits + 90D all-location pass',           components:[
+        {type:'credit', creditType:'Junior Youth', qty:12, days:90},
+        {type:'pass',   passName:'90D Range Pass',  locations:['West Coast','Chai Chee'], days:90}
+      ]},
+      {id:'c3', name:'4 MC Credits w/ Pass',           price:120, ico:'combo', desc:'Bundle: 4 MC credits + 30D all-location pass',            components:[
+        {type:'credit', creditType:'Master Class', qty:4,  days:90},
+        {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30}
+      ]},
+      {id:'c4', name:'12 MC Credits w/ Pass',          price:300, ico:'combo', desc:'Bundle: 12 MC credits + 90D all-location pass',           components:[
+        {type:'credit', creditType:'Master Class', qty:12, days:90},
+        {type:'pass',   passName:'90D Range Pass',  locations:['West Coast','Chai Chee'], days:90}
+      ]},
+      {id:'c5', name:'24 MC Credits w/ Pass',          price:540, ico:'combo', desc:'Bundle: 24 MC credits + 365D all-location pass',          components:[
+        {type:'credit', creditType:'Master Class', qty:24, days:90},
+        {type:'pass',   passName:'365D Range Pass', locations:['West Coast','Chai Chee'], days:365}
+      ]},
+      {id:'c6', name:'4 PC Credits w/ Pass',           price:150, ico:'combo', desc:'Bundle: 4 PC credits + 30D all-location pass',            components:[
+        {type:'credit', creditType:'Private Coaching', qty:4,  days:90},
+        {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30}
+      ]},
+      {id:'c7', name:'4 JY Credits w/ Pass + Locker',  price:110, ico:'combo', desc:'Bundle: 4 JY credits + 30D pass + 30D West Coast locker', components:[
+        {type:'credit', creditType:'Junior Youth', qty:4,  days:90},
+        {type:'pass',   passName:'30D Range Pass',  locations:['West Coast','Chai Chee'], days:30},
+        {type:'locker', lockerName:'30D West Coast Locker Access', locations:['West Coast'], days:30}
+      ]},
+    ]
+  },
+  {
+    id:'activities', title:'Paid Activities', col:'bottom',
+    items:[
+      {id:'a1', name:'Basic Archery Course Plus (Recurve)',      price:260, ico:'act', act:true},
+      {id:'a2', name:'Basic Archery Course Refresher (Recurve)', price:80,  ico:'act', act:true},
+      {id:'a3', name:'Basic Archery Course Test (Recurve)',      price:60,  ico:'act', act:true},
+    ]
+  }
+];
+
+/* Flatten for lookup */
+const ITEM_MAP = {};
+SECTIONS.forEach(s=>s.items.forEach(i=>{ i.section=s.id; ITEM_MAP[i.id]=i; }));
+
+function renderCatalog(){
+  const feed = document.getElementById('shopFeed');
+  let leftHTML = '', rightHTML = '', bottomHTML = '';
+  SECTIONS.forEach(s=>{
+    const rows = s.items.map(it=>{
+      return `<div class="prod-row" onclick="openCheckout('${it.id}')">
+        <span class="prod-ico ic-${it.ico}">${ICO[it.ico]}</span>
+        <div class="prod-info">
+          <div class="prod-name">${it.name}</div>
+          ${it.desc ? `<div class="prod-sub">${it.desc}</div>` : ''}
+        </div>
+        <div class="prod-action">
+          <div class="prod-price">$${it.price}.00</div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:var(--color-text-disabled);flex-shrink:0;"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>`;
+    }).join('');
+    const block = `<div class="sec-head"><span class="sec-title">${s.title}</span></div>
+      ${s.devNote ? `<div class="dev-note">${s.devNote}</div>` : ''}
+      <div class="prod-list">${rows}</div>`;
+    if(s.col==='left') leftHTML += block;
+    else if(s.col==='right') rightHTML += block;
+    else bottomHTML += block;
+  });
+  feed.innerHTML = `<div class="gc-left">${leftHTML}</div><div class="gc-right">${rightHTML}</div>${bottomHTML ? `<div class="gc-bottom">${bottomHTML}</div>` : ''}`;
+}
+
+/* ── Checkout ── */
+const ACT_ROUTE = { a1: 'basic-plus', a2: 'basic-refresher', a3: 'basic-test' };
+function openCheckout(id){
+  if(ACT_ROUTE[id]){
+    location.href = '04a%20Paid%20Activity.html?act=' + ACT_ROUTE[id];
+    return;
+  }
+  location.href = '04b%20Checkout.html?item=' + id;
+}
+/* ── Purchase history ── */
+const HISTORY = [
+  {idx:0, date:'1 May 2026',  month:'2026-05', name:'90D West Coast Locker Access', type:'locker', price:35,  method:'PayNow', status:'active',  ref:'SY20260501143022',
+   detail:{lockerName:'90D West Coast Locker Access', locations:['West Coast'], validity:'1 May 2026 – 30 Jul 2026'}},
+  {idx:1, date:'5 Apr 2026',  month:'2026-04', name:'90D West Coast Pass',          type:'pass',   price:90,  method:'Card',   status:'active',  ref:'WC20260405092215',
+   detail:{passName:'90D West Coast Pass', locations:['West Coast'], validity:'5 Apr 2026 – 4 Jul 2026'}},
+  {idx:2, date:'5 Apr 2026',  month:'2026-04', name:'Intermediate Archery Course (Recurve)', type:'act', subtype:'prepaid',  price:240, method:'PayNow', ref:'SY20260405110034',
+   detail:{bookingCodes:['BK-20260405-012']}},
+  {idx:3, date:'12 Apr 2026', month:'2026-04', name:'Range Practice',               type:'act',    subtype:'postpaid', price:24,  method:'POS',    ref:'SY20260412180012',
+   detail:{venue:'West Coast 2', bowStyle:'Recurve', billedDuration:'2 hr', bookingCodes:['BK-20260412-027','BK-20260412-028'], voucherCode:'WELCOME10'}},
+  {idx:4, date:'20 Mar 2026', month:'2026-03', name:'12 RP Credits',                type:'credit', price:48,  method:'PayNow', status:'active',  ref:'SY20260320085641',
+   detail:{credits:'12 × Range Practice', validity:'20 Mar 2026 – 18 Jun 2026'}},
+  {idx:5, date:'5 Mar 2026',  month:'2026-03', name:'Basic Archery Course (Recurve)', type:'act', subtype:'prepaid', price:180, method:'PayNow', ref:'SY20260305093115',
+   detail:{bookingCodes:['BK-20260305-008','BK-20260305-009','BK-20260305-010','BK-20260305-011','BK-20260305-012','BK-20260305-013','BK-20260305-014','BK-20260305-015']}},
+  {idx:6, date:'15 Feb 2026', month:'2026-02', name:'12 MC Credits w/ Pass',        type:'combo',  price:300, method:'Card',   status:'expired', ref:'SY20260215143328',
+   detail:{components:[
+     {head:'Credits',    rows:[{l:'Credits', v:'12 × Master Class'},{l:'Validity', v:'15 Feb 2026 – 16 May 2026'}]},
+     {head:'Range Pass', rows:[{l:'Pass Name', v:'90D West Coast Pass'},{l:'Location(s)', v:'West Coast'},{l:'Validity', v:'15 Feb 2026 – 16 May 2026'}]}
+   ]}},
+];
+
+const HI_ICO = {
+  credit:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`,
+  pass:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="2"/></svg>`,
+  locker:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  combo:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m21 16-4 4-4-4M17 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m3 8 4-4 4 4M7 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  act:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+const HI_ICO_CLS = {credit:'ic-credit', pass:'ic-pass', locker:'ic-locker', combo:'ic-combo', act:'ic-act'};
+const STATUS_LABEL = {active:'Active', expired:'Expired', used:'Used', pending:'Pending', upcoming:'Upcoming'};
+
+/* Month bar */
+const HM_MONTHS = [
+  {key:'2026-01',label:'Jan'},{key:'2026-02',label:'Feb'},{key:'2026-03',label:'Mar'},
+  {key:'2026-04',label:'Apr'},{key:'2026-05',label:'May'},{key:'2026-06',label:'Jun'},
+];
+let activeHistMonth = '2026-05';
+
+function renderHistMonthBar(){
+  const hasData = new Set(HISTORY.map(h=>h.month));
+  document.getElementById('histMonthBar').innerHTML = HM_MONTHS.map(m=>
+    `<button class="month-pill${m.key===activeHistMonth?' on':''}${!hasData.has(m.key)?' empty':''}" onclick="pickHistMonth('${m.key}')">${m.label}</button>`
+  ).join('');
+}
+
+function pickHistMonth(m){
+  activeHistMonth = m;
+  renderHistMonthBar();
+  renderHistory();
+}
+
+function renderHistory(){
+  const list = HISTORY.filter(h=>h.month===activeHistMonth);
+  const card = document.getElementById('histCard');
+  if(!list.length){ card.innerHTML='<div class="hist-empty">No purchases in this month</div>'; return; }
+  let html = '';
+  list.forEach(h=>{
+    const cls = HI_ICO_CLS[h.type];
+    const ico = HI_ICO[h.type];
+    html += `<div class="hist-row" onclick="openHistDetail(${h.idx})">
+      <span class="hi-ico ${cls}">${ico}</span>
+      <div class="hi-body">
+        <div class="hi-name">${h.name}</div>
+        <div class="hi-sub">${h.date} · ${h.ref}</div>
+      </div>
+      <div class="hi-right">
+        <div class="hi-price">$${h.price}.00</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:var(--color-text-disabled);flex-shrink:0;margin-left:4px;"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>`;
+  });
+  card.innerHTML = html;
+}
+
+/* Purchase detail sheet */
+function openHistDetail(idx){
+  const h = HISTORY[idx];
+  document.getElementById('histDetBody').innerHTML = renderHistDetail(h);
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('histDetSheet').classList.add('open');
+  document.getElementById('profSheet').classList.remove('open');
+}
+
+function renderHistDetail(h){
+  let rows = '';
+  if(h.type==='credit'){
+    rows = `<div class="det-row"><span class="det-lbl">Credits</span><span class="det-val">${h.detail.credits}</span></div>
+      <div class="det-row"><span class="det-lbl">Validity</span><span class="det-val">${h.detail.validity}</span></div>`;
+  } else if(h.type==='pass'){
+    rows = `<div class="det-row"><span class="det-lbl">Pass Name</span><span class="det-val">${h.detail.passName}</span></div>
+      <div class="det-row"><span class="det-lbl">Location(s)</span><span class="det-val">${h.detail.locations.join(', ')}</span></div>
+      <div class="det-row"><span class="det-lbl">Validity</span><span class="det-val">${h.detail.validity}</span></div>`;
+  } else if(h.type==='locker'){
+    rows = `<div class="det-row"><span class="det-lbl">Locker Access</span><span class="det-val">${h.detail.lockerName}</span></div>
+      <div class="det-row"><span class="det-lbl">Location(s)</span><span class="det-val">${h.detail.locations.join(', ')}</span></div>
+      <div class="det-row"><span class="det-lbl">Validity</span><span class="det-val">${h.detail.validity}</span></div>`;
+  } else if(h.type==='combo'){
+    rows = h.detail.components.map(c=>`
+      <div class="det-section">
+        <div class="det-section-head">${c.head}</div>
+        ${c.rows.map(r=>`<div class="det-row"><span class="det-lbl">${r.l}</span><span class="det-val">${r.v}</span></div>`).join('')}
+      </div>`).join('');
+  } else if(h.type==='act'){
+    const codes = (h.detail.bookingCodes && h.detail.bookingCodes.length) ? h.detail.bookingCodes.join(', ') : '—';
+    let topRows = '';
+    if(h.subtype === 'postpaid'){
+      topRows = `<div class="det-row"><span class="det-lbl">Billed duration</span><span class="det-val">${h.detail.billedDuration}</span></div>`;
+    }
+    topRows += `<div class="det-row"><span class="det-lbl">Booking code(s)</span><span class="det-val">${codes}</span></div>`;
+    const voucherRow = h.detail.voucherCode ? `<div class="det-row"><span class="det-lbl">Voucher code</span><span class="det-val">${h.detail.voucherCode}</span></div>` : '';
+    rows = topRows + `
+      <div class="det-section">
+        <div class="det-section-head">Purchase summary</div>
+        <div class="det-row"><span class="det-lbl">Amount paid</span><span class="det-val">$${h.price}.00</span></div>
+        ${voucherRow}
+        <div class="det-row"><span class="det-lbl">Payment method</span><span class="det-val">${h.method}</span></div>
+        <div class="det-row det-row-last"><span class="det-lbl">Sale reference</span><span class="det-val det-ref">${h.ref}</span></div>
+      </div>`;
+  }
+  if(h.type !== 'act'){
+    rows += `<div class="det-row"><span class="det-lbl">Payment</span><span class="det-val">${h.method}</span></div>
+      <div class="det-row det-row-last"><span class="det-lbl">Sale reference</span><span class="det-val det-ref">${h.ref}</span></div>`;
+  }
+
+  const ico = HI_ICO[h.type]||HI_ICO.credit;
+  const icoCls = HI_ICO_CLS[h.type]||'ic-credit';
+  return `<div class="sheet-grip"></div>
+    <div class="det-header">
+      <span class="det-ico ${icoCls}">${ico}</span>
+      <div class="det-title-block">
+        <div class="det-name">${h.name}</div>
+        <div class="det-date">${h.date}</div>
+      </div>
+      <div class="det-price-block">
+        <div class="det-price">$${h.price}.00</div>
+      </div>
+    </div>
+    <div class="det-body">${rows}</div>`;
+}
+
+/* ── Init ── */
+renderCatalog();
+renderHistMonthBar();
+renderHistory();
+</script>
+
+<script>
+/* wf-nav */
+(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+</body>
+</html>

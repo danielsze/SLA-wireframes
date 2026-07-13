@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Admin — Archer 360 &gt; Profile (Phase 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1320px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+
+/* ── Desktop frame (dashboard, ~1280px stage — no phone chrome/notch) ── */
+.frame{position:relative;background:#0f0d0b;border-radius:22px;padding:0;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:1280px;max-width:100%;flex-shrink:0;}
+.screen{position:relative;width:100%;overflow:hidden;border-radius:22px;background:var(--color-surface-lowest);}
+
+/* ── Dashboard layout: nav rail + content ── */
+.app{width:100%;display:grid;grid-template-columns:220px 1fr;min-height:780px;}
+.nav-rail{background:var(--color-surface);border-right:var(--border-subtle) solid var(--color-border-subtle);padding:20px 0;display:flex;flex-direction:column;gap:2px;}
+.nav-rail-brand{display:flex;align-items:center;gap:8px;padding:0 20px 20px;font-weight:800;font-size:14px;color:var(--color-text-primary);}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;font-size:13px;font-weight:600;color:var(--color-text-secondary);cursor:pointer;border-left:3px solid transparent;}
+.nav-item .ic{width:20px;height:20px;border-radius:5px;background:var(--color-surface-variant);flex-shrink:0;display:grid;place-items:center;font-size:11px;color:var(--color-text-disabled);}
+.nav-item.selected{background:var(--color-surface-variant);color:var(--color-primary);border-left-color:var(--color-primary);font-weight:700;}
+.nav-item.selected .ic{background:var(--color-primary);color:#fff;}
+.nav-item.disabled{opacity:.4;cursor:not-allowed;}
+
+.content{padding:24px 28px;overflow-x:auto;}
+
+/* Main area header (main_area_header.dart) */
+.main-hdr{padding:0 0 16px;}
+.main-hdr-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.main-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:var(--color-text-primary);}
+.profile-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{font-size:12px;font-weight:700;padding:7px 14px;border-radius:var(--radius-full);background:var(--color-surface-variant);color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);cursor:pointer;}
+.chip.on{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+.title-btm{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;font-weight:600;color:var(--color-text-secondary);}
+.back-btn{width:26px;height:26px;border-radius:50%;border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);display:grid;place-items:center;cursor:pointer;color:var(--color-text-secondary);}
+
+/* Data area card */
+.data-area{background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-1);padding:20px;}
+.data-area + .data-area{margin-top:16px;}
+.data-area-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.data-area-title{font-size:20px;font-weight:800;color:var(--color-text-primary);}
+.data-area-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-text{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--color-primary);background:transparent;border:none;cursor:pointer;padding:8px 12px;border-radius:var(--radius-sm);}
+.btn-text:hover{background:var(--color-surface-variant);}
+.search-box{display:flex;align-items:center;gap:6px;border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:7px 12px;font-size:13px;color:var(--color-text-disabled);min-width:150px;}
+
+/* Archer Information — 4 column read-only layout (archer_tab.dart) */
+.divider{height:1px;background:var(--color-border-subtle);margin-bottom:16px;}
+.info-columns{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+.info-col{padding:0 16px;border-right:var(--border-hairline) solid var(--color-border-subtle);display:flex;flex-direction:column;gap:14px;}
+.info-col:last-child{border-right:none;}
+.col-title{font-size:13px;font-weight:700;color:var(--color-text-secondary);}
+.ro-field{display:flex;flex-direction:column;gap:3px;}
+.ro-field label{font-size:11px;font-weight:700;color:var(--color-text-secondary);}
+.ro-field .val{font-size:13.5px;color:var(--color-text-primary);white-space:pre-line;}
+
+/* Field row (fieldRow widget) */
+.field-row{display:flex;gap:12px;}
+.field-row > *{flex:1;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11px;font-weight:700;color:var(--color-text-secondary);}
+.field .input{border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-xs);padding:9px 10px;font-size:13px;color:var(--color-text-primary);background:var(--color-surface);}
+.field .input.readonly{background:var(--color-surface-variant);color:var(--color-text-disabled);}
+.section-title{font-size:14px;font-weight:800;color:var(--color-text-secondary);margin-bottom:4px;}
+
+/* Table */
+.dt{width:100%;border-collapse:collapse;font-size:13px;}
+.dt th{text-align:left;font-weight:700;color:var(--color-text-secondary);padding:10px 12px;border-bottom:var(--border-emphasis) solid var(--color-border-subtle);white-space:nowrap;}
+.dt th .sort{color:var(--color-text-disabled);font-size:10px;margin-left:4px;}
+.dt td{padding:12px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);color:var(--color-text-primary);vertical-align:top;}
+.dt td.center{text-align:center;}
+.icon-btn{width:28px;height:28px;border-radius:var(--radius-sm);border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);display:grid;place-items:center;cursor:pointer;color:var(--color-text-secondary);}
+.pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px;font-size:12px;color:var(--color-text-secondary);}
+.pg-btn{width:26px;height:26px;border-radius:50%;border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);cursor:pointer;}
+
+/* Secondary section framing (AS-IS reference call-outs further down the page) */
+.secondary-section{margin-top:32px;padding-top:20px;border-top:2px dashed var(--color-border-emphasis);}
+.secondary-label{font-size:12px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--color-primary);margin-bottom:10px;}
+
+/* Dev notes */
+.dev-note{background:rgba(139,94,21,.08);border:1px dashed var(--color-primary);border-radius:var(--radius-sm);padding:8px 10px;font-size:11.5px;color:var(--color-text-secondary);line-height:1.5;margin-top:10px;}
+.dev-note code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;}
+
+/* Phase 2 new elements marker */
+.p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+td.p2-new,th.p2-new{outline-offset:-2px;}
+
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Admin
+    </div>
+    <span class="crumb">Phase 2 · Archer360 Profile</span>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="screen">
+      <div class="app">
+
+        <!-- NAV RAIL — order + labels from admin/lib/app/routes.dart Module enum (idx 0-7) -->
+        <div class="nav-rail">
+          <div class="nav-rail-brand">
+            <span class="logo" style="width:22px;height:22px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+            x10s Admin
+          </div>
+          <div class="nav-item"><span class="ic">◔</span>Range Overview</div>
+          <div class="nav-item"><span class="ic">▦</span>Range Timetable</div>
+          <div class="nav-item"><span class="ic">☰</span>Bookings</div>
+          <div class="nav-item"><span class="ic">$</span>Sales</div>
+          <div class="nav-item selected"><span class="ic">☺</span>Archer 360</div>
+          <div class="nav-item disabled"><span class="ic">◷</span>Events</div>
+          <div class="nav-item"><span class="ic">⚙</span>Config</div>
+          <div class="nav-item"><span class="ic">▤</span>Reports</div>
+        </div>
+
+        <!-- CONTENT — archer_profile.dart -->
+        <div class="content">
+
+          <!-- MainAreaHeader: title "Archer360", titleTrailing = ProfileTab chips, titleBtm = back + "Viewing Profile of {name}" -->
+          <div class="main-hdr">
+            <div class="main-hdr-top">
+              <div class="main-title">Archer360</div>
+              <div class="profile-tabs">
+                <span class="chip on">Archer</span>
+                <span class="chip">Bookings</span>
+                <span class="chip">Sales</span>
+                <span class="chip p2-new">Credits / Passes / Locker</span>
+                <span class="chip p2-new">Scores</span>
+              </div>
+            </div>
+            <div class="title-btm">
+              <span class="back-btn">‹</span>
+              Viewing Profile of Marcus Tan
+            </div>
+          </div>
+
+          <!-- PRIMARY TAB: Archer (archer_tab.dart) -->
+          <div class="data-area" style="margin-top:16px;">
+            <div class="data-area-hdr">
+              <div class="data-area-title">Archer Information</div>
+              <div class="data-area-actions">
+                <button class="btn-text">✎ Edit</button>
+                <button class="btn-text">🗑 Delete Archer</button>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="info-columns">
+              <div class="info-col">
+                <div class="col-title">General</div>
+                <div class="ro-field"><label>First Name</label><div class="val">Marcus</div></div>
+                <div class="ro-field"><label>Last Name</label><div class="val">Tan</div></div>
+                <div class="ro-field"><label>Username</label><div class="val">marcus.tan</div></div>
+                <div class="ro-field"><label>Gender</label><div class="val">Male</div></div>
+                <div class="ro-field"><label>Handedness</label><div class="val">Right</div></div>
+                <div class="ro-field"><label>Date of Birth</label><div class="val">14/03/1994 (32 y/o)</div></div>
+                <div class="ro-field"><label>Phone</label><div class="val">+65 91234567</div></div>
+                <div class="ro-field"><label>Address</label><div class="val">21 Clementi Ave 3, #05-14</div></div>
+                <div class="ro-field"><label>Zip</label><div class="val">120021</div></div>
+              </div>
+              <div class="info-col">
+                <div class="col-title">Secondary Contact</div>
+                <div class="ro-field"><label>First Name</label><div class="val">Serene</div></div>
+                <div class="ro-field"><label>Last Name</label><div class="val">Tan</div></div>
+                <div class="ro-field"><label>Relationship</label><div class="val">Parent</div></div>
+                <div class="ro-field"><label>Phone</label><div class="val">+65 98761234</div></div>
+              </div>
+              <div class="info-col">
+                <div class="col-title">Characteristics</div>
+                <div class="ro-field"><label>Group</label><div class="val">Youth Squad</div></div>
+                <div class="ro-field"><label>Style(s)</label><div class="val">Recurve, Barebow</div></div>
+                <div class="ro-field"><label>Archery Club</label><div class="val">Salt Light Archery Club</div></div>
+                <div class="ro-field p2-new"><label>Club Role</label><div class="val">Admin</div></div>
+                <div class="ro-field p2-new"><label>Credit Access</label><div class="val">Yes</div></div>
+                <div class="ro-field"><label>Special Needs</label><div class="val">No</div></div>
+                <div class="ro-field"><label>Student Expiry Date</label><div class="val">31/12/2026</div></div>
+                <div class="ro-field"><label>Internal Remarks</label><div class="val">-</div></div>
+              </div>
+            </div>
+            <div class="dev-note">The 4th read-only column (previously Range Pass, then Certificates) is removed entirely; Certificates has its own card below, Range Pass/Locker info lives solely in the Credits tab.</div>
+            <div class="dev-note p2-new">SoW 2.15: Club Role (<code>user.club_role</code>) and Credit Access (<code>user.use_credit</code>) shown read-only here for context — editable only in Config > Club's Club Members table, not here.</div>
+          </div>
+
+          <!-- Certificates card (Phase 2 NET-NEW) — extracted out of Archer Information -->
+          <div class="data-area p2-new" style="margin-top:16px;">
+            <div class="data-area-hdr">
+              <div class="data-area-title">Certificates</div>
+              <div class="data-area-actions">
+                <button class="btn-text">Generate Cert</button>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="dt">
+                <thead>
+                  <tr>
+                    <th>Certificate Ref</th>
+                    <th>Activity Name</th>
+                    <th>Awarded Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>CERT-2024-0031</td>
+                    <td>Beginner Course (Recurve)</td>
+                    <td>15 Dec 2024</td>
+                    <td><div style="display:flex;gap:6px;"><span class="icon-btn" title="Email Cert">✉</span><span class="icon-btn" title="Download Cert">⬇</span><span class="icon-btn" title="Delete Cert">🗑</span></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="dev-note p2-new">Certificates moved out of Archer Information into this dedicated card. Columns: certificate reference, activity name, awarded date. Generate Cert moved here (was in Archer Information header). Issue Cert replaced with Email Cert + Download Cert, reusing existing APIs. Delete action added per certificate — requires a new API.</div>
+          </div>
+
+          <!-- Account card (Phase 2 NET-NEW) — Account (login, keyed by email) vs Profile (the archer record) -->
+          <div class="data-area p2-new" style="margin-top:16px;">
+            <div class="data-area-hdr">
+              <div class="data-area-title">Account</div>
+              <div class="data-area-actions">
+                <button class="btn-text">Unlink</button>
+                <button class="btn-text">+ Link Archer</button>
+              </div>
+            </div>
+
+            <div class="ro-field" style="margin-bottom:12px;">
+              <label>Account Email</label>
+              <div class="val">marcus.tan@example.com</div>
+            </div>
+
+            <div style="overflow-x:auto;">
+              <table class="dt">
+                <thead>
+                  <tr>
+                    <th>Archer Name</th>
+                    <th>Group</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background:var(--color-surface-variant);">
+                    <td>Marcus Tan <span style="font-size:11px;color:var(--color-text-disabled);">(this profile)</span></td>
+                    <td>Youth Squad</td>
+                  </tr>
+                  <tr>
+                    <td>Ashley Tan</td>
+                    <td>Junior Youth</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="dev-note p2-new">Net-new "Account" card — separates login Account (identified by email) from Profile (the archer record). One Account can have multiple linked Profiles (e.g. a parent's email managing several children's archer profiles). "Unlink" changes this profile's email to a new/standalone address, detaching it from this Account. "+ Link Archer" opens an archer selector to attach another existing profile to this same Account. Open: today <code>user</code> conflates Account + Profile (one row = one email = one archer) — needs a schema decision (accounts table, or a grouping key on <code>user</code>) before build.</div>
+          </div>
+
+          <!-- SECONDARY: Credits tab — holdings table (AS-IS) -->
+          <div class="secondary-section">
+            <div class="secondary-label">Credits / Passes / Locker tab</div>
+            <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px;">Credit Holdings + Credit Transactions (AS-IS) · Range Pass Holdings + Locker Holdings (Phase 2 NET-NEW, SoW 2.7 — combined here instead of the Archer tab)</div>
+
+            <div class="data-area">
+              <div class="data-area-hdr">
+                <div class="data-area-title">Credit Holdings</div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Credit Type</th>
+                      <th>Quantity</th>
+                      <th>Expiry Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Arrow Credit</td>
+                      <td class="center">18</td>
+                      <td>15/09/2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>Coaching Credit</td>
+                      <td class="center">4</td>
+                      <td>-</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="data-area">
+              <div class="data-area-hdr">
+                <div class="data-area-title">Credit Transactions</div>
+                <div class="data-area-actions">
+                  <button class="btn-text">+ Create</button>
+                  <div class="search-box">🔍 Search</div>
+                </div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Reference</th>
+                      <th>Transacted On<span class="sort">↕</span></th>
+                      <th>Transaction Type<span class="sort">↕</span></th>
+                      <th>Credit Type<span class="sort">↕</span></th>
+                      <th>Quantity</th>
+                      <th>Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>TXN-000481</td>
+                      <td>02/07/2026 14:20</td>
+                      <td>Top Up</td>
+                      <td>Arrow Credit</td>
+                      <td class="center">20</td>
+                      <td>Package renewal</td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>-</td>
+                      <td>28/06/2026 09:05</td>
+                      <td>Deduct</td>
+                      <td>Arrow Credit</td>
+                      <td class="center">-2</td>
+                      <td>Range session</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination">1 - 2 of 2 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
+            </div>
+
+            <!-- SECTION A.2: Range Pass Holdings (Phase 2 NET-NEW — combined into Credits tab, not the Archer tab) -->
+            <div class="data-area p2-new">
+              <div class="data-area-hdr">
+                <div class="data-area-title">Range Pass Holdings</div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Range Pass</th>
+                      <th>Location(s)</th>
+                      <th>Valid From</th>
+                      <th>Valid Till</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>10-Session Pass</td>
+                      <td>Bishan, Kallang</td>
+                      <td>13 Jun 2026</td>
+                      <td>12 Aug 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>10-Session Pass</td>
+                      <td>Bishan, Kallang</td>
+                      <td>6 Aug 2026</td>
+                      <td>5 Oct 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                    <tr>
+                      <td>Indoor Pass</td>
+                      <td>Kallang</td>
+                      <td>1 Jul 2026</td>
+                      <td>30 Jul 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="dev-note">SoW 2.7 rebuild: <code>user_pass</code> is one-to-many (replaces single passName/passExpiry fields). Same-name overlapping rows = renewal overlap, allowed. Backend <code>expire_on</code> = start_date + days_valid (exclusive end) — FE must display Valid Till = start_date + (days_valid − 1), the last actual valid day. Do not render the raw backend <code>expire_on</code> directly.</div>
+            </div>
+
+            <!-- SECONDARY: Edit Archer Profile dialog — Range Pass section (profile_range_pass.dart) -->
+            <div class="secondary-section">
+              <div class="secondary-label">Edit Archer Profile dialog — Range Pass section (AS-IS)</div>
+              <div class="data-area">
+                <div class="data-area-hdr">
+                  <div class="data-area-title">Range Pass (single pass — edit form)</div>
+                </div>
+                <div class="section-title">Range Pass</div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>Range Pass</label>
+                    <div class="input readonly">7-Day Access Pass</div>
+                  </div>
+                  <div class="field">
+                    <label>Location(s)</label>
+                    <div class="input readonly">Main Range</div>
+                  </div>
+                </div>
+                <div class="field" style="max-width:340px;">
+                  <label>Range Pass Valid Till *</label>
+                  <div class="input">02/08/2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION B: Locker Holdings (Phase 2 NET-NEW — combined into Credits tab, not the Archer tab) -->
+            <div class="data-area p2-new">
+              <div class="data-area-hdr">
+                <div class="data-area-title">Locker Holdings</div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Locker Package</th>
+                      <th>Location(s)</th>
+                      <th>Valid From</th>
+                      <th>Valid Till</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Locker — 3 Months</td>
+                      <td>Bishan, Kallang</td>
+                      <td>1 Jul 2026</td>
+                      <td>30 Sep 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>Locker — 3 Months</td>
+                      <td>Bishan</td>
+                      <td>29 Sep 2026</td>
+                      <td>28 Dec 2026</td>
+                      <td><span class="icon-btn">✎</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRIMARY TAB: Bookings (bookings_tab.dart + bookings_tab_table.dart) -->
+          <div class="secondary-section">
+            <div class="secondary-label">Bookings tab</div>
+
+            <div class="data-area">
+              <div class="data-area-hdr">
+                <div class="data-area-title">Bookings (Excl. Practice)</div>
+                <div class="data-area-actions">
+                  <div class="search-box">🔍 Search</div>
+                </div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Code<span class="sort">↕</span></th>
+                      <th>Date<span class="sort">↕</span></th>
+                      <th>Time</th>
+                      <th>Booking Info</th>
+                      <th>Attendance</th>
+                      <th>Payment</th>
+                      <th>Remarks</th>
+                      <th class="p2-new">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>BKG-002214</td>
+                      <td>5 Jul 2026</td>
+                      <td>09:00 – 10:00</td>
+                      <td>Beginner Course (Recurve), Bishan</td>
+                      <td>-</td>
+                      <td>HitPay</td>
+                      <td>-</td>
+                      <td class="p2-new"><button class="btn-text p2-new" style="padding:6px 10px;">Mark Attended</button></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>BKG-002198</td>
+                      <td>2 Jul 2026</td>
+                      <td>18:00 – 19:00</td>
+                      <td>Intermediate Course (Compound), Kallang</td>
+                      <td>2 Jul 2026 18:04</td>
+                      <td>Package Credit</td>
+                      <td>-</td>
+                      <td class="p2-new"><span style="font-size:12.5px;font-weight:700;color:var(--color-text-disabled);">✓ Attended</span></td>
+                    </tr>
+                    <tr>
+                      <td>BKG-002150</td>
+                      <td>28 Jun 2026</td>
+                      <td>09:00 – 10:00</td>
+                      <td>Beginner Course (Recurve), Bishan</td>
+                      <td>28 Jun 2026 09:02</td>
+                      <td>HitPay</td>
+                      <td>Makeup session</td>
+                      <td class="p2-new"><span style="font-size:12.5px;font-weight:700;color:var(--color-text-disabled);">✓ Attended</span></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>BKG-002310</td>
+                      <td>12 Jul 2026</td>
+                      <td>09:00 – 10:00</td>
+                      <td>Beginner Course (Recurve), Bishan</td>
+                      <td>-</td>
+                      <td>Unpaid</td>
+                      <td>-</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>BKG-002121</td>
+                      <td>21 Jun 2026</td>
+                      <td>14:00 – 17:00</td>
+                      <td>Fun Shoot Event (Recurve), Kallang</td>
+                      <td>-</td>
+                      <td>HitPay</td>
+                      <td>-</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination">1 - 5 of 5 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
+              <div class="dev-note p2-new">SoW 2.10: "Mark Attended" action button per row (not a checkbox) — replaced by disabled "✓ Attended" text once <code>signin_time</code> is set. Applies ONLY to course-type bookings, and only past/today sessions (future bookings get no button). Backend: writes attendance/<code>signin_time</code> on the booking's session record (<code>book_mgmt</code> Attendance).</div>
+            </div>
+          </div>
+
+          <!-- SECTION C: Scores tab (Phase 2 NET-NEW) -->
+          <div class="secondary-section">
+            <div class="secondary-label">Scores tab (Phase 2 — NET-NEW)</div>
+            <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px;">SoW 2.14 · Verified-Score entry</div>
+
+            <div class="data-area p2-new">
+              <div class="data-area-hdr">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div class="data-area-title">Verified Scores</div>
+                  <span class="p2-new" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:var(--radius-full);background:var(--color-surface-variant);color:var(--color-text-secondary);">Opted Out: N</span>
+                </div>
+                <div class="data-area-actions">
+                  <button class="btn-text">+ Add Score</button>
+                </div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="dt">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Format</th>
+                      <th class="p2-new">Competition Name</th>
+                      <th>Score</th>
+                      <th>Max Score</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>28 Jun 2026</td>
+                      <td>Recurve — 18m (40cm - 30 arrows)</td>
+                      <td class="p2-new">-</td>
+                      <td class="center">265</td>
+                      <td class="center">300</td>
+                      <td><span class="icon-btn">✎</span> <span class="icon-btn">🗑</span></td>
+                    </tr>
+                    <tr style="background:var(--color-surface-variant);">
+                      <td>14 Jun 2026</td>
+                      <td>Recurve — 70m (122cm - 36 arrows)</td>
+                      <td class="p2-new">National Youth Championships 2026</td>
+                      <td class="center">301</td>
+                      <td class="center">360</td>
+                      <td><span class="icon-btn">✎</span> <span class="icon-btn">🗑</span></td>
+                    </tr>
+                    <tr>
+                      <td>31 May 2026</td>
+                      <td>Compound — 50m (80cm - 36 arrows)</td>
+                      <td class="p2-new">-</td>
+                      <td class="center">322</td>
+                      <td class="center">360</td>
+                      <td><span class="icon-btn">✎</span> <span class="icon-btn">🗑</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Add Verified Score dialog mock -->
+            <div class="data-area p2-new" style="margin-top:16px;">
+              <div class="data-area-title" style="margin-bottom:16px;">Add Verified Score (dialog mock)</div>
+              <div class="field">
+                <label>Format *</label>
+                <select class="input" style="font-family:inherit;">
+                  <optgroup label="Recurve">
+                    <option>Recurve — 70m (122cm - 36 arrows)</option>
+                    <option>Recurve — 60m (122cm - 36 arrows)</option>
+                    <option>Recurve — 50m (122cm - 36 arrows)</option>
+                    <option>Recurve — 50m (80cm - 36 arrows)</option>
+                    <option>Recurve — 30m (122cm - 36 arrows)</option>
+                    <option>Recurve — 30m (80cm - 36 arrows)</option>
+                    <option>Recurve — 18m (80cm - 36 arrows)</option>
+                    <option>Recurve — 18m (40cm - 30 arrows)</option>
+                  </optgroup>
+                  <optgroup label="Compound">
+                    <option>Compound — 50m (80cm - 36 arrows)</option>
+                    <option>Compound — 50m (80cm - 15 arrows IKO)</option>
+                    <option>Compound — 30m (80cm - 36 arrows)</option>
+                    <option>Compound — 18m (40cm inner 10 - 30 arrows)</option>
+                  </optgroup>
+                  <optgroup label="Barebow">
+                    <option>Barebow — 50m (122cm - 36 arrows)</option>
+                    <option>Barebow — 18m (40cm - 30 arrows)</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="field-row p2-new" style="margin-top:12px;">
+                <div class="field">
+                  <label>Competition Name</label>
+                  <div class="input">National Youth Championships 2026</div>
+                </div>
+                <div class="field">
+                  <label>Date *</label>
+                  <div class="input">28 Jun 2026</div>
+                </div>
+              </div>
+              <div class="field-row" style="margin-top:12px;">
+                <div class="field">
+                  <label>Score *</label>
+                  <div class="input">543</div>
+                </div>
+                <div class="field p2-new">
+                  <label>Max Score</label>
+                  <div class="input readonly">600</div>
+                  <div style="font-size:11px;color:var(--color-text-disabled);margin-top:4px;">Auto-fills from the Format catalog, read-only.</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:16px;">
+                <button class="btn-text" style="flex:0;">Cancel</button>
+                <button class="btn-text" style="flex:0;">Save</button>
+              </div>
+              <div class="dev-note p2-new">Score and Max Score placed side by side. Max Score auto-fills from the selected Format and is read-only (overrides the earlier G10c "editable" decision — Daniel confirmed 2026-07-12).</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

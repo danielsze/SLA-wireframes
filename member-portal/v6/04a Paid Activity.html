@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Paid Activity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
+svg{display:block;}
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:16px;width:100%;max-width:1180px;margin-bottom:28px;color:#E8DDD0;}
+.stage-bar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:7px 16px;border-radius:var(--radius-full);transition:all var(--duration-fast) ease;display:flex;align-items:center;gap:7px;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+/* ── Frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;grid-template-areas:"header" "main" "foot";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+.app-foot{grid-area:foot;}
+/* ── Status bar ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+/* ── Header ── */
+.step-hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.step-back{width:38px;height:38px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);}
+.step-back:hover{background:var(--color-surface-variant);}
+.step-title-area{flex:1;text-align:center;}
+.step-eyebrow{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.step-name{font-size:16px;font-weight:700;margin-top:1px;}
+.step-close{width:38px;height:38px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);}
+.step-spacer{width:38px;height:38px;flex-shrink:0;}
+/* ── Footer / CTA ── */
+.app-foot{background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:12px var(--space-md);padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:var(--space-sm);}
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast) ease,transform var(--duration-fast) ease,opacity var(--duration-fast) ease;}
+.btn:active{transform:scale(.99);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover:not(:disabled){background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;transform:none;}
+
+/* ── Page layout ── */
+.scroll{padding:var(--space-md) var(--space-md) var(--space-lg);}
+.section-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--color-text-secondary);margin:0 0 8px 2px;}
+.section{margin-bottom:var(--space-lg);}
+
+/* ── Activity hero + title ── */
+.act-title-block{margin-bottom:var(--space-lg);}
+.act-name-h{font-size:22px;font-weight:700;line-height:1.2;margin-bottom:6px;}
+.act-price{font-size:24px;font-weight:800;color:var(--color-primary);}
+.act-price-sub{font-size:11px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.6px;margin-left:6px;}
+.act-desc{font-size:13.5px;line-height:1.6;color:var(--color-text-primary);}
+
+/* ── Location ── */
+.venue-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.venue-card{padding:14px 12px;border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;transition:all var(--duration-fast) ease;text-align:left;font-family:inherit;}
+.venue-card.sel{background:var(--color-surface-highest);border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary);}
+.vc-name{font-size:15px;font-weight:700;}
+
+/* ── Calendar ── */
+.cal-wrap{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);padding:var(--space-md);margin-bottom:var(--space-sm);}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-md);}
+.cal-month{font-size:15px;font-weight:700;}
+.cal-nav-btn{width:32px;height:32px;border:none;background:transparent;cursor:pointer;border-radius:var(--radius-full);display:grid;place-items:center;color:var(--color-text-secondary);}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:6px;}
+.cal-dow span{font-size:11px;font-weight:700;color:var(--color-text-disabled);padding:4px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 2px;border-radius:var(--radius-sm);position:relative;}
+.cal-day.avail{cursor:pointer;}
+.cal-day.avail:hover{background:var(--color-surface-variant);}
+.cal-day.sel{background:var(--color-primary);border-radius:var(--radius-sm);}
+.dn{font-size:14px;font-weight:600;line-height:1;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+.cal-day.past .dn,.cal-day.na .dn{color:var(--color-text-disabled);}
+.cal-day.today:not(.sel) .dn{color:var(--color-primary);font-weight:800;}
+.cal-day.sel .dn{color:#fff;font-weight:700;}
+
+/* ── Slots ── */
+.slot-list{display:flex;flex-direction:column;gap:4px;}
+.slot-row{display:flex;align-items:center;gap:12px;padding:12px var(--space-md);border-radius:var(--radius-sm);background:var(--color-surface);border:1.5px solid transparent;cursor:pointer;transition:all var(--duration-fast) ease;}
+.slot-row:hover:not(.s-full){background:var(--color-surface-variant);}
+.slot-row.s-sel{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.slot-row.s-full{cursor:not-allowed;opacity:.5;}
+.slot-time-range{font-size:14px;font-weight:700;flex:1;}
+.slot-avail{font-size:11.5px;font-weight:700;color:var(--color-text-secondary);min-width:50px;text-align:right;}
+.slot-avail.lbl-low{color:var(--color-warning);}
+.slot-avail.lbl-full{color:var(--color-error);}
+.s-ring{width:22px;height:22px;border-radius:50%;border:2px solid var(--color-border-emphasis);background:transparent;display:grid;place-items:center;flex-shrink:0;transition:all var(--duration-fast) ease;}
+.slot-row.s-sel .s-ring{border-color:var(--color-primary);}
+.slot-row.s-sel .s-ring::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--color-primary);}
+.pick-prompt{text-align:center;padding:18px 16px;color:var(--color-text-disabled);font-size:13px;font-weight:600;background:var(--color-surface);border-radius:var(--radius-sm);border:1px dashed var(--color-border-subtle);}
+
+/* ── Review / summary ── */
+.review-card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;}
+.rv-row{display:flex;align-items:center;justify-content:space-between;padding:12px var(--space-md);}
+.rv-row+.rv-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.rv-lbl{font-size:11.5px;font-weight:700;color:var(--color-text-secondary);}
+.rv-val{font-size:14px;font-weight:700;text-align:right;}
+.rv-val.muted{color:var(--color-text-disabled);font-weight:600;}
+.rv-row.total .rv-val{font-size:18px;color:var(--color-primary);}
+
+/* ── Promo ── */
+.promo-row{display:flex;gap:8px;}
+.promo-input{flex:1;font-family:inherit;font-size:14px;font-weight:600;border:1.5px solid var(--color-border-emphasis);border-radius:var(--radius-sm);padding:10px 12px;background:var(--color-surface);color:var(--color-text-primary);outline:none;}
+.promo-input:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(139,94,21,.1);}
+.promo-input::placeholder{color:var(--color-text-disabled);font-weight:500;}
+.promo-btn{font-family:inherit;font-size:13px;font-weight:700;padding:10px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--color-primary);background:transparent;color:var(--color-primary);cursor:pointer;white-space:nowrap;}
+.promo-btn:hover{background:var(--color-surface-variant);}
+.promo-msg{font-size:11.5px;font-weight:700;margin-top:6px;padding-left:2px;min-height:14px;}
+.promo-msg.ok{color:var(--color-success);}
+.promo-msg.err{color:var(--color-error);}
+.voucher-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.voucher-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(42,107,62,.12);color:var(--color-success);border:1px solid rgba(42,107,62,.25);border-radius:var(--radius-full);padding:5px 6px 5px 11px;font-size:12px;font-weight:700;line-height:1;}
+.voucher-chip .vc-amt{font-weight:600;opacity:.85;}
+.voucher-chip .vc-x{background:transparent;border:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:inherit;opacity:.7;padding:0;}
+.voucher-chip .vc-x:hover{opacity:1;background:rgba(42,107,62,.18);}
+
+/* ── Payment ── */
+.pay-list{display:flex;flex-direction:column;gap:8px;}
+.pay-opt{display:flex;align-items:center;gap:13px;padding:14px var(--space-md);border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;transition:all var(--duration-fast) ease;}
+.pay-opt.sel{background:var(--color-surface-highest);border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary);}
+.pay-ico{width:40px;height:40px;border-radius:var(--radius-sm);background:var(--color-surface-variant);display:grid;place-items:center;color:var(--color-primary);flex-shrink:0;font-weight:800;font-size:13px;letter-spacing:.4px;}
+.pay-opt.sel .pay-ico{background:var(--color-primary);color:#fff;}
+.pay-name{font-size:15px;font-weight:700;flex:1;}
+.pay-ring{width:22px;height:22px;border-radius:50%;border:2px solid var(--color-border-emphasis);flex-shrink:0;display:grid;place-items:center;}
+.pay-opt.sel .pay-ring{border-color:var(--color-primary);}
+.pay-opt.sel .pay-ring::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--color-primary);}
+.pay-seg{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;gap:2px;margin-bottom:var(--space-sm);}
+.pay-tab{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:9px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.pay-tab.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.co-privacy-note{font-size:11.5px;color:var(--color-text-disabled);text-align:center;line-height:1.55;padding:6px 4px 4px;}
+
+/* ── View switcher ── */
+.view{display:none;}
+.view.on{display:block;}
+
+/* ── HitPay redirect screen (SLA background + drop-in overlay) ── */
+.hp-wrap{position:relative;min-height:100%;background:var(--color-surface-lowest);}
+/* SLA pending card behind the drop-in */
+.hp-bg{padding:var(--space-md);}
+.hp-bg-logo{display:flex;justify-content:center;margin-bottom:var(--space-md);}
+.hp-bg-logo-mark{width:44px;height:44px;border-radius:12px;background:var(--color-primary);display:grid;place-items:center;color:#fff;}
+.hp-bg-title{font-size:17px;font-weight:700;text-align:center;margin-bottom:var(--space-md);color:var(--color-text-primary);}
+.hp-bg-body{font-size:13.5px;line-height:1.6;color:var(--color-text-secondary);margin-bottom:var(--space-sm);}
+.hp-bg-body a{color:var(--color-primary);font-weight:700;text-decoration:none;}
+.hp-bg-body strong{color:var(--color-text-primary);}
+.hp-bg-btns{display:flex;gap:8px;margin-top:var(--space-md);}
+.hp-bg-btns .btn{flex:1;}
+/* Backdrop dim behind drop-in */
+.hp-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:1;}
+/* Drop-in modal (HitPay) */
+.hp-dropin{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:calc(100% - 28px);max-width:320px;background:#fff;border-radius:var(--radius-md);box-shadow:0 14px 36px -10px rgba(0,0,0,.45);padding:14px 16px 16px;font-family:inherit;color:#111;}
+.hp-dropin-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #eee;margin-bottom:14px;}
+.hp-dropin-brand{font-size:13px;font-weight:700;color:#111;}
+.hp-dropin-close{font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.6px;background:transparent;border:none;color:#666;cursor:pointer;padding:4px 6px;}
+.hp-dropin-amt-lbl{font-size:11px;font-weight:600;color:#666;margin-bottom:2px;}
+.hp-dropin-amt-val{font-size:16px;font-weight:700;color:#111;margin-bottom:16px;}
+.hp-dropin-method{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid #eee;}
+.hp-dropin-method-ico{width:32px;height:22px;border-radius:4px;background:#3a8df0;display:grid;place-items:center;color:#fff;}
+.hp-dropin-method-name{font-size:12px;font-weight:700;letter-spacing:.4px;color:#111;}
+.hp-dropin-field{margin:14px 0 18px;position:relative;}
+.hp-dropin-field input{width:100%;font-family:inherit;font-size:13px;border:1px solid #e1e1e1;border-radius:6px;padding:11px 80px 11px 12px;color:#111;background:#fff;outline:none;}
+.hp-dropin-field input::placeholder{color:#9b9b9b;}
+.hp-dropin-autofill{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:#1f8a3a;color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.3px;border:none;border-radius:99px;padding:5px 11px 5px 9px;display:flex;align-items:center;gap:4px;cursor:pointer;}
+.hp-dropin-pay{width:100%;background:#101a33;color:#fff;border:none;border-radius:8px;padding:11px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
+.hp-dropin-foot{text-align:center;font-size:10.5px;color:#7d7d7d;margin-top:10px;}
+.hp-dropin-foot strong{color:#101a33;font-weight:700;}
+.hp-wrap.no-modal .hp-dropin,
+.hp-wrap.no-modal .hp-backdrop{display:none;}
+
+/* ── Dev simulator panel (HitPay only) ── */
+.dev-sim{display:none;background:rgba(139,94,21,.08);border:1.5px dashed var(--color-primary);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:var(--space-md);}
+body.devmode .dev-sim{display:block;}
+.dev-sim-lbl{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--color-primary);text-transform:uppercase;margin-bottom:6px;font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+.dev-sim-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.dev-sim-btn{font-family:inherit;font-size:11.5px;font-weight:700;padding:6px 10px;border-radius:99px;border:1px solid var(--color-primary);background:var(--color-surface);color:var(--color-primary);cursor:pointer;}
+.dev-sim-btn:hover{background:var(--color-surface-variant);}
+
+/* ── Terminal states (Success / Failure / Pending) ── */
+.term{padding:var(--space-lg) var(--space-md) var(--space-md);display:flex;flex-direction:column;align-items:center;text-align:center;min-height:100%;}
+.term-ico{width:80px;height:80px;border-radius:50%;display:grid;place-items:center;margin-bottom:var(--space-md);}
+.term-ico.ok{background:rgba(42,107,62,.12);color:var(--color-success);}
+.term-ico.err{background:var(--color-error-container);color:var(--color-error);}
+.term-ico.pend{background:var(--color-warning-container);color:var(--color-warning);}
+.term h2{font-size:22px;font-weight:700;margin-bottom:8px;}
+.term p{font-size:13.5px;line-height:1.6;color:var(--color-text-secondary);max-width:320px;margin-bottom:var(--space-md);}
+.term-code{display:inline-block;background:var(--color-surface-variant);border-radius:var(--radius-xs);padding:4px 10px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:13px;font-weight:700;color:var(--color-text-primary);margin-bottom:var(--space-lg);}
+.term-card{width:100%;background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;margin-bottom:var(--space-lg);text-align:left;}
+.term-card .rv-row{padding:11px var(--space-md);}
+.term-actions{width:100%;display:flex;flex-direction:column;gap:8px;}
+.btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
+.btn-ghost:hover{background:var(--color-surface-variant);}
+.spinner{width:42px;height:42px;border:4px solid var(--color-warning-container);border-top-color:var(--color-warning);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s ease;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 4a · Paid Activity</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.4" stroke="currentColor" stroke-width="2"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Phone</button>
+      <button id="segDesktop" onclick="setForm('desktop')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="8.5" y1="21" x2="15.5" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Desktop</button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <!-- HEADER -->
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="step-hdr">
+            <button class="step-back" onclick="closeFlow()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="step-title-area">
+              <div class="step-eyebrow">Select Location & Time</div>
+              <div class="step-name">Shop</div>
+            </div>
+            <span class="step-spacer" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <!-- MAIN (single scrollable page) -->
+        <div class="app-main">
+
+          <!-- ── VIEW: Booking form (default) ── -->
+          <div class="view on" id="viewForm">
+          <div class="scroll">
+
+            <!-- Hero + title -->
+            <div class="act-title-block">
+              <div class="act-name-h" id="actTitle">Basic Archery Course Plus (Recurve)</div>
+            </div>
+
+            <!-- Description -->
+            <div class="section">
+              <div class="section-h">About this activity</div>
+              <p class="act-desc" id="actDesc">A coach-led recurve session designed for archers who have completed the Basic Archery Course and want to consolidate their technique. Covers form, anchor consistency, and aiming routine over a 2 hour block.</p>
+            </div>
+
+            <!-- Location -->
+            <div class="section">
+              <div class="section-h">Location</div>
+              <div class="venue-grid">
+                <button class="venue-card" data-loc="West Coast" onclick="pickLoc(this)">
+                  <div class="vc-name">West Coast</div>
+                </button>
+                <button class="venue-card" data-loc="Chai Chee" onclick="pickLoc(this)">
+                  <div class="vc-name">Chai Chee</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Date -->
+            <div class="section" id="secDate" style="display:none">
+              <div class="section-h">Date</div>
+              <div class="cal-wrap">
+                <div class="cal-head">
+                  <button class="cal-nav-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <div class="cal-month">June 2026</div>
+                  <button class="cal-nav-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                </div>
+                <div class="cal-dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+                <div class="cal-grid" id="calGrid"></div>
+              </div>
+            </div>
+
+            <!-- Time -->
+            <div class="section" id="secTime" style="display:none">
+              <div class="section-h">Timeslot</div>
+              <div id="slotZone">
+                <div class="pick-prompt">Pick a date above to see available slots.</div>
+              </div>
+            </div>
+
+            <!-- Order summary -->
+            <div class="section">
+              <div class="section-h">Order summary</div>
+              <div class="review-card" id="reviewCard">
+                <div class="rv-row"><span class="rv-lbl">Activity</span><span class="rv-val" id="rvAct">Basic Archery Course Plus (Recurve)</span></div>
+                <div class="rv-row"><span class="rv-lbl">Location</span><span class="rv-val muted" id="rvLoc">—</span></div>
+                <div class="rv-row"><span class="rv-lbl">Date</span><span class="rv-val muted" id="rvDate">—</span></div>
+                <div class="rv-row"><span class="rv-lbl">Time</span><span class="rv-val muted" id="rvTime">—</span></div>
+                <div class="rv-row" id="rvVoucherRow" style="display:none"><span class="rv-lbl">Voucher discount</span><span class="rv-val" id="rvVoucherAmt" style="color:var(--color-success)">−$0.00</span></div>
+                <div class="rv-row total"><span class="rv-lbl">Total</span><span class="rv-val" id="rvTotal">$260.00</span></div>
+              </div>
+            </div>
+
+            <!-- Promo -->
+            <div class="section">
+              <div class="section-h">Voucher code</div>
+              <div class="promo-row">
+                <input class="promo-input" id="promoIn" placeholder="Enter code (try WELCOME10)" autocomplete="off">
+                <button class="promo-btn" onclick="applyPromo()">Apply</button>
+              </div>
+              <div class="promo-msg" id="promoMsg"></div>
+              <div class="voucher-chips" id="voucherChips"></div>
+            </div>
+
+            <!-- Payment -->
+            <div class="section">
+              <div class="section-h">Payment method</div>
+              <div class="pay-seg">
+                <button class="pay-tab on" onclick="pickPay('PayNow', this)">PayNow</button>
+                <button class="pay-tab" onclick="pickPay('Card', this)">Credit Card</button>
+              </div>
+              <p class="co-privacy-note">You'll be directed to HitPay, our secure payment gateway. Salt Light Archery does not collect or store any payment information.</p>
+            </div>
+
+            <div class="dev-note">Slot-hold logic (e.g. 10-minute reservation while on this screen) is a backend concern and is out of scope for this wireframe.</div>
+
+            <div class="dev-note">✅ Email receipt — Decided (2026-07-04): no SLA email for member-portal payments. HitPay's automatic payment receipt is the only email, on both 04a and 04b. Members see bookings/purchases in-app. Guest flow unchanged — guests still get the branded confirmation email (guest/post-payment) because they have no portal. Credit-paid bookings send no email at all (unchanged).</div>
+
+          </div>
+          </div><!-- /viewForm -->
+
+          <!-- ── VIEW: HitPay redirect (SLA card behind + drop-in modal overlay) ── -->
+          <div class="view" id="viewHitpay">
+            <div class="hp-wrap">
+
+              <!-- SLA pending card behind the drop-in -->
+              <div class="hp-bg">
+                <div class="hp-bg-logo">
+                  <span class="hp-bg-logo-mark">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg>
+                  </span>
+                </div>
+                <div class="hp-bg-title">Redirecting to Payment Gateway</div>
+                <p class="hp-bg-body">Payment is pending. Please complete the payment in the opened window.</p>
+                <p class="hp-bg-body">Having trouble seeing the payment page? <a href="#" onclick="event.preventDefault()">Click here</a> to reload it.</p>
+                <p class="hp-bg-body">Select <strong>Payment Confirmed</strong> if you have completed payment.</p>
+                <p class="hp-bg-body">Select <strong>Back</strong> to change booking or payment information.</p>
+                <div class="hp-bg-btns">
+                  <button class="btn btn-ghost" onclick="setView('form')">Back</button>
+                  <button class="btn btn-primary" onclick="setView('success')">Payment Confirmed</button>
+                </div>
+              </div>
+
+              <!-- Backdrop dim -->
+              <div class="hp-backdrop"></div>
+
+              <!-- HitPay drop-in modal overlay -->
+              <div class="hp-dropin" role="dialog" aria-label="HitPay drop-in">
+                <div class="hp-dropin-head">
+                  <span class="hp-dropin-brand">Salt Light Archery</span>
+                  <button class="hp-dropin-close" onclick="dismissDropin()">Close</button>
+                </div>
+                <div class="hp-dropin-amt-lbl">Amount</div>
+                <div class="hp-dropin-amt-val" id="hpAmount">$260.00</div>
+                <div class="hp-dropin-method">
+                  <span class="hp-dropin-method-ico">
+                    <svg width="16" height="11" viewBox="0 0 24 17" fill="none"><rect x="0.5" y="0.5" width="23" height="16" rx="2" fill="#3a8df0" stroke="#3a8df0"/><rect x="0.5" y="3.5" width="23" height="3" fill="#fff" fill-opacity=".6"/></svg>
+                  </span>
+                  <span class="hp-dropin-method-name">CARD</span>
+                </div>
+                <div class="hp-dropin-field">
+                  <input type="text" placeholder="Card number" readonly>
+                  <button class="hp-dropin-autofill" type="button">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Autofill
+                  </button>
+                </div>
+                <button class="hp-dropin-pay" onclick="setView('success')">Pay <span id="hpPayLbl">$260.00</span></button>
+                <div class="hp-dropin-foot">Powered by <strong>HitPay</strong></div>
+              </div>
+
+              <div class="dev-sim" style="position:relative;z-index:3;margin:var(--space-md);">
+                <div class="dev-sim-lbl">Dev simulator — pick a terminal state</div>
+                <div class="dev-sim-btns">
+                  <button class="dev-sim-btn" onclick="setView('success')">Simulate success</button>
+                  <button class="dev-sim-btn" onclick="setView('failure')">Simulate failure</button>
+                  <button class="dev-sim-btn" onclick="setView('pending')">Simulate pending</button>
+                </div>
+              </div>
+
+              <div class="dev-note" style="position:relative;z-index:3;margin:0 var(--space-md) var(--space-md);">In production the SLA screen mounts the pending state (background card) and injects HitPay's drop-in script, which opens this modal on top via <code>window.HitPay.toggle(...)</code>. SLA does not render the card / PayNow form itself — the modal contents come from HitPay.</div>
+            </div>
+          </div><!-- /viewHitpay -->
+
+          <!-- ── VIEW: Success ── -->
+          <div class="view" id="viewSuccess">
+            <div class="term">
+              <div class="term-ico ok">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <h2>Booking confirmed</h2>
+              <p>Your session is booked. We've sent the receipt to your email.</p>
+              <div class="term-code" id="sucBookingCode">BK20260613001</div>
+              <div class="term-card" id="sucCard">
+                <div class="rv-row"><span class="rv-lbl">Activity</span><span class="rv-val" id="sucAct">Basic Archery Course Plus (Recurve)</span></div>
+                <div class="rv-row"><span class="rv-lbl">Location</span><span class="rv-val" id="sucLoc">West Coast</span></div>
+                <div class="rv-row"><span class="rv-lbl">Date</span><span class="rv-val" id="sucDate">Sat, 20 Jun 2026</span></div>
+                <div class="rv-row"><span class="rv-lbl">Time</span><span class="rv-val" id="sucTime">1:00 – 3:00 PM</span></div>
+                <div class="rv-row" id="sucVoucherRow" style="display:none"><span class="rv-lbl">Voucher discount</span><span class="rv-val" style="color:var(--color-success)" id="sucVoucherAmt">−$0.00</span></div>
+                <div class="rv-row total"><span class="rv-lbl">Amount paid</span><span class="rv-val" id="sucTotal" style="color:var(--color-primary);font-size:18px">$260.00</span></div>
+              </div>
+              <div class="term-actions">
+                <a class="btn btn-primary" href="01 Nav + Home.html">Back to Home</a>
+              </div>
+            </div>
+          </div><!-- /viewSuccess -->
+
+          <!-- ── VIEW: Failure / cancel ── -->
+          <div class="view" id="viewFailure">
+            <div class="term">
+              <div class="term-ico err">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+              </div>
+              <h2>Payment was not completed</h2>
+              <p>No charge was made. Your slot is released. You can try again or pick a different time.</p>
+              <div class="term-actions">
+                <button class="btn btn-primary" onclick="setView('form')">Try again</button>
+                <a class="btn btn-ghost" href="04 Shop.html">Cancel and return to Shop</a>
+              </div>
+            </div>
+          </div><!-- /viewFailure -->
+
+          <!-- ── VIEW: Pending ── -->
+          <div class="view" id="viewPending">
+            <div class="term">
+              <div class="term-ico pend">
+                <div class="spinner"></div>
+              </div>
+              <h2>We're confirming your payment</h2>
+              <p>This usually takes under a minute. You don't need to stay on this screen — we'll send a confirmation once your booking is locked in.</p>
+              <div class="client-note" style="text-align:left;width:100%;margin-bottom:var(--space-lg)">
+                If you closed the app, check the Book tab in a few minutes. If it's still not showing after 10 minutes, contact us at hello@saltlight.sg.
+              </div>
+              <div class="dev-note" style="text-align:left;width:100%;margin-bottom:var(--space-lg)">Pending / webhook recovery — to be designed in BE. Open questions: (1) How does the app know when payment has resolved — polling, push notification, or webhook → silent refresh? (2) What happens if the member closes the app before resolution — does the booking still confirm? (3) How long before the purchase is considered failed and rolled back? (4) Where does the resolved booking surface — Book tab, Purchases, or both? Capture decisions in the BE design spec before implementation.</div>
+              <div class="term-actions">
+                <a class="btn btn-primary" href="02 Make a Booking.html">Check Book tab</a>
+                <a class="btn btn-ghost" href="04 Shop.html">Back to Shop</a>
+              </div>
+            </div>
+          </div><!-- /viewPending -->
+
+        </div>
+
+        <!-- FOOT (form view only) -->
+        <div class="app-foot" id="appFoot">
+          <button class="btn btn-primary" id="primaryBtn" onclick="proceed()" disabled>Proceed to Pay</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode toggle -->
+</div>
+
+
+</body>
+</html>

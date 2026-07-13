@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Club Members</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1180px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:6px 14px;border-radius:var(--radius-full);transition:all var(--duration-fast);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+
+/* ── Device frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;flex-shrink:0;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+
+/* ── App grid (header + main only — drill-in page, no bottom nav) ── */
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr;grid-template-areas:"header" "main";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+
+/* ── Status bar ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sbr{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+
+/* ── Page header (back + title) ── */
+.pg-hdr{display:flex;align-items:center;gap:10px;padding:10px 12px 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.pg-back{width:36px;height:36px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);flex-shrink:0;text-decoration:none;}
+.pg-back:hover{background:var(--color-surface-variant);}
+.pg-title{font-size:16px;font-weight:800;letter-spacing:-.2px;color:var(--color-text-primary);}
+.pg-sub{font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-top:1px;}
+
+/* ── Members feed ── */
+.club-feed{padding:var(--space-md);display:flex;flex-direction:column;gap:10px;}
+
+/* Avatar */
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);flex-shrink:0;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.avatar.slate{background:linear-gradient(135deg,#3d5168,#2E4055);}
+
+/* Chip */
+.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:var(--radius-full);white-space:nowrap;}
+.chip-admin{background:rgba(26,82,118,.13);color:#1a5276;}
+
+/* Member row */
+.member-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-1);}
+.member-row.is-self{border-color:var(--color-primary);}
+.mr-body{flex:1;min-width:0;}
+.mr-name{font-size:14px;font-weight:700;color:var(--color-text-primary);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.mr-sub{font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-top:2px;}
+.mr-toggle{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;}
+.mr-toggle-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-disabled);}
+
+/* Toggle switch */
+.switch{position:relative;width:38px;height:22px;flex-shrink:0;cursor:pointer;}
+.switch input{opacity:0;width:0;height:0;position:absolute;}
+.switch .track{position:absolute;inset:0;border-radius:var(--radius-full);background:var(--color-border-subtle);transition:background var(--duration-fast);}
+.switch .knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-1);transition:transform var(--duration-fast);}
+.switch input:checked + .track{background:var(--color-success,#3c7a3c);}
+.switch input:checked + .track + .knob{transform:translateX(16px);}
+
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 6a · Club Members</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="11" height="14" viewBox="0 0 22 28" fill="none"><rect x="2" y="1" width="18" height="26" rx="3" stroke="currentColor" stroke-width="2"/><line x1="8" y1="23" x2="14" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="12" viewBox="0 0 26 20" fill="none"><rect x="1" y="1" width="24" height="14" rx="2" stroke="currentColor" stroke-width="2"/><line x1="7" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Desktop
+      </button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sbr">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5 1.5 4A9 9 0 0 1 14.5 4Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="8" cy="9.5" r="1.1" fill="currentColor"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="pg-hdr">
+            <a class="pg-back" href="06 Me.html"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div>
+              <div class="pg-title">Club Members</div>
+              <div class="pg-sub">Singapore Disability Sports Council · 14 members</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-main">
+          <div class="club-feed">
+            <div class="dev-note">💡 <strong>Two independent attributes per member.</strong> <code>club_role</code> — nullable, iterable; <code>admin</code> renders the chip, <code>null</code> = normal member (no backfill needed). <code>use_credit</code> — <code>Y</code>/<code>N</code>, the toggle. The toggle is editable here; the <strong>admin role is assigned in back-office</strong>. Back-office only: adding members, topping up club credits. The admin's own credit toggle is locked here.</div>
+            <div class="dev-note">🎯 <strong>Stretch goal —</strong> removing a member from the club is out of scope for this phase; handle removals in back-office for now. Revisit an in-portal "remove member" action later.</div>
+
+            <div class="member-row is-self">
+              <span class="avatar olive">CT</span>
+              <div class="mr-body">
+                <div class="mr-name">Caleb Tan <span class="chip chip-admin">Admin · You</span></div>
+                <div class="mr-sub">Can use club credits</div>
+              </div>
+              <div class="mr-toggle"><span class="mr-toggle-lbl">Credits</span><label class="switch"><input type="checkbox" checked disabled><span class="track"></span><span class="knob"></span></label></div>
+            </div>
+
+            <div class="member-row">
+              <span class="avatar slate">ML</span>
+              <div class="mr-body">
+                <div class="mr-name">Mei Lin Tan</div>
+                <div class="mr-sub mr-access">Can use club credits</div>
+              </div>
+              <div class="mr-toggle"><span class="mr-toggle-lbl">Credits</span><label class="switch"><input type="checkbox" checked onchange="toggleAccess(this)"><span class="track"></span><span class="knob"></span></label></div>
+            </div>
+
+            <div class="member-row">
+              <span class="avatar" style="background:#7a5230;">JL</span>
+              <div class="mr-body">
+                <div class="mr-name">Jonas Lim</div>
+                <div class="mr-sub mr-access">Can use club credits</div>
+              </div>
+              <div class="mr-toggle"><span class="mr-toggle-lbl">Credits</span><label class="switch"><input type="checkbox" checked onchange="toggleAccess(this)"><span class="track"></span><span class="knob"></span></label></div>
+            </div>
+
+            <div class="member-row">
+              <span class="avatar" style="background:#5a6e3a;">PW</span>
+              <div class="mr-body">
+                <div class="mr-name">Priya Wong</div>
+                <div class="mr-sub mr-access">No credit access</div>
+              </div>
+              <div class="mr-toggle"><span class="mr-toggle-lbl">Credits</span><label class="switch"><input type="checkbox" onchange="toggleAccess(this)"><span class="track"></span><span class="knob"></span></label></div>
+            </div>
+
+            <div class="member-row">
+              <span class="avatar" style="background:#444;">RT</span>
+              <div class="mr-body">
+                <div class="mr-name">Ravi Tan</div>
+                <div class="mr-sub mr-access">No credit access</div>
+              </div>
+              <div class="mr-toggle"><span class="mr-toggle-lbl">Credits</span><label class="switch"><input type="checkbox" onchange="toggleAccess(this)"><span class="track"></span><span class="knob"></span></label></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function setForm(m){
+  document.getElementById('frame').classList.toggle('desktop',m==='desktop');
+  document.getElementById('segPhone').classList.toggle('on',m==='phone');
+  document.getElementById('segDesktop').classList.toggle('on',m==='desktop');
+  localStorage.setItem('wf-form',m);
+}
+function toggleAccess(input){
+  const sub=input.closest('.member-row').querySelector('.mr-access');
+  if(sub) sub.textContent=input.checked?'Can use club credits':'No credit access';
+}
+</script>
+
+</body>
+</html>

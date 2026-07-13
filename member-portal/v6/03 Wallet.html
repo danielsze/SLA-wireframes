@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Wallet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
+svg{display:block;}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:16px;width:100%;max-width:1180px;margin-bottom:28px;color:#E8DDD0;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:7px 16px;border-radius:var(--radius-full);transition:all var(--duration-fast);display:flex;align-items:center;gap:7px;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;grid-template-areas:"header" "main" "nav";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+.app-nav{grid-area:nav;}
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+.hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.profile-switch{display:flex;align-items:center;gap:10px;flex:1;min-width:0;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:var(--radius-sm);transition:background var(--duration-fast);}
+.profile-switch:hover{background:var(--color-surface-variant);}
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);flex-shrink:0;}
+.avatar.sm{width:30px;height:30px;font-size:12px;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.avatar.slate{background:linear-gradient(135deg,#3d5168,#2E4055);}
+.ps-text{text-align:left;min-width:0;}
+.ps-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.ps-name{font-size:15px;font-weight:700;color:var(--color-text-primary);display:flex;align-items:center;gap:4px;}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);transition:background var(--duration-fast);}
+.icon-btn:hover{background:var(--color-surface-variant);}
+.nav{display:flex;align-items:stretch;background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:6px 4px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:7px 2px 12px;color:var(--color-text-disabled);transition:color var(--duration-fast);}
+.nav-item .ni-label{font-size:10.5px;font-weight:700;}
+.nav-item.on{color:var(--color-primary);}
+.rail-brand,.rail-foot{display:none;}
+.wlt-feed{padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-md);}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--color-text-secondary);}
+.wlt-card{padding:var(--space-md);border-radius:var(--radius-md);background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;transition:box-shadow var(--duration-fast),border-color var(--duration-fast);}
+.wlt-card:hover{box-shadow:var(--shadow-2);border-color:var(--color-border-emphasis);}
+.wlt-card.wc-warn{border-color:rgba(155,79,0,.35);background:#FFFBF4;}
+.wlt-card.wc-warn:hover{border-color:rgba(155,79,0,.6);}
+.wlt-card.wc-err{border-color:rgba(139,26,26,.3);background:#FFF8F8;}
+.wlt-card.wc-err:hover{border-color:rgba(139,26,26,.55);}
+.wc-top{display:flex;align-items:center;gap:11px;}
+.wc-ico{width:38px;height:38px;border-radius:var(--radius-sm);display:grid;place-items:center;flex-shrink:0;font-size:13px;font-weight:800;letter-spacing:-.5px;font-family:var(--font-primary);}
+.wc-ico.ok{background:rgba(139,94,21,.1);color:var(--color-primary);}
+.wc-ico.warn{background:rgba(155,79,0,.12);color:var(--color-warning);}
+.wc-ico.err{background:rgba(139,26,26,.12);color:var(--color-error);}
+.wc-ico.info{background:rgba(26,82,118,.1);color:var(--color-info);}
+.wc-meta{flex:1;min-width:0;}
+.wc-name{font-size:14px;font-weight:700;}
+.wc-type{font-size:11px;color:var(--color-text-secondary);font-weight:600;margin-top:1px;}
+.wc-club{font-size:11px;color:var(--color-text-disabled);font-weight:600;margin-top:3px;line-height:1.35;}
+.wc-badge{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;}
+.bd-ok{background:rgba(26,108,54,.1);color:var(--color-success);}
+.bd-warn{background:rgba(155,79,0,.12);color:var(--color-warning);}
+.bd-err{background:rgba(139,26,26,.12);color:var(--color-error);}
+.wc-bal-row{display:flex;align-items:baseline;gap:5px;padding:10px 0 10px 49px;}
+.wc-amount{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1;color:var(--color-text-primary);}
+.wc-amount.err{color:var(--color-error);}
+.wc-unit{font-size:13px;font-weight:700;color:var(--color-text-secondary);}
+.wc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.wc-exp{font-size:12px;font-weight:600;color:var(--color-text-secondary);}
+.wc-exp.warn{color:var(--color-warning);}
+.wc-exp.err{color:var(--color-error);font-weight:700;}
+.wc-chevron{color:var(--color-text-disabled);flex-shrink:0;margin-left:4px;display:flex;align-items:center;}
+.pass-card{padding:var(--space-md);border-radius:var(--radius-md);background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);}
+.pass-card.pc-warn{border-color:rgba(155,79,0,.35);background:#FFFBF4;}
+.pass-top{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
+.pass-ico{width:38px;height:38px;border-radius:var(--radius-sm);flex-shrink:0;display:grid;place-items:center;background:rgba(26,82,118,.1);color:var(--color-info);}
+.pass-meta{flex:1;min-width:0;}
+.pass-name{font-size:14px;font-weight:700;}
+.pass-sub{font-size:11px;color:var(--color-text-secondary);font-weight:600;margin-top:1px;}
+.pass-dates{display:flex;gap:var(--space-md);padding:10px 0;border-top:var(--border-hairline) solid var(--color-border-subtle);border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:10px;}
+.pd-item{display:flex;flex-direction:column;gap:2px;flex:1;}
+.pd-label{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-disabled);}
+.pd-val{font-size:13.5px;font-weight:700;color:var(--color-text-primary);}
+.pd-val.warn{color:var(--color-warning);}
+.pass-foot{display:flex;align-items:center;justify-content:space-between;}
+.chip{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);}
+.chip-warn{background:var(--color-warning-container);color:var(--color-warning);}
+.chip-ok{background:var(--color-success-container);color:var(--color-success);}
+.chip-expired{background:rgba(0,0,0,.07);color:var(--color-text-disabled);}
+.pass-card.pc-expired{opacity:.55;}
+.pass-card.pc-expired .pass-ico{background:rgba(0,0,0,.08);color:var(--color-text-disabled);}
+.shop-link{color:var(--color-primary);font-weight:700;cursor:pointer;font-size:12px;white-space:nowrap;flex-shrink:0;}
+.shop-link:hover{text-decoration:underline;}
+/* History full-page overlay */
+.hist-page{position:absolute;inset:0;z-index:81;background:var(--color-surface-lowest);display:flex;flex-direction:column;transform:translateX(100%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);}
+.hist-page.open{transform:translateX(0);}
+.hpg-hdr{background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);flex-shrink:0;}
+.hpg-hdr-top{display:flex;align-items:center;gap:10px;padding:10px 12px 8px;}
+.hpg-back{width:36px;height:36px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);flex-shrink:0;}
+.hpg-back:hover{background:var(--color-surface-variant);}
+.hpg-title{font-size:16px;font-weight:800;letter-spacing:-.2px;color:var(--color-text-primary);}
+.hpg-bal{font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-top:1px;}
+.hpg-body{flex:1;overflow-y:auto;}
+/* Upcoming activation rows */
+.act-row{display:flex;align-items:center;gap:12px;padding:13px var(--space-md);background:var(--color-surface);}
+.act-row+.act-row{border-top:.3px solid var(--color-border-subtle);}
+.act-ico{width:34px;height:34px;border-radius:var(--radius-full);flex-shrink:0;display:grid;place-items:center;background:rgba(26,82,118,.1);color:var(--color-info);}
+.act-body{flex:1;min-width:0;}
+.act-name{font-size:14px;font-weight:700;}
+.act-ref{font-size:11.5px;color:var(--color-text-secondary);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.act-right{text-align:right;flex-shrink:0;}
+.act-credits{font-size:13px;font-weight:700;}
+.act-date{font-size:11px;color:var(--color-text-disabled);margin-top:2px;}
+.hpg-empty{padding:28px var(--space-md);text-align:center;color:var(--color-text-disabled);font-size:13px;font-weight:600;}
+.txn-group-head{padding:9px var(--space-md) 4px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-disabled);background:var(--color-surface-lowest);}
+.txn-row{display:flex;align-items:center;gap:11px;padding:12px var(--space-md);}
+.txn-row+.txn-row{border-top:0.3px solid var(--color-border-subtle);}
+.txn-ico{width:34px;height:34px;border-radius:var(--radius-full);flex-shrink:0;display:grid;place-items:center;}
+.txn-ico.ti-debit{background:rgba(139,26,26,.08);color:var(--color-error);}
+.txn-ico.ti-credit{background:rgba(42,107,62,.1);color:var(--color-success);}
+.txn-body{flex:1;min-width:0;}
+.txn-desc{font-size:14px;font-weight:700;}
+.txn-sub{font-size:11.5px;color:var(--color-text-secondary);margin-top:1px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;}
+.txn-right{text-align:right;flex-shrink:0;}
+.txn-amt{font-size:14px;font-weight:700;white-space:nowrap;}
+.txn-amt.pos{color:var(--color-success);}
+.txn-bal{font-size:11px;color:var(--color-text-disabled);margin-top:2px;white-space:nowrap;}
+.txn-empty{padding:36px var(--space-md);text-align:center;color:var(--color-text-disabled);font-size:13px;font-weight:600;}
+.scrim{position:absolute;inset:0;background:rgba(28,22,17,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity var(--duration-normal);}
+.scrim.open{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--color-surface);border-radius:var(--radius-xl) var(--radius-xl) 0 0;box-shadow:var(--shadow-5);padding:8px 0 calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);max-height:88%;display:flex;flex-direction:column;}
+.sheet.open{transform:translateY(0);}
+.sheet-grip{width:38px;height:4px;border-radius:99px;background:var(--color-border-emphasis);margin:8px auto 14px;flex-shrink:0;}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 var(--space-md) 4px;flex-shrink:0;}
+.sheet-title{font-size:18px;font-weight:800;letter-spacing:-.2px;}
+.sheet-close{width:32px;height:32px;border-radius:var(--radius-full);border:none;background:var(--color-surface-variant);cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);flex-shrink:0;}
+.sheet-close:hover{background:var(--color-surface-highest);}
+.sheet-sub{font-size:12.5px;color:var(--color-text-secondary);padding:0 var(--space-md) var(--space-md);flex-shrink:0;}
+.sheet-scroll{overflow-y:auto;flex:1;}
+.sheet-btn-wrap{padding:12px var(--space-md) 0;flex-shrink:0;}
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast) ease,transform var(--duration-fast) ease;}
+.btn:active{transform:scale(.99);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover:not(:disabled){background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;transform:none;}
+.prof-item{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;font-family:inherit;padding:12px var(--space-md);background:transparent;border:none;transition:background var(--duration-fast);}
+.prof-item:hover{background:var(--color-surface-lowest);}
+.prof-item.active{background:var(--color-surface-highest);}
+.pi-text{flex:1;}
+.pi-name{font-size:15px;font-weight:700;color:var(--color-text-primary);}
+.pi-meta{font-size:12px;color:var(--color-text-secondary);}
+.pi-chk{margin-left:auto;color:var(--color-primary);}
+@container (min-width:760px){
+  .app{grid-template-columns:248px 1fr;grid-template-rows:69px 1fr;grid-template-areas:"nav header" "nav main";}
+  .app-main{background:var(--color-surface-lowest);}
+  .statusbar{display:none;}
+  .hdr{padding:14px 40px;}
+  .nav{flex-direction:column;align-items:stretch;justify-content:flex-start;border-top:none;border-right:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface-variant);padding:0;gap:4px;}
+  .rail-brand{display:flex;align-items:center;gap:11px;padding:22px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:8px;}
+  .rail-brand .logo{width:36px;height:36px;border-radius:11px;background:var(--color-primary);display:grid;place-items:center;}
+  .rail-brand .rb-name{font-size:16px;font-weight:800;}
+  .rail-brand .rb-sub{font-size:10.5px;color:var(--color-text-secondary);font-weight:600;}
+  .nav-item{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 22px;margin:0 12px;border-radius:var(--radius-sm);}
+  .nav-item .ni-label{font-size:14px;}
+  .nav-item.on{background:var(--color-surface-highest);color:var(--color-primary);}
+  .rail-foot{display:flex;align-items:center;gap:10px;margin-top:auto;padding:16px 20px;border-top:var(--border-hairline) solid var(--color-border-subtle);}
+  .rf-name{font-size:13px;font-weight:700;}
+  .rf-sub{font-size:11px;color:var(--color-text-secondary);}
+  .wlt-feed{max-width:640px;margin:0 auto;padding:32px 40px 48px;}
+}
+/* Club-role demo toggle (dev affordance, not a real app control) */
+.role-bar{display:flex;align-items:center;gap:10px;width:100%;max-width:1180px;margin:0 auto 14px;flex-wrap:wrap;}
+.role-bar .rb-lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#A89880;}
+.role-bar .pills{display:flex;gap:6px;flex-wrap:wrap;}
+.role-bar .pill-btn{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full,999px);padding:5px 13px;cursor:pointer;transition:all var(--duration-fast,.15s);white-space:nowrap;}
+.role-bar .pill-btn.on{background:var(--color-primary);border-color:var(--color-primary);color:#fff;}
+.txn-who{font-weight:700;color:var(--color-text-primary);}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s ease;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 3 · Wallet</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="11" height="14" viewBox="0 0 22 28" fill="none"><rect x="2" y="1" width="18" height="26" rx="3" stroke="currentColor" stroke-width="2"/><line x1="8" y1="23" x2="14" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="12" viewBox="0 0 26 20" fill="none"><rect x="1" y="1" width="24" height="14" rx="2" stroke="currentColor" stroke-width="2"/><line x1="7" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Desktop
+      </button>
+    </div>
+  </div>
+
+  <div class="role-bar">
+    <span class="rb-lbl">Club credits</span>
+    <div class="pills">
+      <button class="pill-btn" onclick="setCredit(false,this)">No access · use_credit N</button>
+      <button class="pill-btn on" onclick="setCredit(true,this)">Can use credits · use_credit Y</button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="hdr">
+            <button class="profile-switch" onclick="openSheet('sheetProf')">
+              <span class="avatar olive" id="hdrAvatar">CT</span>
+              <span class="ps-text">
+                <span class="ps-label">Active profile</span>
+                <span class="ps-name" id="hdrName">Caleb Tan <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="app-main">
+          <div class="wlt-feed">
+
+            <div class="sec-head"><span class="sec-title">Credits</span></div>
+
+            <!-- RP -->
+            <div class="wlt-card" onclick="openHistory('RP')">
+              <div class="wc-top">
+                <span class="wc-ico ok">RP</span>
+                <div class="wc-meta"><div class="wc-name">Range Practice Credits</div></div>
+                <span class="wc-badge bd-ok">Active</span>
+                <span class="wc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+              <div class="wc-bal-row"><span class="wc-amount">8</span><span class="wc-unit">RP</span></div>
+              <div class="wc-foot">
+                <span class="wc-exp">Valid till Mon, 31 Aug 2026</span>
+              </div>
+            </div>
+
+            <!-- JY -->
+            <div class="wlt-card" onclick="openHistory('JY')">
+              <div class="wc-top">
+                <span class="wc-ico ok">JY</span>
+                <div class="wc-meta"><div class="wc-name">Junior Youth Credits</div></div>
+                <span class="wc-badge bd-warn">Expiring</span>
+                <span class="wc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+              <div class="wc-bal-row"><span class="wc-amount">8</span><span class="wc-unit">JY</span></div>
+              <div class="wc-foot">
+                <span class="wc-exp">Valid till Wed, 10 Jun 2026</span>
+              </div>
+            </div>
+            <div class="dev-note">💡 <strong>Credit wallet status variations</strong> — four states to handle: <strong>Active</strong> (balance &gt; 0, not near expiry), <strong>Expiring</strong> (expires within threshold, e.g. 7 days), <strong>Unactivated</strong> (purchased but not yet activated), <strong>Overdue</strong> (balance &lt; 0). Each drives a different card treatment + badge.</div>
+
+            <!-- MC -->
+            <div class="wlt-card wc-err" onclick="openHistory('MC')">
+              <div class="wc-top">
+                <span class="wc-ico err">MC</span>
+                <div class="wc-meta"><div class="wc-name">Master Class Credits</div></div>
+                <span class="wc-badge bd-err">Overdue</span>
+                <span class="wc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+              <div class="wc-bal-row"><span class="wc-amount err">−2</span><span class="wc-unit">MC</span></div>
+              <div class="wc-foot">
+                <span class="wc-exp err">Clear balance to book sessions</span>
+                <span class="shop-link" onclick="location.href='04 Shop.html'">Top up in Shop →</span>
+              </div>
+            </div>
+
+            <!-- Club Credits (access-gated) -->
+            <div class="client-note">💡 <strong>Club Credits (CC) card is access-gated</strong> — hidden for plain members; shown when the member can use club credits (<code>use_credit = Y</code>) or is a club admin.</div>
+            <div class="dev-note" id="ccDevNote">💡 The ledger shows the <strong>consuming archer's name</strong> on each debit, for anyone with access. Member-level visibility of the club balance is still TBC with the client.</div>
+            <div class="wlt-card" id="ccCard" onclick="openHistory('CL')">
+              <div class="wc-top">
+                <span class="wc-ico info">CC</span>
+                <div class="wc-meta">
+                  <div class="wc-name">Club Credits</div>
+                  <div class="wc-club">Singapore Disability Sports Council (SDSC)</div>
+                </div>
+                <span class="wc-badge bd-ok">Active</span>
+                <span class="wc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+              <div class="wc-bal-row"><span class="wc-amount">12</span><span class="wc-unit">CC</span></div>
+              <div class="wc-foot"><span class="wc-exp">Valid till Thu, 31 Dec 2026</span></div>
+            </div>
+
+            <!-- Passes -->
+            <div class="sec-head" style="margin-top:4px;"><span class="sec-title">Range Passes</span></div>
+            <div class="dev-note">💡 <strong>Pass cards</strong> — <code>valid_from</code> / <code>valid_till</code> derived from <code>pass.start_date + pass.duration_days</code> in DB. Days remaining computed client-side.</div>
+            <div class="client-note">💡 <strong>Expired pass visibility</strong> — recently expired range passes and locker accesses are shown only if the archer has no current active/expiring pass of that type. Show expired passes up to 3 months past expiry. Helps archer track renewal history.</div>
+
+            <div class="pass-card">
+              <div class="pass-top">
+                <span class="pass-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><line x1="5" y1="19" x2="19" y2="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="9 5 19 5 19 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="5" y1="22" x2="7" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <div class="pass-meta"><div class="pass-name">180D West Coast Pass</div><div class="pass-sub">West Coast</div></div>
+                <span class="chip chip-warn">Expiring</span>
+              </div>
+              <div class="pass-dates">
+                <div class="pd-item"><div class="pd-label">Valid from</div><div class="pd-val">10 Dec 2025</div></div>
+                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">Mon, 8 Jun 2026</div></div>
+              </div>
+              <div class="pass-foot">
+                <span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Expires in 1 day</span>
+              </div>
+            </div>
+
+            <div class="pass-card">
+              <div class="pass-top">
+                <span class="pass-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><line x1="5" y1="19" x2="19" y2="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="9 5 19 5 19 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="5" y1="22" x2="7" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <div class="pass-meta"><div class="pass-name">90D Island Pass</div><div class="pass-sub">West Coast · Chai Chee</div></div>
+                <span class="chip chip-ok">Active</span>
+              </div>
+              <div class="pass-dates">
+                <div class="pd-item"><div class="pd-label">Valid from</div><div class="pd-val">9 May 2026</div></div>
+                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">Fri, 7 Aug 2026</div></div>
+              </div>
+              <div class="pass-foot">
+                <span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">61 days remaining</span>
+              </div>
+            </div>
+
+            <div class="pass-card pc-expired">
+              <div class="pass-top">
+                <span class="pass-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><line x1="5" y1="19" x2="19" y2="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="9 5 19 5 19 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="5" y1="22" x2="7" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <div class="pass-meta"><div class="pass-name">30D West Coast Pass</div><div class="pass-sub">West Coast</div></div>
+                <span class="chip chip-expired">Expired</span>
+              </div>
+              <div class="pass-dates">
+                <div class="pd-item"><div class="pd-label">Valid from</div><div class="pd-val">8 Mar 2026</div></div>
+                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">Tue, 7 Apr 2026</div></div>
+              </div>
+              <div class="pass-foot">
+                <span class="shop-link" onclick="location.href='04 Shop.html'">Renew in Shop →</span>
+              </div>
+            </div>
+
+            <!-- Locker Access -->
+            <div class="sec-head" style="margin-top:4px;"><span class="sec-title">Locker Access</span></div>
+
+
+            <div class="pass-card">
+              <div class="pass-top">
+                <span class="pass-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="currentColor"/></svg></span>
+                <div class="pass-meta"><div class="pass-name">180D West Coast Locker Access</div><div class="pass-sub">West Coast</div></div>
+                <span class="chip chip-warn">Expiring</span>
+              </div>
+              <div class="pass-dates">
+                <div class="pd-item"><div class="pd-label">Valid from</div><div class="pd-val">10 Dec 2025</div></div>
+                <div class="pd-item"><div class="pd-label">Valid till</div><div class="pd-val">Mon, 8 Jun 2026</div></div>
+              </div>
+              <div class="pass-foot">
+                <span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Expires in 1 day</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <nav class="nav app-nav">
+          <div class="rail-brand">
+            <span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+            <span><div class="rb-name">x10s</div><div class="rb-sub">Salt Light Archery</div></span>
+          </div>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ni-label">Home</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Booking</span></button>
+          <button class="nav-item on"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Wallet</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Shop</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></button>
+          <div class="rail-foot">
+            <span class="avatar sm olive" id="railAvatar">CT</span>
+            <span><div class="rf-name" id="railName">Caleb Tan</div><div class="rf-sub">Master Class</div></span>
+          </div>
+        </nav>
+
+      </div>
+
+      <div class="scrim" id="scrim" onclick="closeAll()"></div>
+
+      <!-- History full-page -->
+      <div class="hist-page" id="sheetHistory">
+        <div class="hpg-hdr">
+          <div class="hpg-hdr-top">
+            <button class="hpg-back" onclick="closeHistory()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div>
+              <div class="hpg-title" id="histTitle"></div>
+              <div class="hpg-bal" id="histSub"></div>
+            </div>
+          </div>
+        </div>
+        <div class="hpg-body" id="histBody"></div>
+      </div>
+
+      <!-- Profile sheet -->
+      <div class="sheet" id="sheetProf">
+        <div class="sheet-grip"></div>
+        <div class="sheet-head" style="margin-bottom:8px;">
+          <span class="sheet-title">Switch profile</span>
+          <button class="sheet-close" onclick="closeAll()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        </div>
+        <div class="sheet-scroll">
+          <button class="prof-item active" onclick="setProfile('Caleb Tan','CT','olive',this)">
+            <span class="avatar olive">CT</span>
+            <span class="pi-text"><div class="pi-name">Caleb Tan</div><div class="pi-meta">Master Class &middot; 16 yrs</div></span>
+            <span class="pi-chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </button>
+          <button class="prof-item" onclick="setProfile('Mei Lin Tan','ML','slate',this)">
+            <span class="avatar slate">ML</span>
+            <span class="pi-text"><div class="pi-name">Mei Lin Tan</div><div class="pi-meta">Master Class &middot; 42 yrs</div></span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function setForm(m){
+  document.getElementById('frame').classList.toggle('desktop',m==='desktop');
+  document.getElementById('segPhone').classList.toggle('on',m==='phone');
+  document.getElementById('segDesktop').classList.toggle('on',m==='desktop');
+  localStorage.setItem('wf-form',m);
+}
+function openSheet(id){
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById(id).classList.add('open');
+}
+function closeAll(){
+  document.getElementById('scrim').classList.remove('open');
+  document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));
+  document.getElementById('sheetHistory').classList.remove('open');
+}
+function setProfile(name,initials,cls,el){
+  document.querySelectorAll('.prof-item').forEach(p=>{p.classList.remove('active');const c=p.querySelector('.pi-chk');if(c)c.remove();});
+  el.classList.add('active');
+  const chk=document.createElement('span');chk.className='pi-chk';
+  chk.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  el.appendChild(chk);
+  document.getElementById('hdrAvatar').textContent=initials;
+  document.getElementById('hdrAvatar').className='avatar '+cls;
+  document.getElementById('hdrName').childNodes[0].textContent=name+' ';
+  document.getElementById('railAvatar').textContent=initials;
+  document.getElementById('railAvatar').className='avatar sm '+cls;
+  document.getElementById('railName').textContent=name;
+  setTimeout(closeAll,180);
+}
+const WALLET_META={
+  RP:{name:'Range Practice Credits',sub:'Balance: 8 RP · Expires 31 Aug 2026'},
+  JY:{name:'Junior Youth Credits',sub:'Balance: 8 JY · Expires 10 Jun 2026'},
+  MC:{name:'Master Class Credits',sub:'Balance: −2 MC · Overdue'},
+  CL:{name:'Club Credits (SDSC)',sub:'Balance: 12 CC · Expires 31 Dec 2026'},
+};
+const TXNS={
+  RP:[
+    {date:'Today, 5 Jun',type:'debit', desc:'Range Practice',     sub:'6 Jun · West Coast',        amt:-2},
+    {date:'10 May',      type:'credit',desc:'Booking cancelled',  sub:'11 May · West Coast',       amt:+2},
+    {date:'20 Apr',      type:'credit',desc:'Credit Top-up',      sub:'ref TU-20260420-007',       amt:+12},
+    {date:'15 Apr',      type:'credit',desc:'Admin adjustment',   sub:'Credit correction',         amt:+2},
+    {date:'8 Apr',       type:'debit', desc:'Admin adjustment',   sub:'Duplicate charge reversed', amt:-1},
+  ],
+  JY:[
+    {date:'Today, 5 Jun',type:'debit', desc:'Junior Youth',       sub:'21 Jun · West Coast',       amt:-1},
+    {date:'12 May',      type:'credit',desc:'Booking cancelled',  sub:'13 May · West Coast',       amt:+1},
+    {date:'1 May',       type:'credit',desc:'Credit Top-up',      sub:'ref TU-20260501-009',       amt:+10},
+    {date:'20 Apr',      type:'credit',desc:'Admin adjustment',   sub:'Complimentary credit',      amt:+1},
+  ],
+  MC:[
+    {date:'Today, 5 Jun',type:'debit', desc:'Master Class',       sub:'9 Jun · Chai Chee',         amt:-1},
+    {date:'8 Apr',       type:'debit', desc:'Admin adjustment',   sub:'Session charge applied',    amt:-1},
+    {date:'5 Apr',       type:'credit',desc:'Credit Top-up',      sub:'ref TU-20260405-003',       amt:+2},
+  ],
+  CL:[
+    {date:'2 Jun',  type:'debit', desc:'Range Practice',  who:'Caleb Tan',    sub:'West Coast · 3 Jun',  amt:-1},
+    {date:'28 May', type:'debit', desc:'Range Practice',  who:'Mei Lin Tan',  sub:'West Coast · 29 May', amt:-1},
+    {date:'24 May', type:'debit', desc:'Range Practice',  who:'Jonas Lim',    sub:'Chai Chee · 25 May',  amt:-1},
+    {date:'20 May', type:'credit',desc:'Admin adjustment',                    sub:'Allocation correction', amt:+1},
+    {date:'1 May',  type:'credit',desc:'Credit Top-up',                       sub:'ref SDSC-MAY-2026',   amt:+15},
+  ],
+};
+const ICO_D='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M8 12h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+const ICO_C='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+const ICO_CAL='<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const UPCOMING={
+  RP:[{pkg:'10 RP Credit Pack',ref:'SA-20260605-014',credits:'10 RP',date:'10 Jun 2026'}],
+  JY:[{pkg:'5 JY Credit Pack', ref:'SA-20260601-022',credits:'5 JY', date:'12 Jun 2026'},{pkg:'10 JY Credit Pack',ref:'SA-20260528-018',credits:'10 JY',date:'20 Jun 2026'}],
+  MC:[],
+  CL:[],
+};
+function closeHistory(){
+  document.getElementById('sheetHistory').classList.remove('open');
+}
+function openHistory(wallet){
+  const meta=WALLET_META[wallet];
+  document.getElementById('histTitle').textContent=meta.name;
+  document.getElementById('histSub').textContent=meta.sub;
+  const unit=wallet==='CL'?'CC':wallet;
+  let html='';
+  // Upcoming activations section
+  const upcoming=UPCOMING[wallet]||[];
+  html+='<div class="txn-group-head">Upcoming Activations</div>';
+  if(upcoming.length){
+    upcoming.forEach(a=>{
+      html+='<div class="act-row"><span class="act-ico">'+ICO_CAL+'</span><div class="act-body"><div class="act-name">'+a.pkg+'</div><div class="act-ref">ref '+a.ref+'</div></div><div class="act-right"><div class="act-credits">'+a.credits+'</div><div class="act-date">Activates '+a.date+'</div></div></div>';
+    });
+  } else {
+    html+='<div class="hpg-empty">No upcoming activations.</div>';
+  }
+  // History section
+  const txns=TXNS[wallet]||[];
+  html+='<div class="txn-group-head" style="margin-top:8px;">History</div>';
+  if(!txns.length){html+='<div class="hpg-empty">No transactions yet.</div>';}
+  else{
+    const groups=[];let ld='';
+    txns.forEach(t=>{if(t.date!==ld){groups.push({date:t.date,items:[]});ld=t.date;}groups[groups.length-1].items.push(t);});
+    groups.forEach(g=>{
+      html+='<div class="txn-group-head" style="font-size:9.5px;opacity:.7;">'+g.date+'</div>';
+      g.items.forEach(t=>{
+        const ic=t.type==='credit'?'ti-credit':'ti-debit';
+        const ico=t.type==='credit'?ICO_C:ICO_D;
+        const amtStr=(t.amt>0?'+':t.amt<0?'−':'')+Math.abs(t.amt)+' '+unit;
+        const ac=t.amt>0?'txn-amt pos':'txn-amt';
+        // Club ledger: always surface the consuming archer's name.
+        let sub=t.sub;
+        if(wallet==='CL' && t.who){ sub = '<span class="txn-who">'+t.who+'</span> · '+t.sub; }
+        html+='<div class="txn-row"><span class="txn-ico '+ic+'">'+ico+'</span><div class="txn-body"><div class="txn-desc">'+t.desc+'</div><div class="txn-sub">'+sub+'</div></div><div class="txn-right"><div class="'+ac+'">'+amtStr+'</div></div></div>';
+      });
+    });
+  }
+  document.getElementById('histBody').innerHTML=html;
+  document.getElementById('sheetHistory').classList.add('open');
+}
+/* Club-credit demo: gates the CC wallet card on use_credit (Y/N). */
+function setCredit(canUse,el){
+  document.querySelectorAll('.role-bar .pill-btn').forEach(p=>p.classList.remove('on'));
+  if(el)el.classList.add('on');
+  const cc=document.getElementById('ccCard');
+  const note=document.getElementById('ccDevNote');
+  if(cc)cc.style.display=canUse?'':'none';
+  if(note)note.style.display=canUse?'':'none';
+}
+</script>
+
+<script>
+/* wf-nav */
+(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+</body>
+</html>
