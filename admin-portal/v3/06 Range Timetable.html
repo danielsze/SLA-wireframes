@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Admin — Range Timetable (Phase 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* Stage chrome */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1320px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+
+/* Desktop device frame (no phone notch / statusbar — admin is desktop-only) */
+.frame{position:relative;background:#0f0d0b;border-radius:22px;padding:0;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:1280px;max-width:100%;flex-shrink:0;}
+.screen{position:relative;width:100%;overflow:hidden;border-radius:22px;background:var(--color-surface-lowest);}
+
+/* App shell: nav rail + main area */
+.app{display:flex;align-items:stretch;min-height:800px;}
+
+/* Nav rail */
+.nav-rail{width:96px;flex-shrink:0;background:var(--color-surface);border-right:var(--border-subtle) solid var(--color-border-subtle);padding:20px 0;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.nav-rail .rail-logo{width:36px;height:36px;border-radius:var(--radius-md);background:var(--color-primary);display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;margin-bottom:20px;}
+.nav-item{width:76px;padding:8px 4px;border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--color-text-secondary);}
+.nav-item .ic{width:24px;height:24px;display:grid;place-items:center;font-size:16px;}
+.nav-item .lbl{font-size:10px;font-weight:600;text-align:center;line-height:1.2;}
+.nav-item.active{background:var(--color-surface-variant);color:var(--color-primary);}
+.nav-item.active .lbl{color:var(--color-text-primary);font-weight:700;}
+.nav-item.disabled{opacity:.4;cursor:not-allowed;}
+
+/* Main area */
+.main-area{flex:1;min-width:0;padding:20px 24px 32px;overflow-x:auto;}
+.pg-title{font-size:26px;font-weight:800;letter-spacing:-.2px;color:var(--color-text-primary);}
+.hdr-row{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:4px;}
+.hdr-left .welcome{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--color-text-secondary);margin-top:8px;}
+.loc-dd{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:var(--border-subtle) solid var(--color-border-emphasis);border-radius:var(--radius-sm);font-size:13px;font-weight:700;background:var(--color-surface);}
+
+/* Range choice chips */
+.range-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.range-chip{padding:8px 16px;border-radius:var(--radius-full);border:var(--border-subtle) solid var(--color-border-emphasis);font-size:13px;font-weight:700;background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;}
+.range-chip.sel{background:var(--color-primary);color:var(--color-on-primary);border-color:var(--color-primary);}
+
+/* Data area card */
+.data-area{background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-1);padding:16px;margin-top:16px;}
+.data-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.data-title{font-size:18px;font-weight:800;color:var(--color-text-primary);}
+.data-actions{display:flex;gap:4px;flex-wrap:wrap;align-items:center;}
+.act-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;color:var(--color-text-secondary);background:transparent;border:none;cursor:pointer;white-space:nowrap;}
+.act-btn:hover{background:var(--color-surface-variant);}
+
+/* Timetable grid */
+.tt-wrap{display:flex;align-items:flex-start;overflow-x:auto;border:var(--border-subtle) solid var(--color-border-subtle);}
+.tt-headercol{flex-shrink:0;width:84px;display:flex;flex-direction:column;}
+.tt-hcell{width:84px;background:var(--color-primary);color:var(--color-on-primary);border:0.5px solid rgba(255,255,255,.35);display:flex;align-items:center;padding:0 8px;font-size:11.5px;font-weight:700;flex-shrink:0;}
+.tt-scroll{position:relative;flex:1;min-width:0;}
+.tt-rows{display:flex;flex-direction:column;}
+.tt-timerow{display:flex;}
+.tt-timecell{width:140px;flex-shrink:0;background:var(--color-primary);color:var(--color-on-primary);display:flex;align-items:center;justify-content:center;height:36px;font-size:12px;font-weight:700;border:0.5px solid rgba(255,255,255,.35);}
+.tt-availrow{display:flex;}
+.tt-availcol{width:140px;flex-shrink:0;display:flex;flex-direction:column;}
+.tt-availcell{height:36px;background:var(--color-surface-lowest);border:0.5px solid var(--color-border-subtle);display:flex;align-items:center;justify-content:center;font-size:10.5px;color:var(--color-text-secondary);text-align:center;padding:0 2px;}
+.tt-instrcell{height:36px;background:var(--color-surface-lowest);border:0.5px solid var(--color-border-subtle);display:flex;font-size:10px;color:var(--color-text-secondary);}
+.tt-instr-slot{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;line-height:1.2;}
+.tt-instr-slot:hover{background:var(--color-surface-variant);}
+.tt-lanerow{position:relative;height:110px;display:flex;}
+.tt-sublane{flex-shrink:0;width:140px;height:100%;display:flex;flex-direction:column;}
+.tt-sublane-strip{flex:1;border-bottom:1px dotted var(--color-border-subtle);}
+.tt-sublane-strip.odd{background:var(--color-surface-lowest);}
+.tt-sublane-strip.even{background:rgba(0,0,0,.03);}
+
+/* Booking cell */
+.tt-booking{position:absolute;border-radius:8px;border:0.5px solid var(--color-border-emphasis);box-shadow:var(--shadow-1);padding:4px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;overflow:hidden;}
+.tt-booking .code{font-size:11.5px;font-weight:800;line-height:1.15;}
+.tt-booking .name{font-size:10px;font-weight:700;line-height:1.15;text-transform:uppercase;}
+.tt-booking .info{font-size:9.5px;font-weight:600;line-height:1.1;}
+.tt-booking .rental{font-size:8.5px;font-weight:700;color:#fff;padding:1px 8px;border-radius:16px;margin-top:2px;}
+.tt-booking .attend{position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:8px;}
+
+.bk-practice{background:#F9F6F3;} .bk-practice .code,.bk-practice .name,.bk-practice .info{color:#845415;} .bk-practice .rental{background:#845415;} .bk-practice .attend{border-color:#845415;color:#845415;}
+.bk-private{background:#FFF3E0;} .bk-private .code,.bk-private .name,.bk-private .info{color:#E65100;} .bk-private .rental{background:#E65100;} .bk-private .attend{border-color:#E65100;color:#E65100;}
+.bk-lesson{background:#F1F4F8;} .bk-lesson .code,.bk-lesson .name,.bk-lesson .info{color:#1A237E;} .bk-lesson .rental{background:#1A237E;} .bk-lesson .attend{border-color:#1A237E;color:#1A237E;}
+.bk-course{background:#FDF2F2;} .bk-course .code,.bk-course .name,.bk-course .info{color:#BA1A1A;} .bk-course .rental{background:#BA1A1A;} .bk-course .attend{border-color:#BA1A1A;color:#BA1A1A;}
+
+/* Daily booking summary — stat cards (v3, matches 02 Location Summary pattern) */
+.dbs-summary-row{display:flex;gap:12px;flex-wrap:wrap;}
+.dbs-card{flex:1 1 160px;min-width:150px;background:var(--color-surface-lowest);border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:12px 14px;}
+.dbs-card .dbs-range{font-size:12px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px;}
+.dbs-card .dbs-stat{font-size:28px;font-weight:800;color:var(--color-text-primary);line-height:1;}
+.dbs-card .dbs-stat-label{font-size:11px;font-weight:600;color:var(--color-text-secondary);margin-top:2px;}
+.dbs-card .dbs-sub{font-size:12px;color:var(--color-text-secondary);margin-top:4px;}
+.dbs-bar-row{display:flex;align-items:center;gap:6px;margin-top:8px;}
+.dbs-bar-track{flex:1;height:6px;border-radius:var(--radius-full);background:var(--color-surface-highest);overflow:hidden;}
+.dbs-bar-fill{height:100%;background:var(--color-primary);border-radius:var(--radius-full);}
+.dbs-bar-max{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--color-text-secondary);}
+.dbs-card.dbs-total{background:var(--color-success-container);border-color:var(--color-success);}
+.dbs-card.dbs-total .dbs-stat{color:var(--color-on-success-container);}
+
+/* Phase 2 new element highlighting */
+.p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+td.p2-new,th.p2-new{outline-offset:-2px;}
+
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Admin
+    </div>
+    <span class="crumb">Phase 2 · Range Timetable</span>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="screen">
+      <div class="app">
+
+        <!-- NAV RAIL -->
+        <div class="nav-rail">
+          <div class="rail-logo">X</div>
+          <div class="nav-item"><span class="ic">◔</span><span class="lbl">Range<br>Overview</span></div>
+          <div class="nav-item active"><span class="ic">▦</span><span class="lbl">Range<br>Timetable</span></div>
+          <div class="nav-item"><span class="ic">☰</span><span class="lbl">Bookings</span></div>
+          <div class="nav-item"><span class="ic">$</span><span class="lbl">Sales</span></div>
+          <div class="nav-item"><span class="ic">☺</span><span class="lbl">Archer 360</span></div>
+          <div class="nav-item disabled"><span class="ic">▢</span><span class="lbl">Events</span></div>
+          <div class="nav-item"><span class="ic">⚙</span><span class="lbl">Config</span></div>
+          <div class="nav-item"><span class="ic">▤</span><span class="lbl">Reports</span></div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="main-area">
+
+          <div class="hdr-row">
+            <div class="hdr-left">
+              <div class="pg-title">Range Timetable</div>
+              <div class="welcome">Welcome Sarah, you are in
+                <span class="loc-dd">Bishan ▾</span>
+              </div>
+            </div>
+            <div class="range-chips">
+              <div class="range-chip sel">Range A</div>
+              <div class="range-chip">Range B</div>
+              <div class="range-chip">Range C</div>
+            </div>
+          </div>
+
+          <!-- PER-RANGE BOOKING SUMMARY WIDGET (v3: stat cards, matches 02 Location Summary pattern) -->
+          <div class="data-area p2-new" style="margin-bottom:16px;">
+            <div class="data-title" style="margin-bottom:12px;">Booking Summary</div>
+            <div class="dbs-summary-row">
+              <div class="dbs-card">
+                <div class="dbs-range">Range A</div>
+                <div class="dbs-stat">4</div>
+                <div class="dbs-stat-label">Instructor-Led Bookings</div>
+                <div class="dbs-bar-row">
+                  <div class="dbs-bar-track"><div class="dbs-bar-fill" style="width:50%;"></div></div>
+                  <div class="dbs-bar-max">4</div>
+                </div>
+                <div class="dbs-sub">2 completed · 2 remaining</div>
+              </div>
+              <div class="dbs-card">
+                <div class="dbs-range">Range B</div>
+                <div class="dbs-stat">2</div>
+                <div class="dbs-stat-label">Instructor-Led Bookings</div>
+                <div class="dbs-bar-row">
+                  <div class="dbs-bar-track"><div class="dbs-bar-fill" style="width:50%;"></div></div>
+                  <div class="dbs-bar-max">2</div>
+                </div>
+                <div class="dbs-sub">1 completed · 1 remaining</div>
+              </div>
+              <div class="dbs-card">
+                <div class="dbs-range">Range C</div>
+                <div class="dbs-stat">0</div>
+                <div class="dbs-stat-label">Instructor-Led Bookings</div>
+                <div class="dbs-bar-row">
+                  <div class="dbs-bar-track"><div class="dbs-bar-fill" style="width:0%;"></div></div>
+                  <div class="dbs-bar-max">0</div>
+                </div>
+                <div class="dbs-sub">No bookings today</div>
+              </div>
+              <div class="dbs-card dbs-total">
+                <div class="dbs-range">Total Bookings Today</div>
+                <div class="dbs-stat">6</div>
+                <div class="dbs-stat-label">Bishan · Today</div>
+              </div>
+            </div>
+          </div>
+          <div class="dev-note p2-new" style="margin-bottom:16px;">Title shortened "Daily Booking Summary" → "Booking Summary" (already scoped to the selected day via the date picker above). Each range card's magnitude bar plots completed instructor-led bookings against that range's total for the day — the number on the right — mirroring 02's occupancy bar but for booking progress instead of current headcount. Subtitle spells out the same split as "X completed · Y remaining" so the bar isn't the only place that information lives.</div>
+
+          <!-- DATA AREA -->
+          <div class="data-area">
+            <div class="data-hdr">
+              <div class="data-title">Sun, Jul 5, 2026</div>
+              <div class="data-actions">
+                <button class="act-btn">⟳ Refresh</button>
+                <button class="act-btn">＋ Create</button>
+                <button class="act-btn">📅 5 Jul 2026</button>
+                <button class="act-btn">🖶 Print</button>
+                <button class="act-btn">⇩ Download</button>
+              </div>
+            </div>
+
+            <!-- TIMETABLE GRID -->
+            <div class="tt-wrap">
+              <!-- FROZEN HEADER COLUMN -->
+              <div class="tt-headercol">
+                <div class="tt-hcell" style="height:36px;">Timeslots</div>
+                <div class="tt-hcell" style="height:72px;">Range Availability</div>
+                <div class="tt-hcell" style="height:110px;">Lane 1</div>
+                <div class="tt-hcell" style="height:110px;">Lane 2</div>
+                <div class="tt-hcell" style="height:110px;">Lane 3</div>
+                <div class="tt-hcell" style="height:110px;">Lane 4</div>
+              </div>
+
+              <!-- SCROLLABLE GRID -->
+              <div class="tt-scroll">
+                <div class="tt-rows">
+                  <!-- TIME ROW -->
+                  <div class="tt-timerow">
+                    <div class="tt-timecell">7 AM - 8 AM</div>
+                    <div class="tt-timecell">8 AM - 9 AM</div>
+                    <div class="tt-timecell">9 AM - 10 AM</div>
+                    <div class="tt-timecell">10 AM - 11 AM</div>
+                    <div class="tt-timecell">11 AM - 12 PM</div>
+                    <div class="tt-timecell">12 PM - 1 PM</div>
+                  </div>
+                  <!-- AVAILABILITY ROW: slots/lanes cell + instructor cell, per hour column -->
+                  <div class="tt-availrow">
+                    <div class="tt-availcol">
+                      <div class="tt-availcell">6 slots  4 lanes</div>
+                      <div class="tt-instrcell">
+                        <div class="tt-instr-slot"><span>J.</span><span>2</span></div>
+                        <div class="tt-instr-slot"><span>A.</span><span>1</span></div>
+                      </div>
+                    </div>
+                    <div class="tt-availcol">
+                      <div class="tt-availcell">4 slots  4 lanes</div>
+                      <div class="tt-instrcell">
+                        <div class="tt-instr-slot"><span>J.</span><span>1</span></div>
+                        <div class="tt-instr-slot"><span>A.</span><span>1</span></div>
+                      </div>
+                    </div>
+                    <div class="tt-availcol">
+                      <div class="tt-availcell">2 slots  2 lanes</div>
+                      <div class="tt-instrcell">
+                        <div class="tt-instr-slot"><span>J.</span><span>0</span></div>
+                        <div class="tt-instr-slot"><span>A.</span><span>1</span></div>
+                      </div>
+                    </div>
+                    <div class="tt-availcol">
+                      <div class="tt-availcell">3 slots  3 lanes</div>
+                      <div class="tt-instrcell">
+                        <div class="tt-instr-slot"><span>J.</span><span>1</span></div>
+                        <div class="tt-instr-slot"><span>A.</span><span>1</span></div>
+                      </div>
+                    </div>
+                    <div class="tt-availcol">
+                      <div class="tt-availcell">4 slots  4 lanes</div>
+                      <div class="tt-instrcell">
+                        <div class="tt-instr-slot"><span>J.</span><span>2</span></div>
+                        <div class="tt-instr-slot"><span>A.</span><span>2</span></div>
+                      </div>
+                    </div>
+                    <div class="tt-availcol">
+                      <div class="tt-availcell">5 slots  4 lanes</div>
+                      <div class="tt-instrcell">
+                        <div class="tt-instr-slot"><span>J.</span><span>2</span></div>
+                        <div class="tt-instr-slot"><span>A.</span><span>2</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- LANE ROWS (each lane's own Stack: sub-lane shading + booking cells positioned by hourIdx/subLaneIdx) -->
+                  <div class="tt-lanerow">
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <!-- Cross-lane booking (Beginner Course, spans Lane1-2, 9-11) rendered as overlay, not part of Lane1's own stack -->
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                  </div>
+                  <div class="tt-lanerow">
+                    <div class="tt-sublane"><div class="tt-sublane-strip odd"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip odd"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip odd"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip odd"></div></div>
+                    <div class="tt-sublane">
+                      <div class="tt-sublane-strip odd"></div>
+                      <!-- singleLaneBooking: Lesson, hourIdx 4 (11-12) -->
+                      <div class="tt-booking bk-lesson" style="left:2px;right:2px;top:2px;bottom:2px;">
+                        <div class="code">BK-2012 (LSN)</div>
+                        <div class="name">Farah Abdullah</div>
+                        <div class="rental">Rental Required</div>
+                        <div class="attend">✓</div>
+                      </div>
+                    </div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip odd"></div></div>
+                  </div>
+                  <div class="tt-lanerow">
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane">
+                      <div class="tt-sublane-strip even"></div>
+                      <!-- singleLaneBooking: Private, hourIdx 3 (10-11) -->
+                      <div class="tt-booking bk-private" style="left:2px;right:2px;top:2px;bottom:2px;">
+                        <div class="code">BK-2010 (PRV)</div>
+                        <div class="name">John Tan</div>
+                        <div class="info">1-1 Coaching</div>
+                      </div>
+                    </div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                  </div>
+                  <div class="tt-lanerow">
+                    <div class="tt-sublane">
+                      <!-- subLaneBookings: 2 Practice bookings sharing Lane4, hourIdx 0 (7-8), each occupying half the lane height -->
+                      <div class="tt-booking bk-practice" style="left:2px;right:2px;top:2px;height:51px;">
+                        <div class="code">BK-2005 (100)</div>
+                        <div class="name">Mei Lin Koh</div>
+                        <div class="rental">Rental Required</div>
+                        <div class="attend">✓</div>
+                      </div>
+                      <div class="tt-booking bk-practice" style="left:2px;right:2px;top:57px;height:51px;">
+                        <div class="code">BK-2006 (101)</div>
+                        <div class="name">Ravi Kumar</div>
+                      </div>
+                    </div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                    <div class="tt-sublane"><div class="tt-sublane-strip even"></div></div>
+                  </div>
+                </div>
+
+                <!-- CROSS-LANE BOOKING OVERLAY (positioned relative to the whole grid Stack, not any single lane) -->
+                <div class="tt-booking bk-course" style="left:284px;top:110px;width:276px;height:220px;">
+                  <div class="code">BK-2001 (CRS)</div>
+                  <div class="name">Group: 5 Pax</div>
+                  <div class="info">Beginner Course — Wk 3</div>
+                  <div class="rental">Rental Required</div>
+                  <div class="attend">✓</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<script>document.body.classList.add("lofi");</script>
+</body>
+</html>

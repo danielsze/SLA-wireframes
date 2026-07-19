@@ -447,6 +447,9 @@ input[type=range].arrow-input::-moz-range-thumb{width:24px;height:24px;border-ra
                   <span class="lc-text"><span class="lc-name">Chai Chee</span></span>
                 </button>
               </div>
+              <div class="si-fieldlabel" id="rangeFieldLabel" style="display:none;">Your range</div>
+              <div class="loc-pick" id="rangePick" style="display:none;"></div>
+              <div class="dev-note" id="rangeDevNote" style="display:none;margin-bottom:14px;">💡 <strong>Range selection — outside-hours sign-in only:</strong> No booking is enforced here, but `access.range_id` is NOT NULL and Range Overview needs a specific range to tally the sign-in against. Chips populate from the ranges under the selected location; changing location resets the range choice. Not shown when a valid booking exists — the booking's own `range_id` already determines the range.</div>
               <div class="bk-tile" id="bkTile" style="display:none;">
                 <span class="bkt-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 <div class="bkt-body">
@@ -698,10 +701,12 @@ function setScenario(s){
   }
   if(isSignin){
     selectedLoc='West Coast';
+    selectedRange=null;
     document.getElementById('lcWC').classList.add('sel');
     document.getElementById('lcCC').classList.remove('sel');
+    if(outsideHours) renderRangePick();
     updateSigninCard();
-    siHasBooking = !outsideHours && selectedLoc===MOCK_BOOKING.loc;
+    siHasBooking = outsideHours || selectedLoc===MOCK_BOOKING.loc;
     siCode=''; siSubStep = 0;
     if(s!=='signin_oh'){
       renderSiStep();
@@ -757,10 +762,27 @@ function handleScrimClick(){
 }
 
 /* ── Sign-in sheet ── */
+const MOCK_RANGES={'West Coast':['Range A','Range B','Range C'],'Chai Chee':['Range A','Range B']};
+let selectedRange=null;
+function renderRangePick(){
+  const wrap=document.getElementById('rangePick');
+  wrap.innerHTML=(MOCK_RANGES[selectedLoc]||[]).map(r=>
+    `<button class="loc-chip${r===selectedRange?' sel':''}" onclick="pickRange('${r}')">
+      <span class="lc-text"><span class="lc-name">${r}</span></span>
+    </button>`
+  ).join('');
+}
+function pickRange(r){
+  selectedRange=r;
+  renderRangePick();
+  updateSigninCard();
+}
 function pickLoc(loc){
+  const changed = loc!==selectedLoc;
   selectedLoc=loc;
   document.getElementById('lcWC').classList.toggle('sel',loc==='West Coast');
   document.getElementById('lcCC').classList.toggle('sel',loc==='Chai Chee');
+  if(outsideHours){ if(changed) selectedRange=null; renderRangePick(); }
   updateSigninCard();
 }
 function updateSigninCard(){
@@ -769,10 +791,16 @@ function updateSigninCard(){
     document.getElementById('bkTile').style.display='none';
     document.getElementById('nbNote').style.display='none';
     document.getElementById('nbButtons').style.display='none';
+    document.getElementById('rangeFieldLabel').style.display='';
+    document.getElementById('rangePick').style.display='';
+    document.getElementById('rangeDevNote').style.display='';
     document.getElementById('signinBtn').style.display='';
-    document.getElementById('signinBtn').disabled=!selectedLoc;
+    document.getElementById('signinBtn').disabled=!selectedLoc||!selectedRange;
     return;
   }
+  document.getElementById('rangeFieldLabel').style.display='none';
+  document.getElementById('rangePick').style.display='none';
+  document.getElementById('rangeDevNote').style.display='none';
   const hasBooking=selectedLoc===MOCK_BOOKING.loc;
   const noBookingState=!hasBooking&&selectedLoc;
   document.getElementById('bkTile').style.display=hasBooking?'':'none';
@@ -788,7 +816,7 @@ function updateSigninCard(){
 function goNewBookingFromHome(){ localStorage.setItem('wf-open-booking','1'); location.href='02%20Make%20a%20Booking.html?new=1'; }
 function openSigninCode(){ siHasBooking=false; siCode=''; siSubStep=1; renderSiStep(); document.getElementById('scrim').classList.add('open'); document.getElementById('siSheet').classList.add('open'); }
 function openSignin(){
-  siHasBooking = selectedLoc === MOCK_BOOKING.loc;
+  siHasBooking = outsideHours || selectedLoc === MOCK_BOOKING.loc;
   siCode=''; siSubStep=0;
   renderSiStep();
   document.getElementById('scrim').classList.add('open');
@@ -813,7 +841,7 @@ function renderSiStep(){
       <textarea placeholder="Add any notes about your session…" class="sc-comment" rows="3" style="margin-top:6px;"></textarea>`;
     foot.innerHTML = `<button class="btn btn-primary" onclick="siConfirm()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Sign In · ${selectedLoc}
+      Sign In · ${selectedLoc}${outsideHours&&selectedRange?' · '+selectedRange:''}
     </button>`;
   } else if(siSubStep === 0) {
     body.innerHTML = `
@@ -1148,10 +1176,10 @@ document.getElementById('homeSession').style.display='none';
 })();
 </script>
 
+<script>document.body.classList.add("lofi");</script>
 <script>
 /* wf-nav */
 (function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
 </script>
-<script>document.body.classList.add("lofi");</script>
 </body>
 </html>

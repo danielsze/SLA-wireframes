@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Admin — Config &gt; Club (Phase 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1320px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+
+/* ── Desktop frame (dashboard, ~1280px stage — no phone chrome/notch) ── */
+.frame{position:relative;background:#0f0d0b;border-radius:22px;padding:0;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:1280px;max-width:100%;flex-shrink:0;}
+.screen{position:relative;width:100%;overflow:hidden;border-radius:22px;background:var(--color-surface-lowest);}
+
+/* ── Dashboard layout: nav rail + content ── */
+.app{width:100%;display:grid;grid-template-columns:220px 1fr;min-height:780px;}
+.nav-rail{background:var(--color-surface);border-right:var(--border-subtle) solid var(--color-border-subtle);padding:20px 0;display:flex;flex-direction:column;gap:2px;}
+.nav-rail-brand{display:flex;align-items:center;gap:8px;padding:0 20px 20px;font-weight:800;font-size:14px;color:var(--color-text-primary);}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;font-size:13px;font-weight:600;color:var(--color-text-secondary);cursor:pointer;border-left:3px solid transparent;}
+.nav-item .ic{width:20px;height:20px;border-radius:5px;background:var(--color-surface-variant);flex-shrink:0;display:grid;place-items:center;font-size:11px;color:var(--color-text-disabled);}
+.nav-item.selected{background:var(--color-surface-variant);color:var(--color-primary);border-left-color:var(--color-primary);font-weight:700;}
+.nav-item.selected .ic{background:var(--color-primary);color:#fff;}
+.nav-item.disabled{opacity:.4;cursor:not-allowed;}
+
+.content{padding:24px 28px;overflow-x:auto;}
+
+/* Main area header */
+.main-hdr{padding:0 0 16px;}
+.main-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:var(--color-text-primary);}
+.config-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.chip{font-size:12px;font-weight:700;padding:7px 14px;border-radius:var(--radius-full);background:var(--color-surface-variant);color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);cursor:pointer;}
+.chip.on{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+
+/* Data area card */
+.data-area{background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-1);padding:20px;}
+.data-area-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.data-area-title{font-size:20px;font-weight:800;color:var(--color-text-primary);}
+.data-area-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.btn-text{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--color-primary);background:transparent;border:none;cursor:pointer;padding:8px 12px;border-radius:var(--radius-sm);}
+.btn-text:hover{background:var(--color-surface-variant);}
+.search-box{display:flex;align-items:center;gap:6px;border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:7px 12px;font-size:13px;color:var(--color-text-disabled);min-width:180px;}
+
+/* Table */
+.pkg-table{width:100%;border-collapse:collapse;font-size:13px;}
+.pkg-table th{text-align:left;font-weight:700;color:var(--color-text-secondary);padding:10px 12px;border-bottom:var(--border-emphasis) solid var(--color-border-subtle);white-space:nowrap;}
+.pkg-table th .sort{color:var(--color-text-disabled);font-size:10px;margin-left:4px;}
+.pkg-table td{padding:12px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);color:var(--color-text-primary);vertical-align:top;}
+.pkg-table td.actions-cell{display:flex;gap:6px;}
+.icon-btn{width:28px;height:28px;border-radius:var(--radius-sm);border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);display:grid;place-items:center;cursor:pointer;color:var(--color-text-secondary);}
+.bool-cell{display:flex;align-items:center;}
+.pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px;font-size:12px;color:var(--color-text-secondary);}
+
+/* Toggle switch (Club Admin / Credit Access mock controls — pure CSS, no real <input>) */
+.switch{position:relative;display:inline-block;width:34px;height:18px;border-radius:var(--radius-full);background:var(--color-surface-variant);border:var(--border-subtle) solid var(--color-border-subtle);flex-shrink:0;}
+.switch::after{content:'';position:absolute;top:1px;left:1px;width:14px;height:14px;border-radius:50%;background:var(--color-text-disabled);transition:left .15s ease;}
+.switch.on{background:var(--color-primary);border-color:var(--color-primary);}
+.switch.on::after{left:17px;background:#fff;}
+.pg-btn{width:26px;height:26px;border-radius:50%;border:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface);cursor:pointer;}
+
+/* ── Form fields (shared by dialog mocks + dashboard) ── */
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11px;font-weight:700;color:var(--color-text-secondary);}
+.field label .req{color:var(--color-primary);}
+.field .input{border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-xs);padding:9px 10px;font-size:13px;color:var(--color-text-primary);background:var(--color-surface);}
+.field .input.readonly{border:none;background:transparent;color:var(--color-text-primary);}
+.field .input.dropdown{display:flex;align-items:center;justify-content:space-between;}
+.field .input.dropdown::after{content:'▾';color:var(--color-text-disabled);font-size:10px;}
+.field .hint{font-size:10.5px;color:var(--color-text-disabled);}
+
+/* Dev notes */
+.dev-note{background:rgba(139,94,21,.08);border:1px dashed var(--color-primary);border-radius:var(--radius-sm);padding:8px 10px;font-size:11.5px;color:var(--color-text-secondary);line-height:1.5;}
+.dev-note code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;}
+
+/* Phase 2 new elements */
+.p2-new{outline:2px dashed var(--color-primary);outline-offset:2px;}
+td.p2-new,th.p2-new{outline-offset:-2px;}
+
+/* Dialog mocks (secondary panels below the frame) — copied from 02 Range Overview */
+.section-divider{width:100%;max-width:1320px;margin:40px 0 16px;color:#E8DDD0;}
+.section-divider h2{font-size:18px;font-weight:800;}
+.section-divider p{font-size:12.5px;color:#A89880;margin-top:4px;}
+.dialog-mock{width:100%;max-width:1320px;background:var(--color-surface);border-radius:var(--radius-md);box-shadow:var(--shadow-3);overflow:hidden;margin-bottom:16px;}
+.dialog-mock.narrow{max-width:460px;}
+.dialog-mock.wide{max-width:900px;}
+.dlg-title{padding:16px 16px 12px;font-size:17px;font-weight:800;border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.dlg-body{padding:16px;display:flex;flex-direction:column;gap:16px;}
+.dlg-section-title{font-size:14px;font-weight:700;color:var(--color-text-secondary);}
+.field-row{display:flex;gap:16px;}
+.field-row>*{flex:1;min-width:0;}
+.field .input.editable{background:#fff;border-color:var(--color-border-emphasis);}
+.dlg-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:var(--border-subtle) solid var(--color-border-subtle);}
+.dlg-btn{padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;border:none;}
+.dlg-btn.secondary{background:transparent;color:var(--color-text-secondary);border:var(--border-subtle) solid var(--color-border-subtle);}
+.dlg-btn.primary{background:var(--color-primary);color:var(--color-on-primary);}
+.textarea-mock{min-height:52px;}
+.summary-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+.summary-tile{flex:1;min-width:150px;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:12px;display:flex;flex-direction:column;gap:4px;}
+.summary-tile .t{font-size:11px;font-weight:700;color:var(--color-text-secondary);}
+.summary-tile .v{font-size:18px;font-weight:800;color:var(--color-text-primary);}
+.button-row{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-icon{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface-variant);border:var(--border-subtle) solid var(--color-border-subtle);cursor:pointer;}
+.muted-row{opacity:.6;}
+
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="../index.html" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Admin
+    </div>
+    <span class="crumb">Phase 2 · Config &gt; Club &middot; Club Dialog (Edit mode)</span>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="screen">
+      <div class="app" style="position:relative;">
+
+        <!-- NAV RAIL — order + labels from admin/lib/app/routes.dart Module enum -->
+        <div class="nav-rail">
+          <div class="nav-rail-brand">
+            <span class="logo" style="width:22px;height:22px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+            x10s Admin
+          </div>
+          <div class="nav-item"><span class="ic">◔</span>Range Overview</div>
+          <div class="nav-item"><span class="ic">▦</span>Range Timetable</div>
+          <div class="nav-item"><span class="ic">☰</span>Bookings</div>
+          <div class="nav-item"><span class="ic">$</span>Sales</div>
+          <div class="nav-item"><span class="ic">☺</span>Archer 360</div>
+          <div class="nav-item disabled"><span class="ic">◷</span>Events</div>
+          <div class="nav-item selected"><span class="ic">⚙</span>Config</div>
+          <div class="nav-item"><span class="ic">▤</span>Reports</div>
+        </div>
+
+        <!-- CONTENT — Config dashboard: MainAreaHeader + ConfigTab chips (config_dashboard.dart) -->
+        <div class="content">
+          <div class="main-hdr">
+            <div class="main-title">Configurations</div>
+            <div class="config-tabs">
+              <span class="chip">Activity</span>
+              <span class="chip">Activity Schedule</span>
+              <span class="chip">Instructor Schedule</span>
+              <span class="chip">Voucher</span>
+              <span class="chip">Package</span>
+              <span class="chip on">Club</span>
+            </div>
+          </div>
+
+
+          <!-- DataArea (club_data_area.dart) -->
+          <div class="data-area" style="margin-top:16px;">
+            <div class="data-area-hdr">
+              <div class="data-area-title p2-new">Club Listing</div>
+              <div class="data-area-actions">
+                <button class="btn-text">+ Create</button>
+                <div class="search-box">🔍 Search</div>
+              </div>
+            </div>
+
+            <!-- Table columns — clubs_table.dart columnDefinitions (lines 86-91) — PHASE 2 DELTA -->
+            <div style="overflow-x:auto;">
+              <table class="pkg-table">
+                <thead>
+                  <tr>
+                    <th>Club<span class="sort">↕</span></th>
+                    <th>Affiliated</th>
+                    <th class="p2-new">No. of Members</th>
+                    <th class="p2-new">Credit Expiry</th>
+                    <th class="p2-new">Email</th>
+                    <th>Remarks</th>
+                    <th class="p2-new">Credit Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a href="#club-dashboard" class="p2-new" style="color:var(--color-primary);font-weight:700;text-decoration:underline;">Salt Light Archery Club</a></td>
+                    <td class="bool-cell">✔</td>
+                    <td class="p2-new">42</td>
+                    <td class="p2-new">31 Dec 2026</td>
+                    <td class="p2-new">admin@saltlightarchery.sg</td>
+                    <td>Home club, main range</td>
+                    <td class="p2-new">240 CC</td>
+                  </tr>
+                  <tr style="background:var(--color-surface-variant);">
+                    <td><a href="#club-dashboard" class="p2-new" style="color:var(--color-primary);font-weight:700;text-decoration:underline;">Woodlands Archers</a></td>
+                    <td class="bool-cell">✔</td>
+                    <td class="p2-new">128</td>
+                    <td class="p2-new">30 Jun 2027</td>
+                    <td class="p2-new">&mdash;</td>
+                    <td>&mdash;</td>
+                    <td class="p2-new">1,180 CC</td>
+                  </tr>
+                  <tr class="muted-row">
+                    <td><a href="#club-dashboard" class="p2-new" style="color:var(--color-primary);font-weight:700;text-decoration:underline;">Tampines Bowmen</a></td>
+                    <td class="bool-cell">✘</td>
+                    <td class="p2-new">6</td>
+                    <td class="p2-new">&mdash;</td>
+                    <td class="p2-new">&mdash;</td>
+                    <td>Non-affiliate, walk-in only</td>
+                    <td class="p2-new">0 CC</td>
+                  </tr>
+                  <tr>
+                    <td><a href="#club-dashboard" class="p2-new" style="color:var(--color-primary);font-weight:700;text-decoration:underline;">Independent (No Club)</a></td>
+                    <td class="bool-cell">✘</td>
+                    <td class="p2-new">38</td>
+                    <td class="p2-new">&mdash;</td>
+                    <td class="p2-new">&mdash;</td>
+                    <td>Default fallback entry</td>
+                    <td class="p2-new">&mdash;</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">1 - 4 of 4 <span class="pg-btn">‹</span><span class="pg-btn">›</span></div>
+            <div class="dev-note">Heading renamed "Club" → "Club Listing". New CC Balance column, sourced from <code>club_credit</code> table (club_id, code=CC, balance, expiry). No Status column — soft-deactivate via existing <code>deleted_on</code> (NULL = active); muted-row styling derives from <code>deleted_on IS NOT NULL</code>.</div>
+            <div class="dev-note p2-new">Added No. of Members and Credit Expiry columns. Club name is now a hyperlink to the Club Dashboard (below). Actions column removed entirely — dashboard-open replaced by the name link; Deactivate Club moved into the Club Dashboard's Basic Info tab (below).</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CLUB DASHBOARD — Phase 2 restructure (2026-07-05), replaces the old Club Credits detail modal -->
+  <!-- Ticket: "[Phase 2] 2.15 Individual Credits & Club Credits for Range Practice" — GET /club is planned as exactly this dashboard: admin(s) + wallet + member list -->
+  <div class="section-divider p2-new" id="club-dashboard">
+    <h2>Club Dashboard (Phase 2 — replaces Club Credits dialog)</h2>
+    <p>SoW 2.15 · opened from the club name link in Club Listing · full page, mirrors the Archer360 profile-page pattern · Salt Light Archery Club</p>
+  </div>
+
+  <!-- Dashboard header: back button + title + Basic Info / Credits tab chips, mirrors Archer360 profile-page main-hdr pattern -->
+  <div class="dialog-mock p2-new">
+    <div class="dlg-body" style="gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="icon-btn p2-new" title="Back to Club list" style="border-radius:50%;">‹</span>
+          <div style="font-size:20px;font-weight:800;color:var(--color-text-primary);">Salt Light Archery Club</div>
+        </div>
+        <div class="config-tabs p2-new">
+          <span class="chip on">Basic Info</span>
+          <span class="chip">Credits</span>
+        </div>
+      </div>
+      <div class="dev-note p2-new">Full per-club dashboard page (not a modal), route target for the club name link in the Clubs table. <code>GET /club</code> planned payload: admin(s) + wallet (club_credit) + member list (user.club_id). Dashboard split into Basic Info and Credits tabs — Basic Info tab (selected) shown first below, Credits tab content stacked after for wireframe review; only one renders at a time in the real build.</div>
+    </div>
+  </div>
+
+  <!-- ═══ BASIC INFO TAB ═══ -->
+  <div class="section-divider p2-new" style="margin:24px 0 12px;">
+    <h2 style="font-size:15px;">Basic Info tab</h2>
+  </div>
+
+  <!-- SECTION A: Basic info (inline, + Edit/Delete buttons) -->
+  <div class="dialog-mock p2-new">
+    <div class="dlg-title" style="display:flex;align-items:center;justify-content:space-between;">
+      Basic Info
+      <div style="display:flex;gap:4px;">
+        <button class="btn-icon p2-new">✎ Edit</button>
+        <button class="btn-icon p2-new">🗑 Delete Club</button>
+      </div>
+    </div>
+    <div class="dlg-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Club Name</label>
+          <div class="input readonly">Salt Light Archery Club</div>
+        </div>
+        <div class="field">
+          <label>Affiliation</label>
+          <div class="input readonly">Yes</div>
+        </div>
+      </div>
+      <div class="field p2-new">
+        <label>Club Email</label>
+        <div class="input readonly">admin@saltlightarchery.sg</div>
+      </div>
+      <div class="field">
+        <label>Remarks</label>
+        <div class="input readonly" style="min-height:52px;">Home club, main range</div>
+      </div>
+      <div class="dev-note p2-new">Basic Info tab: Basic Info card (Edit + Delete Club actions), plus the Club Members table and its row actions, below. Delete Club here replaces the old row-level deactivate icon from Club Listing — same soft-deactivate behavior (sets <code>deleted_on</code>, freezes balance, no auto-refund).</div>
+    </div>
+  </div>
+
+  <!-- Edit Club dialog mock (relocated from table row action; same fields as AS-IS club_dialog.dart) -->
+  <div class="dialog-mock narrow p2-new">
+    <div class="dlg-title">Edit Club</div>
+    <div class="dlg-body">
+      <div class="field">
+        <label>Club Name <span class="req">*</span></label>
+        <div class="input editable">Salt Light Archery Club</div>
+        <div class="hint">Max 60 characters</div>
+      </div>
+      <div class="field">
+        <label>Affiliation <span class="req">*</span></label>
+        <div class="input dropdown editable">Yes</div>
+      </div>
+      <div class="field p2-new">
+        <label>Club Email</label>
+        <div class="input editable">admin@saltlightarchery.sg</div>
+        <div class="hint">Optional</div>
+      </div>
+      <div class="field">
+        <label>Remarks</label>
+        <div class="input editable textarea-mock" style="height:52px;">Home club, main range</div>
+      </div>
+    </div>
+    <div class="dlg-actions">
+      <button class="dlg-btn secondary">Cancel</button>
+      <button class="dlg-btn primary">Ok</button>
+    </div>
+  </div>
+
+  <!-- SECTION C: Club Members (moved into Basic Info tab) -->
+  <div class="dialog-mock wide p2-new">
+    <div class="dlg-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      Club Members
+      <div class="search-box p2-new" style="display:flex;align-items:center;gap:6px;border:var(--border-subtle) solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:7px 12px;font-size:13px;color:var(--color-text-disabled);min-width:180px;">🔍 Search members</div>
+    </div>
+    <div class="dlg-body">
+      <div class="dev-note p2-new" style="margin:0 0 4px;">No "+ Add Member" button — members are added by tagging the archer's club in Archer360 (Characteristics > Archery Club field). Rows derived from <code>user.club_id</code> (no junction table).</div>
+      <div style="overflow-x:auto;">
+        <table class="pkg-table">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Phone</th>
+              <th class="p2-new">Club Role</th>
+              <th class="p2-new">Credit Access</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>John Tan</td>
+              <td>9123 4567</td>
+              <td class="p2-new">Admin</td>
+              <td class="p2-new">Y</td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Edit Member">✎</span><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
+            </tr>
+            <tr style="background:var(--color-surface-variant);">
+              <td>Mei Lin Koh</td>
+              <td>9876 5432</td>
+              <td class="p2-new">Member</td>
+              <td class="p2-new">Y</td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Edit Member">✎</span><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
+            </tr>
+            <tr>
+              <td>Ravi Kumar</td>
+              <td>9001 1223</td>
+              <td class="p2-new">Member</td>
+              <td class="p2-new">N</td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Edit Member">✎</span><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
+            </tr>
+            <tr>
+              <td>Priya Nair</td>
+              <td>9456 7890</td>
+              <td class="p2-new">Admin</td>
+              <td class="p2-new">N</td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Edit Member">✎</span><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
+            </tr>
+            <tr style="background:var(--color-surface-variant);">
+              <td>Wei Jie Ong</td>
+              <td>9234 5678</td>
+              <td class="p2-new">Member</td>
+              <td class="p2-new">Y</td>
+              <td class="actions-cell"><span class="icon-btn p2-new" title="Edit Member">✎</span><span class="icon-btn p2-new" title="Remove from club">✕</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="dev-note p2-new">Added a member search bar. <strong>Club Role</strong> and <strong>Credit Access</strong> are now read-only columns (were interactive toggles) — backed by the same independent flags: <code>user.club_role</code> ('admin'|null → "Admin"/"Member") and <code>user.use_credit</code> (Y/N). Edit icon opens the new Edit Member dialog (below) to change them; expel icon (✕) clears <code>user.club_id</code> (does not delete the archer record).</div>
+    </div>
+  </div>
+
+  <!-- Edit Member dialog mock (NET-NEW) -->
+  <div class="dialog-mock narrow p2-new">
+    <div class="dlg-title">Edit Member</div>
+    <div class="dlg-body">
+      <div class="field">
+        <label>Club Role <span class="req">*</span></label>
+        <div class="input dropdown editable">Member</div>
+      </div>
+      <div class="field">
+        <label>Credit Access <span class="req">*</span></label>
+        <div class="input dropdown editable">Y</div>
+      </div>
+    </div>
+    <div class="dlg-actions">
+      <button class="dlg-btn secondary">Cancel</button>
+      <button class="dlg-btn primary">Ok</button>
+    </div>
+  </div>
+  <div class="dev-note p2-new">Net-new Edit Member dialog, opened from the Club Members table's edit icon. Fields: Club Role (Member/Admin dropdown → <code>user.club_role</code>), Credit Access (Y/N dropdown → <code>user.use_credit</code>).</div>
+
+  <!-- ═══ CREDITS TAB ═══ -->
+  <div class="section-divider p2-new" style="margin:24px 0 12px;">
+    <h2 style="font-size:15px;">Credits tab</h2>
+  </div>
+
+  <!-- SECTION B: Club Credits — wallet tiles + adjustment dialog + Transactions table -->
+  <div class="dialog-mock p2-new">
+    <div class="dlg-title" style="display:flex;align-items:center;justify-content:space-between;">
+      Club Credits
+      <div style="display:flex;gap:4px;">
+        <button class="btn-icon p2-new">✎ Edit expiry date</button>
+        <button class="btn-icon p2-new">+ Create</button>
+      </div>
+    </div>
+    <div class="dlg-body">
+      <div class="summary-row">
+        <div class="summary-tile"><div class="t">CC Balance</div><div class="v">240 CC</div></div>
+        <div class="summary-tile"><div class="t">Expiry</div><div class="v">31 Dec 2026</div></div>
+      </div>
+      <div class="dev-note p2-new">Credits tab: credit balance, credit transactions (below), and associated credit actions. Wallet tiles: CC Balance + Expiry only, no Status tile. "+ Create" replaces the old Top-Up-only button (see credit-adjustment dialog below). "Edit expiry date" action added beside it. Usage Report button removed — users navigate to the Reports module directly via the nav rail.</div>
+    </div>
+  </div>
+
+  <!-- Credit adjustment dialog mock (replaces the old Top-Up-only dialog) -->
+  <div class="dialog-mock narrow p2-new">
+    <div class="dlg-title">Credit Adjustment</div>
+    <div class="dlg-body">
+      <div class="field">
+        <label>Amount (CC) <span class="req">*</span></label>
+        <div class="input editable">+100</div>
+        <div class="hint">Signed: + = top-up, − = deduction</div>
+      </div>
+      <div class="field">
+        <label>Reason <span class="req">*</span></label>
+        <div class="input dropdown editable">admin</div>
+        <div class="hint">Defaults to "admin"</div>
+      </div>
+      <div class="field">
+        <label>Remark <span class="req">*</span></label>
+        <div class="input editable textarea-mock" style="height:52px;">Manual top-up for Q3 campaign</div>
+      </div>
+      <div class="field">
+        <label>Payment Reference</label>
+        <div class="input editable">INV-2026-0705</div>
+      </div>
+    </div>
+    <div class="dlg-actions">
+      <button class="dlg-btn secondary">Cancel</button>
+      <button class="dlg-btn primary">Ok</button>
+    </div>
+  </div>
+  <div class="dev-note p2-new">General credit-adjustment dialog replaces the old Top-Up-only dialog. Maps to <code>POST /club/credit/adjustment</code>: Amount (signed numeric — positive=top-up, negative=deduction), Reason (defaults "admin"), Remark (required), Payment Reference (optional). Writes one row to <code>club_credit_transaction</code>.</div>
+
+  <!-- Transactions table (titled "Transactions", NOT "Ledger") -->
+  <div class="dialog-mock wide p2-new">
+    <div class="dlg-title">Transactions</div>
+    <div class="dlg-body">
+      <div style="overflow-x:auto;">
+        <table class="pkg-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Booking Ref</th>
+              <th class="p2-new">Archer</th>
+              <th>Quantity</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5 Jul 2026</td>
+              <td>admin</td>
+              <td>&mdash;</td>
+              <td class="p2-new">&mdash;</td>
+              <td style="color:var(--color-success);">+100</td>
+              <td>Manual top-up for Q3 campaign</td>
+            </tr>
+            <tr>
+              <td>2 Jul 2026</td>
+              <td>booking</td>
+              <td>BK-1042</td>
+              <td class="p2-new"><a href="../v2/03%20Archer360%20Profile.html" style="color:var(--color-primary);font-weight:700;text-decoration:underline;">John Tan</a></td>
+              <td style="color:var(--color-error);">−20</td>
+              <td>&mdash;</td>
+            </tr>
+            <tr>
+              <td>28 Jun 2026</td>
+              <td>refund</td>
+              <td>BK-1017</td>
+              <td class="p2-new"><a href="../v2/03%20Archer360%20Profile.html" style="color:var(--color-primary);font-weight:700;text-decoration:underline;">John Tan</a></td>
+              <td style="color:var(--color-success);">+20</td>
+              <td>Booking cancelled</td>
+            </tr>
+            <tr>
+              <td>20 Jun 2026</td>
+              <td>admin</td>
+              <td>&mdash;</td>
+              <td class="p2-new">&mdash;</td>
+              <td style="color:var(--color-success);">+140</td>
+              <td>Manual top-up for Q2 campaign</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="dev-note p2-new">Table renamed "Ledger" → "Transactions" (must not say "Ledger"). Split old "Info" column into Booking Ref (booking code, else "—") and a new clickable <strong>Archer</strong> column — the archer who consumed or received a credit refund, linking to their Archer360 profile. No running-balance or "By" column — matches <code>club_credit_transaction</code> schema exactly (club_id, consuming user_id, booking ref, amount, reason, remark).</div>
+
+
+</div>
+
+
+<script>document.body.classList.add("lofi");</script>
+</body>
+</html>
