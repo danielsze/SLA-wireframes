@@ -478,7 +478,300 @@ body.devmode .dev-sim{display:block;}
   <!-- Mode toggle -->
 </div>
 
+<script>
+// ── Mock data ──
+const ACTIVITIES = {
+  'basic-plus': {
+    title: 'Basic Archery Course Plus (Recurve)',
+    price: 260,
+    desc: 'A coach-led recurve session designed for archers who have completed the Basic Archery Course and want to consolidate their technique. Covers form, anchor consistency, and aiming routine over a 2 hour block.'
+  },
+  'basic-refresher': {
+    title: 'Basic Archery Course Refresher (Recurve)',
+    price: 80,
+    desc: 'A shorter group refresher for past Basic Archery Course graduates returning after a break. Re-establishes safety routine, draw, and aim over 45 minutes on the range.'
+  },
+  'basic-test': {
+    title: 'Basic Archery Course Test (Recurve)',
+    price: 60,
+    desc: 'Skills assessment session for archers seeking to qualify for advanced courses. Includes a marked scoring round and coach feedback at the end.'
+  }
+};
+const SLOTS = [
+  { time: '9:00 – 11:00 AM', rem: 6 },
+  { time: '11:00 AM – 1:00 PM', rem: 2 },
+  { time: '1:00 – 3:00 PM', rem: 8 },
+  { time: '3:00 – 5:00 PM', rem: 5 },
+  { time: '5:00 – 7:00 PM', rem: 0 }
+];
 
-<script>document.body.classList.add("lofi");</script>
+// ── State ──
+const VOUCHERS = {
+  WELCOME10: { type: 'pct',   value: 5  },
+  SLA20:     { type: 'fixed', value: 20 },
+  ARCHER5:   { type: 'fixed', value: 5  }
+};
+function money(n){ return Number(n).toFixed(2); }
+function voucherAmount(v, price){
+  return v.type === 'pct' ? Math.round(price * v.value / 100) : v.value;
+}
+function voucherLabel(v){
+  return v.type === 'pct' ? `−${v.value}%` : `−$${money(v.value)}`;
+}
+const state = {
+  view: 'form',
+  actId: 'basic-plus',
+  loc: null,
+  date: null,
+  dateLabel: null,
+  time: null,
+  vouchers: [],
+  pay: 'PayNow'
+};
+function voucherTotal(){ return state.vouchers.reduce((s,v) => s + v.amount, 0); }
+function priceAfterVouchers(){
+  const act = ACTIVITIES[state.actId];
+  return Math.max(0, act.price - voucherTotal());
+}
+
+// Read ?act= query string
+(function initAct(){
+  const params = new URLSearchParams(location.search);
+  const a = params.get('act');
+  if(a && ACTIVITIES[a]) state.actId = a;
+  const act = ACTIVITIES[state.actId];
+  document.getElementById('actTitle').textContent = act.title;
+  document.getElementById('actDesc').textContent = act.desc;
+  document.getElementById('rvAct').textContent = act.title;
+  document.getElementById('rvTotal').textContent = '$' + money(act.price);
+})();
+
+function closeFlow(){
+  // From HitPay, back returns to form; from terminal states, back returns to Shop.
+  if(state.view === 'hitpay'){ setView('form'); return; }
+  location.href = '04 Shop.html';
+}
+function proceed(){ setView('hitpay'); }
+
+// ── View switcher ──
+const HEADER_TITLES = {
+  form:    { eyebrow: 'Select Location & Time', name: 'Shop' },
+  hitpay:  { eyebrow: 'Payment',                name: 'Shop' },
+  success: { eyebrow: 'Confirmed',              name: 'Shop' },
+  failure: { eyebrow: 'Payment Failed',         name: 'Shop' },
+  pending: { eyebrow: 'Confirming…',            name: 'Shop' }
+};
+function setView(v){
+  state.view = v;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('on'));
+  document.getElementById('view' + v[0].toUpperCase() + v.slice(1)).classList.add('on');
+  // Footer only on form view
+  document.getElementById('appFoot').style.display = (v === 'form') ? 'flex' : 'none';
+  // Hide back button on success terminal state
+  const hideNav = (v === 'success');
+  document.querySelector('.step-back').style.visibility = hideNav ? 'hidden' : '';
+  // Header text
+  const h = HEADER_TITLES[v];
+  document.querySelector('.step-eyebrow').textContent = h.eyebrow;
+  document.querySelector('.step-name').textContent = h.name;
+  if(v === 'hitpay') populateHitpay();
+  if(v === 'success') populateSuccess();
+  // Scroll to top of new view
+  document.querySelector('.app-main').scrollTop = 0;
+}
+function populateHitpay(){
+  const total = priceAfterVouchers();
+  document.getElementById('hpAmount').textContent = '$' + money(total);
+  document.getElementById('hpPayLbl').textContent = '$' + money(total);
+  // Re-open the drop-in modal on (re)entry
+  document.querySelector('#viewHitpay .hp-wrap').classList.remove('no-modal');
+}
+function dismissDropin(){
+  document.querySelector('#viewHitpay .hp-wrap').classList.add('no-modal');
+}
+function populateSuccess(){
+  const act = ACTIVITIES[state.actId];
+  document.getElementById('sucAct').textContent = act.title;
+  document.getElementById('sucLoc').textContent = state.loc || '—';
+  document.getElementById('sucDate').textContent = state.dateLabel || '—';
+  document.getElementById('sucTime').textContent = state.time || '—';
+  document.getElementById('sucTotal').textContent = '$' + money(priceAfterVouchers());
+  const vRow = document.getElementById('sucVoucherRow');
+  const discount = voucherTotal();
+  if(discount > 0){
+    vRow.style.display = '';
+    document.getElementById('sucVoucherAmt').textContent = '−$' + money(discount);
+  } else {
+    vRow.style.display = 'none';
+  }
+}
+
+// ── Location ──
+function pickLoc(el){
+  document.querySelectorAll('.venue-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  state.loc = el.dataset.loc;
+  document.getElementById('secDate').style.display = '';
+  document.getElementById('secTime').style.display = '';
+  refreshReview();
+  updatePrimary();
+}
+
+// ── Calendar (mock — June 2026, 1 Jun = Mon) ──
+(function buildCal(){
+  const grid = document.getElementById('calGrid');
+  const lead = 1;            // 1 Jun 2026 = Monday → 1 leading blank for Sunday
+  const days = 30;
+  const today = 13;          // mock today
+  const avail = new Set([14,15,17,18,20,21,22,24,25,27,28]);
+  let html = '';
+  for(let i = 0; i < lead; i++) html += '<div class="cal-day na"><span class="dn"></span></div>';
+  for(let d = 1; d <= days; d++){
+    let cls = 'cal-day';
+    const isAvail = avail.has(d) && d >= today;
+    if(d < today) cls += ' past';
+    else if(isAvail) cls += ' avail';
+    else cls += ' na';
+    if(d === today) cls += ' today';
+    html += `<div class="${cls}" ${isAvail ? `onclick="pickDate(${d})"` : ''}><span class="dn">${d}</span></div>`;
+  }
+  grid.innerHTML = html;
+})();
+
+function pickDate(d){
+  document.querySelectorAll('.cal-day.sel').forEach(c => c.classList.remove('sel'));
+  document.querySelectorAll('.cal-grid .cal-day').forEach(c => {
+    if(c.querySelector('.dn').textContent === String(d) && c.classList.contains('avail')) c.classList.add('sel');
+  });
+  state.date = d;
+  // 1 Jun 2026 = Mon, so day-of-week index = (d - 1 + 1) % 7 from Sun=0; for "1=Mon" weekday[idx]
+  const wd = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][(d - 1) % 7];
+  state.dateLabel = `${wd}, ${d} Jun 2026`;
+  // reset time when date changes
+  state.time = null;
+  renderSlots();
+  refreshReview();
+  updatePrimary();
+}
+
+function renderSlots(){
+  const zone = document.getElementById('slotZone');
+  zone.innerHTML = `
+    <div class="slot-list">
+      ${SLOTS.map((s,i) => {
+        const isFull = s.rem === 0;
+        const cls = isFull ? 's-full' : '';
+        const lblCls = isFull ? 'lbl-full' : (s.rem <= 2 ? 'lbl-low' : '');
+        const availLbl = isFull ? '0 slots' : `${s.rem} slots`;
+        const click = isFull ? '' : `onclick="pickSlot(${i})"`;
+        const selCls = state.time === s.time ? ' s-sel' : '';
+        return `<div class="slot-row ${cls}${selCls}" data-idx="${i}" ${click}>
+          <span class="slot-time-range">${s.time}</span>
+          <span class="slot-avail ${lblCls}">${availLbl}</span>
+          <span class="s-ring"></span>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function pickSlot(i){
+  const s = SLOTS[i];
+  if(s.rem === 0) return;
+  state.time = s.time;
+  renderSlots();
+  refreshReview();
+  updatePrimary();
+}
+
+// ── Vouchers + checkout ──
+function applyPromo(){
+  const input = document.getElementById('promoIn');
+  const msg = document.getElementById('promoMsg');
+  const code = input.value.trim().toUpperCase();
+  const act = ACTIVITIES[state.actId];
+  if(!code){
+    msg.textContent = ''; msg.className = 'promo-msg';
+    return;
+  }
+  if(state.vouchers.some(v => v.code === code)){
+    msg.textContent = 'Voucher already added.';
+    msg.className = 'promo-msg err';
+    return;
+  }
+  const def = VOUCHERS[code];
+  if(!def){
+    msg.textContent = 'Voucher code not recognised.';
+    msg.className = 'promo-msg err';
+    return;
+  }
+  const amount = voucherAmount(def, act.price);
+  const label = voucherLabel(def);
+  state.vouchers.push({ code, amount, label });
+  input.value = '';
+  msg.textContent = '';
+  msg.className = 'promo-msg';
+  renderVoucherChips();
+  refreshReview();
+}
+function removeVoucher(code){
+  state.vouchers = state.vouchers.filter(v => v.code !== code);
+  const msg = document.getElementById('promoMsg');
+  msg.textContent = ''; msg.className = 'promo-msg';
+  renderVoucherChips();
+  refreshReview();
+}
+function renderVoucherChips(){
+  const zone = document.getElementById('voucherChips');
+  zone.innerHTML = state.vouchers.map(v => `
+    <span class="voucher-chip">
+      <span class="vc-code">${v.code}</span>
+      <span class="vc-amt">${v.label}</span>
+      <button class="vc-x" onclick="removeVoucher('${v.code}')" aria-label="Remove ${v.code}">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      </button>
+    </span>`).join('');
+}
+function pickPay(method, el){
+  el.parentElement.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  state.pay = method;
+}
+
+function refreshReview(){
+  const locEl = document.getElementById('rvLoc');
+  const dateEl = document.getElementById('rvDate');
+  const timeEl = document.getElementById('rvTime');
+  locEl.textContent = state.loc || '—';
+  locEl.classList.toggle('muted', !state.loc);
+  dateEl.textContent = state.dateLabel || '—';
+  dateEl.classList.toggle('muted', !state.dateLabel);
+  timeEl.textContent = state.time || '—';
+  timeEl.classList.toggle('muted', !state.time);
+  const vRow = document.getElementById('rvVoucherRow');
+  const discount = voucherTotal();
+  if(discount > 0){
+    vRow.style.display = '';
+    document.getElementById('rvVoucherAmt').textContent = '−$' + money(discount);
+  } else {
+    vRow.style.display = 'none';
+  }
+  document.getElementById('rvTotal').textContent = '$' + money(priceAfterVouchers());
+}
+
+function updatePrimary(){
+  const btn = document.getElementById('primaryBtn');
+  btn.disabled = !(state.loc && state.date && state.time && state.pay);
+}
+
+// ── Stage / desktop toggle ──
+function setForm(m){
+  const frame = document.getElementById('frame');
+  document.getElementById('segPhone').classList.toggle('on', m === 'phone');
+  document.getElementById('segDesktop').classList.toggle('on', m === 'desktop');
+  frame.classList.toggle('desktop', m === 'desktop');
+}
+
+document.body.classList.add("lofi");
+</script>
 </body>
 </html>
