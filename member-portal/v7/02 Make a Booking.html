@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Make a Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;}
+svg{display:block;}
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:16px;width:100%;max-width:1180px;margin-bottom:28px;color:#E8DDD0;}
+.stage-bar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:7px 16px;border-radius:var(--radius-full);transition:all var(--duration-fast) ease;display:flex;align-items:center;gap:7px;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+/* ── Frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+/* ── App grid ── */
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr auto;grid-template-areas:"header" "main" "nav";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+.app-nav{grid-area:nav;}
+/* ── Status bar ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+/* ── Header ── */
+.hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.profile-switch{display:flex;align-items:center;gap:10px;flex:1;min-width:0;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:var(--radius-sm);transition:background var(--duration-fast) ease;}
+.profile-switch:hover{background:var(--color-surface-variant);}
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);}
+.avatar.sm{width:30px;height:30px;font-size:12px;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.ps-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.ps-name{font-size:15px;font-weight:700;color:var(--color-text-primary);display:flex;align-items:center;gap:4px;}
+.hdr-actions{display:flex;align-items:center;gap:4px;}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);transition:background var(--duration-fast) ease;}
+.icon-btn:hover{background:var(--color-surface-variant);}
+/* ── Nav ── */
+.nav{display:flex;align-items:stretch;background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:6px 4px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:inherit;padding:7px 2px 12px;color:var(--color-text-disabled);transition:color var(--duration-fast) ease;}
+.nav-item .ni-label{font-size:10.5px;font-weight:700;}
+.nav-item.on{color:var(--color-primary);}
+.rail-brand{display:none;}
+.rail-foot{display:none;}
+/* ── Desktop ── */
+@container (min-width:760px){
+  .app{grid-template-columns:248px 1fr;grid-template-rows:69px 1fr;grid-template-areas:"nav header" "nav main";}
+  .app-main{background:var(--color-surface-lowest);}
+  .hdr{padding:14px 40px;}
+  .nav{flex-direction:column;align-items:stretch;justify-content:flex-start;border-top:none;border-right:var(--border-subtle) solid var(--color-border-subtle);background:var(--color-surface-variant);padding:0;gap:4px;}
+  .rail-brand{display:flex;align-items:center;gap:11px;padding:22px;border-bottom:var(--border-hairline) solid var(--color-border-subtle);margin-bottom:8px;}
+  .rail-brand .rl{width:36px;height:36px;border-radius:11px;background:var(--color-primary);display:grid;place-items:center;}
+  .rail-brand .rb-name{font-size:16px;font-weight:800;}
+  .rail-brand .rb-sub{font-size:10.5px;color:var(--color-text-secondary);font-weight:600;}
+  .nav-item{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 22px;margin:0 12px;border-radius:var(--radius-sm);}
+  .nav-item .ni-label{font-size:14px;}
+  .nav-item.on{background:var(--color-surface-highest);color:var(--color-primary);}
+  .rail-foot{display:flex;align-items:center;gap:10px;margin-top:auto;padding:16px 20px;border-top:var(--border-hairline) solid var(--color-border-subtle);}
+  .rf-name{font-size:13px;font-weight:700;}
+  .rf-sub{font-size:11px;color:var(--color-text-secondary);}
+  #vStepper{height:100%;}
+}
+/* ── Shared components ── */
+.tag{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);}
+.tag-practice{background:var(--color-success-container);color:var(--color-on-success-container);}
+.tag-lesson{background:var(--color-info-container);color:var(--color-info);}
+.tag-private{background:var(--color-surface-variant);color:var(--color-text-secondary);}
+.tag-course{background:var(--color-info-container);color:var(--color-on-info-container);}
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast) ease,transform var(--duration-fast) ease,opacity var(--duration-fast) ease;}
+.btn:active{transform:scale(.99);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover:not(:disabled){background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;transform:none;}
+.btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
+.btn-ghost:hover{background:var(--color-surface-variant);}
+.btn-danger{background:transparent;color:var(--color-error);border:1.5px solid var(--color-error);}
+/* ── Bookings list ── */
+#vList{padding:var(--space-md);}
+.list-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-md);}
+.list-top h1{font-size:24px;font-weight:700;}
+.new-btn{display:flex;align-items:center;gap:7px;font-family:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--color-primary);border:none;cursor:pointer;padding:9px 16px;border-radius:var(--radius-sm);}
+.seg-tabs{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;margin-bottom:var(--space-md);}
+.seg-tab{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:8px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.seg-tab.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.bk-list{display:flex;flex-direction:column;gap:var(--space-sm);}
+.bk-card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;transition:box-shadow var(--duration-fast) ease;}
+.bk-card:hover{box-shadow:var(--shadow-2);}
+.bk-inner{display:flex;align-items:center;gap:13px;padding:13px var(--space-md);}
+.date-chip{width:50px;flex-shrink:0;text-align:center;border-radius:var(--radius-sm);background:var(--color-surface-variant);padding:7px 4px;border:1px solid var(--color-border-subtle);}
+.date-chip .dc-mon{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--color-primary);}
+.date-chip .dc-day{font-size:19px;font-weight:700;line-height:1.05;}
+.date-chip.past{background:var(--color-surface-lowest);}
+.date-chip.past .dc-mon{color:var(--color-text-disabled);}
+.date-chip.past .dc-day{color:var(--color-text-secondary);}
+.bk-info{flex:1;min-width:0;}
+.bk-title{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.bk-meta{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+.chev{ color:var(--color-text-secondary); display:flex; align-items:center; margin-left:auto; flex-shrink:0; }
+.month-bar{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px 0 8px;-webkit-overflow-scrolling:touch;}
+.month-bar::-webkit-scrollbar{display:none;}
+.month-pill{font-family:inherit;font-size:13px;font-weight:700;padding:7px 16px;border-radius:var(--radius-full);border:none;cursor:pointer;white-space:nowrap;background:var(--color-surface-variant);color:var(--color-text-secondary);transition:all var(--duration-fast) ease;flex-shrink:0;}
+.month-pill.on{background:var(--color-primary);color:#fff;}
+.month-pill.empty{opacity:.45;}
+.past-empty{text-align:center;padding:32px 16px;color:var(--color-text-disabled);font-size:13px;font-weight:600;}
+.att-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;margin-top:4px;}
+.att-chip .att-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.att-yes .att-dot{background:var(--color-success);}
+.att-yes{color:var(--color-success);}
+.att-no .att-dot{background:var(--color-text-disabled);}
+.att-no{color:var(--color-text-disabled);}
+.bk-status{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;}
+.st-ok{background:rgba(42,107,62,.12);color:var(--color-success);}
+.st-done{background:var(--color-surface-variant);color:var(--color-text-disabled);}
+.st-cancel{background:rgba(139,26,26,.08);color:var(--color-error);}
+/* ── Stepper ── */
+#vStepper{height:100%;display:flex;flex-direction:column;}
+.step-prog{display:flex;gap:4px;padding:12px 16px 0;background:var(--color-surface);}
+.step-seg{flex:1;height:4px;border-radius:2px;background:var(--color-border-subtle);}
+.step-seg.done{background:var(--color-primary);}
+.step-seg.cur{background:var(--color-primary);opacity:.5;}
+.step-hdr{display:flex;align-items:center;gap:var(--space-sm);padding:10px var(--space-md) 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.step-back{width:38px;height:38px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);}
+.step-back:disabled{opacity:.3;cursor:default;}
+.step-title-area{flex:1;text-align:center;}
+.step-eyebrow{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-disabled);}
+.step-name{font-size:16px;font-weight:700;margin-top:1px;}
+.step-close{width:38px;height:38px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);}
+.step-scroll{flex:1;overflow-y:auto;overflow-x:hidden;}
+.step-panel{display:none;padding:var(--space-md) var(--space-md) 0;}
+.step-panel.on{display:block;}
+.step-foot{background:var(--color-surface);border-top:var(--border-subtle) solid var(--color-border-subtle);padding:12px var(--space-md);padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:var(--space-sm);}
+/* ── Activities ── */
+.act-list{display:flex;flex-direction:column;gap:var(--space-sm);}
+.act-item{display:flex;align-items:center;gap:13px;padding:14px var(--space-md);border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;transition:all var(--duration-fast) ease;}
+.act-item.sel{background:var(--color-surface-highest);border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary);}
+.act-ico{width:40px;height:40px;border-radius:var(--radius-sm);background:var(--color-surface-variant);display:grid;place-items:center;color:var(--color-primary);flex-shrink:0;transition:all var(--duration-fast) ease;}
+.act-item.sel .act-ico{background:var(--color-primary);color:#fff;}
+.act-name{font-size:15px;font-weight:700;}
+.act-sub{font-size:12px;color:var(--color-text-secondary);margin-top:3px;display:flex;align-items:center;gap:6px;}
+.sel-ring{width:24px;height:24px;border-radius:var(--radius-full);border:2px solid var(--color-border-emphasis);display:grid;place-items:center;flex-shrink:0;transition:all var(--duration-fast) ease;}
+.act-item.sel .sel-ring{border-color:var(--color-primary);background:var(--color-primary);}
+/* ── Venue ── */
+.vg-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--color-text-secondary);margin:var(--space-md) 0 var(--space-sm);padding-left:2px;}
+.vg-label:first-child{margin-top:0;}
+.venue-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;}
+.venue-card{padding:14px 12px;border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;transition:all var(--duration-fast) ease;text-align:left;font-family:inherit;}
+.venue-card.sel{background:var(--color-surface-highest);border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary);}
+.vc-name{font-size:15px;font-weight:700;}
+.vc-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px;font-weight:600;}
+/* ── Calendar ── */
+.cal-wrap{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);padding:var(--space-md);}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-md);}
+.cal-month{font-size:15px;font-weight:700;}
+.cal-nav-btn{width:32px;height:32px;border:none;background:transparent;cursor:pointer;border-radius:var(--radius-full);display:grid;place-items:center;color:var(--color-text-secondary);}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:6px;}
+.cal-dow span{font-size:11px;font-weight:700;color:var(--color-text-disabled);padding:4px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 2px;border-radius:var(--radius-sm);position:relative;}
+.cal-day.avail{cursor:pointer;}
+.cal-day.avail:hover{background:var(--color-surface-variant);}
+.cal-day.sel{background:var(--color-primary);border-radius:var(--radius-sm);}
+.dn{font-size:14px;font-weight:600;line-height:1;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+.cal-day.past .dn,.cal-day.na .dn,.cal-day.full .dn{color:var(--color-text-disabled);}
+.cal-day.today:not(.sel) .dn{color:var(--color-primary);font-weight:800;}
+.cal-day.sel .dn{color:#fff;font-weight:700;}
+.cal-legend{display:flex;align-items:center;gap:14px;margin-top:12px;font-size:11px;color:var(--color-text-secondary);font-weight:600;}
+.cl-item{display:flex;align-items:center;gap:5px;}
+.cl-dot{width:7px;height:7px;border-radius:50%;}
+/* ── Timeslots ── */
+.slot-ctx{display:flex;align-items:center;gap:10px;margin-bottom:var(--space-md);padding:11px var(--space-md);background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);}
+.sc-ico{width:34px;height:34px;border-radius:var(--radius-sm);background:var(--color-surface-variant);display:grid;place-items:center;color:var(--color-primary);flex-shrink:0;}
+.sc-title{font-size:13.5px;font-weight:700;}
+.sc-date{font-size:11.5px;color:var(--color-text-secondary);margin-top:1px;}
+.slot-err{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:var(--radius-sm);border-left:var(--border-accent) solid;margin-bottom:var(--space-md);font-size:12.5px;line-height:1.45;}
+.slot-err-icon{flex-shrink:0;margin-top:1px;}
+.err-cons{background:var(--color-error-container);border-color:var(--color-error);color:var(--color-on-error-container);}
+.err-max{background:var(--color-error-container);border-color:var(--color-error);color:var(--color-on-error-container);}
+.err-full{background:var(--color-warning-container);border-color:var(--color-warning);color:var(--color-on-warning-container);}
+.slot-list{display:flex;flex-direction:column;gap:4px;}
+.slot-row{display:flex;align-items:center;gap:12px;padding:12px var(--space-md);border-radius:var(--radius-sm);background:var(--color-surface);border:1.5px solid transparent;cursor:pointer;transition:all var(--duration-fast) ease;}
+.slot-row:hover:not(.s-full){background:var(--color-surface-variant);}
+.slot-row.s-sel{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.slot-row.s-bad{background:var(--color-error-container);border-color:var(--color-error);}
+.slot-row.s-full{cursor:not-allowed;opacity:.5;}
+.slot-row.s-walkin{background:var(--color-warning-container);border-color:var(--color-warning);cursor:pointer;}
+.slot-row.s-walkin:hover{background:var(--color-warning-container);}
+.slot-row.s-walkin .s-ring{border-color:var(--color-warning);}
+.slot-row.s-walkin.s-sel{background:var(--color-warning-container);border-color:var(--color-warning);}
+.slot-row.s-walkin.s-sel .s-ring{border-color:var(--color-warning);background:var(--color-warning);}
+.slot-row.s-walkin .s-ring-walk{border-color:var(--color-warning);color:var(--color-warning);background:transparent;}
+.slot-time{font-size:14px;font-weight:700;width:80px;flex-shrink:0;}
+.slot-bar-wrap{flex:1;display:flex;align-items:center;gap:8px;}
+.bar-track{flex:1;height:5px;border-radius:3px;background:var(--color-surface-variant);}
+.bar-fill{height:100%;border-radius:3px;}
+.fill-q{background:var(--color-success);}
+.fill-m{background:var(--color-warning);}
+.fill-f{background:var(--color-error);}
+.avail-lbl{font-size:11px;font-weight:700;width:52px;text-align:right;white-space:nowrap;}
+.avail-lbl.lbl-ok{color:var(--color-text-secondary);}
+.avail-lbl.lbl-low{color:var(--color-warning);}
+.avail-lbl.lbl-full{color:var(--color-error);}
+.s-ring{width:22px;height:22px;border-radius:var(--radius-sm);border:2px solid var(--color-border-emphasis);background:transparent;display:grid;place-items:center;flex-shrink:0;transition:all var(--duration-fast) ease;}
+.slot-row.s-sel .s-ring{border-color:var(--color-primary);background:var(--color-primary);}
+.slot-row.s-bad .s-ring{border-color:var(--color-error);background:var(--color-error);}
+/* ── Equipment ── */
+.gear-list{display:flex;flex-direction:column;gap:var(--space-sm);}
+.gear-item{border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);box-shadow:var(--shadow-1);cursor:pointer;font-family:inherit;text-align:left;transition:all var(--duration-fast) ease;overflow:hidden;}
+.gear-item.sel{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.gear-header{display:flex;align-items:center;gap:13px;padding:12px var(--space-md);}
+.gear-ico{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-surface-variant);display:grid;place-items:center;color:var(--color-text-secondary);flex-shrink:0;transition:all var(--duration-fast) ease;font-size:12px;font-weight:800;}
+.gear-item.sel .gear-ico{background:var(--color-primary);color:#fff;}
+.gear-name{font-size:14px;font-weight:700;}
+.gear-desc{font-size:11.5px;color:var(--color-text-secondary);margin-top:1px;}
+.gear-ring{width:22px;height:22px;border-radius:var(--radius-full);border:2px solid var(--color-border-emphasis);display:grid;place-items:center;flex-shrink:0;transition:all var(--duration-fast) ease;}
+.gear-item.sel .gear-ring{border-color:var(--color-primary);background:var(--color-primary);}
+.gear-accordion{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .25s ease;opacity:0;}
+.gear-accordion.show{max-height:400px;opacity:1;}
+.gear-acc-inner{padding:var(--space-md);padding-top:0;display:flex;flex-direction:column;gap:var(--space-md);border-top:1px solid var(--color-border-subtle);margin:0 var(--space-md) var(--space-md);padding-top:var(--space-md);}
+.f-label{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:6px;}
+.f-seg{display:flex;background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:3px;gap:2px;}
+.f-seg-btn{flex:1;font-family:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;padding:8px 4px;border-radius:var(--radius-xs);background:transparent;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.f-seg-btn.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+.f-input{width:100%;font-family:inherit;font-size:14px;font-weight:600;border:1.5px solid var(--color-border-emphasis);border-radius:var(--radius-sm);padding:10px 12px;background:var(--color-surface);color:var(--color-text-primary);outline:none;-moz-appearance:textfield;}
+.f-input::-webkit-inner-spin-button,.f-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.f-input:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(139,94,21,.1);}
+.f-bool{display:flex;align-items:center;justify-content:space-between;}
+.f-bool-lbl{font-size:13.5px;font-weight:600;}
+.f-toggle{width:44px;height:24px;border-radius:12px;background:var(--color-border-emphasis);cursor:pointer;border:none;position:relative;transition:background .2s ease;flex-shrink:0;}
+.f-toggle.on{background:var(--color-primary);}
+.f-knob{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s ease;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+.f-toggle.on .f-knob{left:22px;}
+/* ── Review ── */
+.review-card{background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;}
+.rv-row{display:flex;align-items:center;justify-content:space-between;padding:12px var(--space-md);}
+.rv-row+.rv-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.rv-lbl{font-size:11.5px;font-weight:700;color:var(--color-text-secondary);}
+.rv-val{font-size:14px;font-weight:700;text-align:right;}
+.rv-sep{height:6px;background:var(--color-surface-lowest);}
+.cred-section{padding:var(--space-md);}
+.cred-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cred-head-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--color-text-secondary);}
+.jyp-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-full);font-size:10.5px;font-weight:700;background:rgba(139,94,21,.1);color:var(--color-primary);}
+.cl{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;margin-bottom:6px;}
+.cl .c-lbl{color:var(--color-text-secondary);}
+.cl .c-val{font-weight:700;}
+.cl .c-val.neg{color:var(--color-error);}
+.cl .c-val.pos{color:var(--color-primary);}
+.c-div{height:1px;background:var(--color-border-subtle);margin:8px 0;}
+.rv-note{font-size:12px;color:var(--color-text-disabled);margin-top:var(--space-md);text-align:center;line-height:1.5;padding-bottom:var(--space-md);}
+/* ── T&C note ── */
+.tnc-note{font-size:11.5px;color:var(--color-text-secondary);line-height:1.55;padding:var(--space-md) 0 4px;text-align:center;}
+.tnc-note a{color:var(--color-primary);text-decoration:none;}
+/* ── Slot time range ── */
+.slot-time-range{font-size:14px;font-weight:700;flex:1;}
+/* ── Credits toggle + type selector ── */
+.cred-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-sm);}
+.cred-type-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cred-type-btns{display:flex;gap:4px;}
+.cred-type-btn{font-family:inherit;font-size:12px;font-weight:700;padding:4px 11px;border-radius:var(--radius-full);border:1.5px solid var(--color-border-emphasis);background:transparent;cursor:pointer;color:var(--color-text-secondary);transition:all var(--duration-fast) ease;}
+.cred-type-btn.sel{border-color:var(--color-primary);background:rgba(139,94,21,.1);color:var(--color-primary);}
+.cred-type-btn.sel.err{border-color:var(--color-error);background:rgba(139,26,26,.06);color:var(--color-error);}
+.f-toggle.disabled{opacity:.45;cursor:not-allowed;}
+.credit-scenario-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.credit-scenario-btn{font-family:inherit;font-size:11px;font-weight:700;padding:5px 8px;border-radius:var(--radius-full);border:1px solid var(--color-border-emphasis);background:transparent;color:var(--color-text-secondary);cursor:pointer;}
+.credit-scenario-btn.on{border-color:var(--color-primary);background:rgba(139,94,21,.1);color:var(--color-primary);}
+.cred-insuff{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:var(--radius-sm);background:var(--color-error-container);border-left:3px solid var(--color-error);font-size:12px;color:var(--color-on-error-container);line-height:1.45;margin-top:8px;}
+.cred-settle-note{font-size:12px;color:var(--color-text-secondary);margin-top:6px;}
+/* ── Slot availability ── */
+.slot-avail{font-size:11.5px;font-weight:700;color:var(--color-text-secondary);min-width:44px;text-align:right;}
+.slot-avail.lbl-low{color:var(--color-warning);}
+.slot-avail.lbl-full{color:var(--color-error);}
+.slot-avail.lbl-walk{color:var(--color-warning);}
+.slot-note{display:flex;gap:9px;align-items:flex-start;padding:11px 13px;border-radius:var(--radius-sm);font-size:12px;line-height:1.45;margin-top:8px;}
+.slot-note.note-walkin{background:var(--color-warning-container);border:1px solid var(--color-warning);color:var(--color-on-warning-container);}
+.slot-note.note-walkin .slot-err-icon{color:var(--color-warning);flex-shrink:0;margin-top:1px;line-height:0;}
+/* ── Success ── */
+.success-wrap{display:flex;flex-direction:column;align-items:center;padding:40px var(--space-md) var(--space-xxl);text-align:center;}
+.suc-ico{width:72px;height:72px;border-radius:var(--radius-full);background:rgba(42,107,62,.12);display:grid;place-items:center;margin-bottom:var(--space-md);color:var(--color-success);}
+.success-wrap h2{font-size:24px;font-weight:700;margin-bottom:6px;}
+.suc-ref{font-size:13px;color:var(--color-text-secondary);font-weight:600;margin-bottom:var(--space-lg);}
+.suc-card{width:100%;background:var(--color-surface);border-radius:var(--radius-md);border:var(--border-hairline) solid var(--color-border-subtle);box-shadow:var(--shadow-1);overflow:hidden;margin-bottom:var(--space-lg);}
+.suc-row{display:flex;align-items:center;justify-content:space-between;padding:11px var(--space-md);}
+.suc-row+.suc-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.suc-lbl{font-size:12px;color:var(--color-text-secondary);font-weight:600;}
+.suc-val{font-size:13.5px;font-weight:700;}
+.suc-btns{display:flex;gap:var(--space-sm);width:100%;}
+/* ── Sheets ── */
+.scrim{position:absolute;inset:0;background:rgba(28,22,17,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity var(--duration-normal) ease;}
+.scrim.open{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--color-surface);border-radius:var(--radius-xl) var(--radius-xl) 0 0;box-shadow:var(--shadow-5);padding:8px var(--space-md) calc(var(--space-md) + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);}
+.sheet.open{transform:translateY(0);}
+.sheet-grip{width:38px;height:4px;border-radius:99px;background:var(--color-border-emphasis);margin:8px auto 6px;}
+.sheet-title{font-size:18px;font-weight:700;padding:6px 0 var(--space-md);}
+.det-rows{display:flex;flex-direction:column;}
+.det-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;}
+.det-row+.det-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.det-lbl{font-size:12px;font-weight:600;color:var(--color-text-secondary);}
+.det-val{font-size:13.5px;font-weight:700;}
+.det-actions{margin-top:var(--space-md);display:flex;flex-direction:column;gap:8px;}
+.cutoff-note{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-top:4px;}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s ease;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 2 · Make a Booking</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.4" stroke="currentColor" stroke-width="2"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Phone</button>
+      <button id="segDesktop" onclick="setForm('desktop')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="8.5" y1="21" x2="15.5" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Desktop</button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <!-- HEADER -->
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="hdr">
+            <button class="profile-switch" onclick="openProfSheet()">
+              <span class="avatar olive">CT</span>
+              <span>
+                <div class="ps-label">Active profile</div>
+                <div class="ps-name">Caleb Tan <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </span>
+            </button>
+            <div class="hdr-actions"></div>
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="app-main" id="main">
+
+          <!-- BOOKINGS LIST -->
+          <div id="vList" style="display:none">
+            <div class="list-top">
+              <h1>Bookings</h1>
+              <button class="new-btn" onclick="openBooking()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                New Booking
+              </button>
+            </div>
+            <div class="seg-tabs">
+              <button class="seg-tab on" id="tabUp" onclick="switchTab('up')">Upcoming</button>
+              <button class="seg-tab" id="tabPast" onclick="switchTab('past')">Past</button>
+            </div>
+            <div class="bk-list" id="listUp">
+              <div class="bk-card" onclick="openDetail('b1')">
+                <div class="bk-inner">
+                  <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">6</div></div>
+                  <div class="bk-info"><div class="bk-title">Range Practice <span class="tag tag-practice">Practice</span></div><div class="bk-meta">West Coast 3 · 9:00 – 11:00 AM</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+              <div class="bk-card" onclick="openDetail('b2')">
+                <div class="bk-inner">
+                  <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">9</div></div>
+                  <div class="bk-info"><div class="bk-title">Private Coaching <span class="tag tag-private">Private</span></div><div class="bk-meta">Chai Chee 1 · 4:00 – 5:00 PM · Recurve</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+              <div class="bk-card" onclick="openDetail('b5')">
+                <div class="bk-inner">
+                  <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">14</div></div>
+                  <div class="bk-info"><div class="bk-title">Basic Archery Course <span class="tag tag-course">Course</span></div><div class="bk-meta">West Coast 1 · 4:00 – 6:00 PM · Traditional</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+              <div class="bk-card" onclick="openDetail('b6')">
+                <div class="bk-inner">
+                  <div class="date-chip"><div class="dc-mon">Jun</div><div class="dc-day">21</div></div>
+                  <div class="bk-info"><div class="bk-title">Master Class <span class="tag tag-lesson">Lesson</span></div><div class="bk-meta">West Coast 2 · 1:00 – 3:00 PM · Compound</div></div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+            </div><!-- /listUp -->
+            <div id="monthCarousel" style="display:none;padding:4px 0 0">
+              <div class="month-bar" id="monthBar"></div>
+            </div>
+            <div class="bk-list" id="listPast" style="display:none">
+              <div class="bk-card" data-month="2026-05" onclick="openDetail('b9')">
+                <div class="bk-inner">
+                  <div class="date-chip past"><div class="dc-mon">May</div><div class="dc-day">30</div></div>
+                  <div class="bk-info">
+                    <div class="bk-title">Private Coaching <span class="tag tag-private">Private</span></div>
+                    <div class="bk-meta">West Coast 1 · 10:00 – 11:00 AM · Recurve</div>
+                    <span class="att-chip att-yes"><span class="att-dot"></span>Attended</span>
+                  </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+              <div class="bk-card" data-month="2026-05" onclick="openDetail('b8')">
+                <div class="bk-inner">
+                  <div class="date-chip past"><div class="dc-mon">May</div><div class="dc-day">24</div></div>
+                  <div class="bk-info">
+                    <div class="bk-title">Master Class <span class="tag tag-lesson">Lesson</span></div>
+                    <div class="bk-meta">West Coast 2 · 1:00 – 3:00 PM · Compound</div>
+                    <span class="att-chip att-no"><span class="att-dot"></span>No sign-in recorded</span>
+                  </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+              <div class="bk-card" data-month="2026-05" onclick="openDetail('b3')">
+                <div class="bk-inner">
+                  <div class="date-chip past"><div class="dc-mon">May</div><div class="dc-day">18</div></div>
+                  <div class="bk-info">
+                    <div class="bk-title">Range Practice <span class="tag tag-practice">Practice</span></div>
+                    <div class="bk-meta">West Coast 1 · 10:00 AM – 12:00 PM</div>
+                    <span class="att-chip att-yes"><span class="att-dot"></span>Attended</span>
+                  </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+              <div class="bk-card" data-month="2026-05" onclick="openDetail('b7')">
+                <div class="bk-inner">
+                  <div class="date-chip past"><div class="dc-mon">May</div><div class="dc-day">10</div></div>
+                  <div class="bk-info">
+                    <div class="bk-title">Private Event <span class="tag tag-private">Private</span></div>
+                    <div class="bk-meta">Chai Chee 1 · 2:00 – 5:00 PM · Compound</div>
+                    <span class="att-chip att-no"><span class="att-dot"></span>No sign-in recorded</span>
+                  </div>
+                  <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEPPER -->
+          <div id="vStepper">
+            <div class="step-prog" id="stepProg"></div>
+            <div class="step-hdr">
+              <button class="step-back" id="stepBack" onclick="stepBackward()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div class="step-title-area">
+                <div class="step-eyebrow" id="sEyebrow">Step 1 of 4</div>
+                <div class="step-name" id="sName">Choose activity</div>
+              </div>
+              <button class="step-close" onclick="closeBooking()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+            </div>
+            <div class="step-scroll" id="stepScroll">
+
+              <!-- P0: Activity + Venue -->
+              <div class="step-panel on" id="p0">
+                <div class="act-list" id="actList"></div>
+                <div id="venueSection" style="max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .25s ease;opacity:0;pointer-events:none">
+                  <div class="vg-label" style="margin-top:var(--space-md)">Select venue</div>
+                  <div id="venueContent"></div>
+                </div>
+                <p class="tnc-note">By proceeding, you agree to SLA's <a href="#" onclick="openTncSheet();return false;">Terms &amp; Conditions</a> and cancellation policy.</p>
+              </div>
+
+              <!-- P1: Date & Timeslots -->
+              <div class="step-panel" id="p1">
+                <!-- Booking summary tile -->
+                <div class="bk-card" style="margin-bottom:var(--space-md);cursor:default">
+                  <div class="bk-inner">
+                    <div class="date-chip" id="sumChip" style="background:var(--color-surface-variant)">
+                      <div class="dc-mon" id="sumMon" style="color:var(--color-text-disabled)">—</div>
+                      <div class="dc-day" id="sumDay" style="color:var(--color-text-disabled);font-size:19px;font-weight:700;line-height:1.05">—</div>
+                    </div>
+                    <div class="bk-info">
+                      <div class="bk-title" id="sumTitle">—</div>
+                      <div class="bk-meta" id="sumMeta" style="margin-top:2px">—</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Calendar -->
+                <div class="cal-wrap">
+                  <div class="cal-head">
+                    <button class="cal-nav-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <span class="cal-month">June 2026</span>
+                    <button class="cal-nav-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  </div>
+                  <div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                  <div class="cal-grid" id="calGrid"></div>
+                </div>
+                <!-- Timeslots — revealed on date pick -->
+                <div id="slotSection" style="max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1),opacity .3s ease;opacity:0;pointer-events:none">
+                  <div style="padding-top:var(--space-md)">
+                    <div id="slotErrWrap"></div>
+                    <div class="slot-list" id="slotList"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- P2: Equipment -->
+              <div class="step-panel" id="p2">
+                <div class="gear-list" id="gearList"></div>
+              </div>
+
+              <!-- P3: Review -->
+              <div class="step-panel" id="p3">
+                <div id="rvWalkin"></div>
+                <div class="review-card">
+                  <div class="rv-row"><span class="rv-lbl">Activity</span><span class="rv-val" id="rvAct">Range Practice</span></div>
+
+                  <div class="rv-row"><span class="rv-lbl">Location / Range</span><span class="rv-val" id="rvVenue">West Coast 1</span></div>
+                  <div class="rv-row"><span class="rv-lbl">Date</span><span class="rv-val" id="rvDate">Sun, 7 Jun 2026</span></div>
+                  <div class="rv-row"><span class="rv-lbl">Time</span><span class="rv-val" id="rvTime">9:00 – 11:00 AM</span></div>
+                  <div class="rv-row"><span class="rv-lbl">Equipment</span><span class="rv-val" id="rvGear">None</span></div>
+                  <div class="rv-sep"></div>
+                  <div class="cred-section">
+                    <div class="cred-toggle-row" id="credToggleRow">
+                      <span class="cred-head-lbl">Pay with credits</span>
+                      <button class="f-toggle on" id="payCredToggle" onclick="togglePayCredits()"><div class="f-knob"></div></button>
+                    </div>
+                    <!-- With credits -->
+                    <div id="credWithSection">
+                      <div class="cred-type-row">
+                        <span class="cred-head-lbl">Credit type</span>
+                        <div class="cred-type-btns" id="credTypeBtns"></div>
+                      </div>
+                      <div class="client-note" style="margin:0 0 10px">💡 Only credit types with a non-zero balance are shown.</div>
+                      <div class="cl"><span class="c-lbl">Amount to deduct</span><span class="c-val neg" id="rvDeduct">−4 RP</span></div>
+                      <div class="c-div"></div>
+                      <div class="cl"><span class="c-lbl">Current balance</span><span class="c-val" id="rvBal">2 RP</span></div>
+                      <div class="cl"><span class="c-lbl">Balance after</span><span class="c-val neg" id="rvAfter">−2 RP</span></div>
+                      <div id="credInsufficientErr" class="cred-insuff">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <div id="credInsufficientMsg">Insufficient balance. Select another credit type or top up in Shop.</div>
+                      </div>
+                    </div>
+                    <!-- Without credits -->
+                    <div id="credWithoutSection" style="display:none">
+                      <div id="credNoEligibleNote" class="client-note" style="display:none;margin:0 0 8px">💡 No available credits for this activity. This Range Practice booking will be charged at sign-out.</div>
+                      <p class="cred-settle-note">Charged at sign-out. No payment now.</p>
+                    </div>
+                    <div class="dev-note" style="margin:12px 0 0">
+                      <strong>Credit scenarios</strong>
+                      <div class="credit-scenario-btns" id="creditScenarioBtns"></div>
+                    </div>
+                  </div>
+                </div>
+                <p class="rv-note">Credits deducted on confirmation. Cancelled before the cutoff? You'll get a full refund.</p>
+              </div>
+
+            </div><!-- /step-scroll -->
+            <div class="step-foot">
+              <button class="btn btn-ghost" id="footBack" onclick="stepBackward()" style="padding:11px 18px;font-size:13px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+              <button class="btn btn-primary" id="footNext" onclick="stepForward()" style="flex:1">Continue</button>
+            </div>
+          </div>
+
+          <!-- SUCCESS -->
+          <div id="vSuccess" style="display:none">
+            <div class="success-wrap">
+              <div class="suc-ico"><svg width="36" height="36" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <h2>Booking confirmed!</h2>
+              <p class="suc-ref" id="sucRef">Reference BK-20260607-042 · 4 RP deducted</p>
+              <div class="suc-card">
+                <div class="suc-row"><span class="suc-lbl">Activity</span><span class="suc-val" id="sucAct">Range Practice</span></div>
+                <div class="suc-row"><span class="suc-lbl">Location / Range</span><span class="suc-val" id="sucVenue">West Coast 3</span></div>
+                <div class="suc-row"><span class="suc-lbl">Date &amp; time</span><span class="suc-val" id="sucTime">Sun 7 Jun · 9:00–11:00 AM</span></div>
+                <div class="suc-row"><span class="suc-lbl" id="sucCreditLbl">Credit</span><span class="suc-val" style="color:var(--color-error)" id="sucCredit">−4.0 · Balance: −2.0</span></div>
+              </div>
+              <div class="suc-btns" id="sucBtns"></div>
+            </div>
+          </div>
+
+        </div><!-- /main -->
+
+        <!-- NAV -->
+        <nav class="nav">
+          <div class="rail-brand"><span class="rl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span><span><div class="rb-name">x10s</div><div class="rb-sub">Salt Light Archery</div></span></div>
+          <button class="nav-item" onclick="goHome()"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ni-label">Home</span></button>
+          <button class="nav-item on" id="navBook"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4M8 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Booking</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M16.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Wallet</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Shop</span></button>
+          <button class="nav-item"><span><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="ni-label">Me</span></button>
+          <div class="rail-foot"><span class="avatar sm olive">CT</span><span><div class="rf-name">Caleb Tan</div><div class="rf-sub">Master Class</div></span></div>
+        </nav>
+
+      </div><!-- /app -->
+
+      <!-- Profile sheet -->
+      <div class="scrim" id="profScrim" onclick="closeProfSheet()"></div>
+      <div class="sheet" id="profSheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-title">Switch profile</div>
+        <button style="display:flex;align-items:center;gap:13px;width:100%;padding:12px;border-radius:var(--radius-md);background:var(--color-surface-highest);border:1.5px solid var(--color-primary);cursor:pointer;font-family:inherit;" onclick="closeProfSheet()">
+          <span class="avatar olive">CT</span>
+          <span><div style="font-size:15px;font-weight:700">Caleb Tan</div><div style="font-size:12px;color:var(--color-text-secondary)">Master Class</div></span>
+          <span style="margin-left:auto;color:var(--color-primary)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <button style="display:flex;align-items:center;gap:13px;width:100%;padding:12px;border-radius:var(--radius-md);background:transparent;border:none;cursor:pointer;font-family:inherit;margin-top:4px;" onclick="closeProfSheet()">
+          <span class="avatar" style="background:linear-gradient(135deg,#3d5168,#2E4055)">ML</span>
+          <span><div style="font-size:15px;font-weight:700">Mei Lin Tan</div><div style="font-size:12px;color:var(--color-text-secondary)">Intermediate</div></span>
+        </button>
+      </div>
+
+      <!-- T&C sheet -->
+      <div class="scrim" id="tncScrim" onclick="closeTncSheet()"></div>
+      <div class="sheet" id="tncSheet" style="max-height:78%;overflow-y:auto;">
+        <div class="sheet-grip"></div>
+        <div class="sheet-title">Terms &amp; Conditions</div>
+        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--color-text-secondary);margin-bottom:8px;">Booking Terms &amp; Conditions</div>
+        <p style="font-size:13px;line-height:1.6;color:var(--color-text-primary);margin-bottom:var(--space-md);">Each can only book a shooting session of maximum 4 hrs per day. Slots are available for booking 1 week in advance. Please note that time slots are fixed, hence do arrive on time to enjoy your full session. E.g. if you made a booking between 1pm – 3pm slot, you can choose to arrive anytime in between 1pm to 3pm, but the end time is still fixed at 3pm as per your time slot. Walk-ins are subjected to availability of slots. You are required to manage your bookings and cancellations on your own.</p>
+        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--color-text-secondary);margin-bottom:8px;">Cancellation Policies</div>
+        <p style="font-size:13px;line-height:1.6;color:var(--color-text-primary);margin-bottom:var(--space-md);">The range fee will be charged for no shows and late cancellations less than 12 hours before the session. For Unlimited package holders, your booking privileges (as well as your pre-existing bookings) will be revoked for 1 week. You will still be able to walk in if the range are not full.</p>
+      </div>
+
+      <!-- Booking detail sheet -->
+      <div class="scrim" id="detScrim" onclick="closeDetail()"></div>
+      <div class="sheet" id="detSheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-title" id="detTitle">Range Practice</div>
+        <div class="det-rows">
+          <div class="det-row"><span class="det-lbl">Date</span><span class="det-val" id="detDate">–</span></div>
+          <div class="det-row"><span class="det-lbl">Location / Range</span><span class="det-val" id="detVenue">–</span></div>
+          <div class="det-row"><span class="det-lbl">Time</span><span class="det-val" id="detTime">–</span></div>
+          <div class="det-row" id="detCodeRow"><span class="det-lbl">Access code</span><span class="det-val" id="detCode">–</span></div>
+          <div class="det-row" id="detAttRow"><span class="det-lbl">Signed in at</span><span id="detAtt">–</span></div>
+        </div>
+        <div class="dev-note" style="margin:12px 0 4px">✅ <strong>Cancellation window</strong> — Decided (2026-07-04): no change to current behaviour. Members can self-cancel anytime before the session's start hour; no fixed-hours cutoff, no variation by activity type. Lesson-specific cutoff KIV. The 12-hr late-cancel wording in the booking T&C sheet is policy copy, not an in-app enforcement rule.</div>
+        <div class="dev-note" style="margin:4px 0 8px">💡 <strong>Past booking — info to display</strong> — Consider: which fields matter for past sessions (sign-in time, credit deducted, access code)? Instructor name is <strong>not</strong> shown. Should there be a receipt link or feedback prompt?</div>
+        <div class="det-actions" id="detActions"></div>
+      </div>
+
+    </div><!-- /screen -->
+  </div><!-- /frame -->
+</div>
+
+<script>
+/* ── Form factor ── */
+function setForm(m){const f=document.getElementById('frame');f.style.transition='none';f.classList.toggle('desktop',m==='desktop');document.getElementById('segPhone').classList.toggle('on',m==='phone');document.getElementById('segDesktop').classList.toggle('on',m==='desktop');
+  localStorage.setItem('wf-form',m);}
+
+/* ── T&C sheet ── */
+function openTncSheet(){document.getElementById('tncScrim').classList.add('open');document.getElementById('tncSheet').classList.add('open');}
+function closeTncSheet(){document.getElementById('tncScrim').classList.remove('open');document.getElementById('tncSheet').classList.remove('open');}
+
+/* ── Profile sheet ── */
+function openProfSheet(){document.getElementById('profScrim').classList.add('open');document.getElementById('profSheet').classList.add('open');}
+function closeProfSheet(){document.getElementById('profScrim').classList.remove('open');document.getElementById('profSheet').classList.remove('open');}
+
+/* ── Bookings list tabs ── */
+function switchTab(t){
+  document.getElementById('tabUp').classList.toggle('on',t==='up');
+  document.getElementById('tabPast').classList.toggle('on',t==='past');
+  document.getElementById('listUp').style.display=t==='up'?'flex':'none';
+  const mc=document.getElementById('monthCarousel');
+  const lp=document.getElementById('listPast');
+  if(t==='past'){mc.style.display='block';lp.style.display='flex';buildMonthBar();filterPast();}else{mc.style.display='none';lp.style.display='none';}  
+}
+function goHome(){}
+
+/* ── Booking detail sheet ── */
+const BKS={
+  b1:{title:'Range Practice',date:'Sat, 6 Jun 2026',venue:'West Coast 3',time:'9:00 – 11:00 AM',status:'Confirmed',showCode:false,canCancel:false,cutoff:'Sat 6 Jun, 9:00 AM'},
+  b2:{title:'Private Coaching',date:'Tue, 9 Jun 2026',venue:'Chai Chee 1',time:'4:00 – 5:00 PM',status:'Confirmed',showCode:false,bow:'Compound',canCancel:false},
+  b5:{title:'Basic Archery Course',date:'Sun, 14 Jun 2026',venue:'West Coast 1',time:'4:00 – 6:00 PM',status:'Confirmed',showCode:false,bow:'Traditional',canCancel:true},
+  b6:{title:'Master Class',date:'Sat, 21 Jun 2026',venue:'West Coast 2',time:'1:00 – 3:00 PM',status:'Confirmed',showCode:false,bow:'Compound',canCancel:true},
+  b9:{title:'Private Coaching',date:'Fri, 30 May 2026',venue:'West Coast 1',time:'10:00 – 11:00 AM',status:'Completed',showCode:true,code:'BENJIN',bow:'Compound',attended:true,signInTime:'10:03 AM',canCancel:false},
+  b8:{title:'Master Class',date:'Sat, 24 May 2026',venue:'West Coast 2',time:'1:00 – 3:00 PM',status:'Completed',showCode:false,bow:'Compound',attended:false,signInTime:null,canCancel:false},
+  b3:{title:'Range Practice',date:'Sun, 18 May 2026',venue:'West Coast 1',time:'10:00 AM – 12:00 PM',status:'Completed',showCode:false,attended:true,signInTime:'10:04 AM',canCancel:false},
+  b7:{title:'Private Event',date:'Sat, 10 May 2026',venue:'Chai Chee 1',time:'2:00 – 5:00 PM',status:'Completed',showCode:true,code:'SUSS2026',bow:'Compound',attended:false,signInTime:null,canCancel:false},
+  b4:{title:'Range Practice',date:'Sat, 3 May 2026',venue:'West Coast 3',time:'9:00 – 10:00 AM',status:'Cancelled',showCode:false,canCancel:false},
+};
+function openDetail(id){
+  const b=BKS[id];
+  document.getElementById('detTitle').textContent=b.title;
+  document.getElementById('detDate').textContent=b.date;
+  document.getElementById('detVenue').textContent=b.venue;
+  document.getElementById('detTime').textContent=b.time;
+  document.getElementById('detCode').textContent=b.code||'—';
+  const codeRow=document.getElementById('detCodeRow');
+  codeRow.style.display=b.showCode?'flex':'none';
+  const attRow=document.getElementById('detAttRow');
+  if(b.status==='Completed'||b.status==='Cancelled'){
+    attRow.style.display='flex';
+    document.getElementById('detAtt').innerHTML=b.signInTime
+      ?`<span class="det-val">${b.signInTime}</span>`
+      :'<span class="det-val" style="color:var(--color-text-disabled)">— Not recorded</span>';
+  } else { attRow.style.display='none'; }
+  const a=document.getElementById('detActions');
+  if(b.canCancel){
+    a.innerHTML='<button class="btn btn-danger" style="width:100%" onclick="closeDetail()">Cancel booking</button>';
+  } else if(b.status==='Confirmed'){
+    a.innerHTML='<button class="btn btn-ghost" style="width:100%;opacity:.45;cursor:not-allowed" disabled>Cancel booking</button><p class="cutoff-note">Cancellation window closed</p>';
+  } else {a.innerHTML='';}
+  document.getElementById('detScrim').classList.add('open');
+  document.getElementById('detSheet').classList.add('open');
+}
+function closeDetail(){document.getElementById('detScrim').classList.remove('open');document.getElementById('detSheet').classList.remove('open');}
+
+/* ── Month carousel ── */
+const MONTHS_BACK=6;
+let activeMonth='2026-05';
+function buildMonthBar(){
+  const bar=document.getElementById('monthBar');
+  const now=new Date(2026,5,5); // Jun 5 2026
+  const months=[];
+  for(let i=MONTHS_BACK-1;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:d.toLocaleString('en-SG',{month:'short'}),year:d.getFullYear()});
+  }
+  const cards=[...document.querySelectorAll('#listPast .bk-card')];
+  bar.innerHTML=months.map(m=>{
+    const hasData=cards.some(c=>c.dataset.month===m.key);
+    const yearLabel=m.year!==2026?` '${String(m.year).slice(2)}`:""; 
+    return `<button class="month-pill${m.key===activeMonth?' on':''}${!hasData?' empty':''}" onclick="pickMonth('${m.key}')">${m.label}${yearLabel}</button>`;
+  }).join('');
+}
+function pickMonth(m){
+  activeMonth=m;
+  buildMonthBar();
+  filterPast();
+}
+function filterPast(){
+  const cards=document.querySelectorAll('#listPast .bk-card');
+  let visible=0;
+  cards.forEach(c=>{
+    const show=c.dataset.month===activeMonth;
+    c.style.display=show?'':'none';
+    if(show)visible++;
+  });
+  let emp=document.getElementById('pastEmpty');
+  if(!emp){emp=document.createElement('div');emp.id='pastEmpty';emp.className='past-empty';document.getElementById('listPast').appendChild(emp);}
+  emp.style.display=visible===0?'block':'none';
+  if(visible===0){const label=document.querySelector(`#monthBar .month-pill.on`);emp.textContent='No bookings in '+(label?label.textContent:'this month')+'.';
+  }
+}
+const ACTS=[
+  {name:'Range Practice', type:'practice', credits:['RP','CC'], rate:1.0, unit:'hr',      defaultVenue:0},
+  {name:'Master Class',   type:'lesson',   credits:['MC'],       rate:1.0, unit:'session', defaultVenue:0, bow:'Compound'},
+];
+const ICON_PRACTICE='<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>';
+const ICON_LESSON='<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const VENUES_P=[
+  {group:'West Coast',items:[{name:'Range 1',sub:'West Coast'},{name:'Range 2',sub:'West Coast'},{name:'Range 3',sub:'West Coast'}]},
+  {group:'Chai Chee',items:[{name:'Range 1',sub:'Chai Chee'}]},
+];
+const VENUES_L=[
+  {group:'Locations',items:[{name:'West Coast',sub:''},{name:'Chai Chee',sub:''}]},
+];
+const NOW_DAY=5;   // today = Jun 5 2026 (matches calendar)
+const NOW_HOUR=13; // current hour = 1 PM → the 1 PM slot is "on now" (and full → walk-in)
+const SLOTS_P=[
+  {h:9,rem:14},{h:10,rem:11},{h:11,rem:7},{h:12,rem:3},
+  {h:13,rem:0},{h:14,rem:0},{h:15,rem:14},{h:16,rem:9},{h:17,rem:15},
+];
+const SLOTS_L=[
+  {h:9, dur:2,rem:4},
+  {h:13,dur:2,rem:2},
+  {h:15,dur:2,rem:0},
+];
+const GEAR=[
+  {id:'none',     name:'No Rental Required',    desc:'', price:0,    fields:[]},
+  {id:'arrows',   name:'Arrow x6 Rental',       desc:'', price:5,    fields:[]},
+  {id:'compound', name:'Basic Compound Bow Set', desc:'', price:15, fields:['drawHand','drawLength','drawPoundage','stabilizer']},
+];
+const FIELD_DEFS={
+  drawHand:    {type:'seg',    label:'Draw hand',          options:['Left','Right'],  dflt:'Right'},
+  drawLength:  {type:'number', label:'Draw length (in)',   placeholder:'e.g. 28',  min:20, max:34},
+  drawPoundage:{type:'number', label:'Bow poundage (lbs)', placeholder:'e.g. 55',  min:30, max:80},
+  stabilizer:  {type:'bool',   label:'Require stabilizer'},
+};
+const CREDIT_BAL={RP:2.0,CC:8.0,MC:6.0};
+const CREDIT_LABELS={RP:'Range Practice (RP)',CC:'Club (CC)',MC:'Master Class (MC)'};
+const CREDIT_SCENARIOS=[
+  {id:'available',label:'Credits available'},
+  {id:'insufficient',label:'Insufficient'},
+  {id:'none',label:'No eligible credits'},
+];
+const STEP_LABELS=['Activity & venue','Date & timeslots','Add equipment','Review booking'];
+const S={step:0,actIdx:0,venueIdx:-1,selDay:0,slots:[],gearIdx:0,gearFields:{},slotErr:null,payWithCredits:true,creditType:null,creditScenario:'available'};
+
+/* ── Flow navigation ── */
+function openBooking(){
+  document.getElementById('vList').style.display='none';
+  document.getElementById('vStepper').style.display='flex';
+  document.getElementById('main').style.overflow='hidden';
+  S.step=0; S.slots=[]; S.selDay=0; S.slotErr=null; S.gearIdx=0; S.gearFields={}; S.payWithCredits=true; S.creditType=null; S.creditScenario='available';
+  S.actIdx=0; S.venueIdx=ACTS[0].defaultVenue;
+  renderStep();
+}
+function closeBooking(){
+  document.getElementById('vStepper').style.display='none';
+  document.getElementById('vSuccess').style.display='none';
+  document.getElementById('vList').style.display='block';
+  document.getElementById('main').style.overflow='auto';
+}
+function stepForward(){
+  if(S.step===3){confirm();return;}
+  S.step=Math.min(3,S.step+1);
+  renderStep();
+  document.getElementById('stepScroll').scrollTop=0;
+}
+function stepBackward(){
+  if(S.step===0){closeBooking();return;}
+  S.step=Math.max(0,S.step-1);
+  renderStep();
+  document.getElementById('stepScroll').scrollTop=0;
+}
+
+function renderStep(){
+  /* Progress */
+  const prog=document.getElementById('stepProg');
+  prog.innerHTML=Array.from({length:4},(_,i)=>`<div class="step-seg${i<S.step?' done':i===S.step?' cur':''}"></div>`).join('');
+  /* Header */
+  document.getElementById('sEyebrow').textContent=`Step ${S.step+1} of 4`;
+  document.getElementById('sName').textContent=STEP_LABELS[S.step];
+  document.getElementById('stepBack').disabled=false;
+  /* Panels */
+  document.querySelectorAll('.step-panel').forEach((p,i)=>p.classList.toggle('on',i===S.step));
+  /* Footer */
+  document.getElementById('footBack').style.display=S.step===0?'none':'flex';
+  document.getElementById('footNext').textContent=S.step===3?'Confirm booking':'Continue';
+  /* Step renders */
+  if(S.step===0){
+    renderActivities();
+    renderVenues();
+    const vs=document.getElementById('venueSection');
+    vs.style.maxHeight='600px';vs.style.opacity='1';vs.style.pointerEvents='auto';
+  }
+  if(S.step===1){renderSummaryTile();renderCalendar();if(S.selDay>0){revealSlots();renderSlots();}}
+  if(S.step===2)renderGear();
+  if(S.step===3)renderReview();
+  updateNext();
+}
+function updateNext(){
+  const noVenue=S.step===0&&S.venueIdx===-1;
+  const noDateSlot=S.step===1&&(S.selDay===0||S.slots.length===0||S.slotErr);
+  let noCredit=false;
+  if(S.step===3){
+    const act=ACTS[S.actIdx];
+    const credAmt=Math.round(S.slots.length*act.rate);
+    if(act.type==='lesson'){
+      const bal=getCreditBalance(S.creditType,credAmt,act.credits||['RP']);
+      noCredit=!S.creditType||(bal-credAmt)<0;
+    }else if(S.payWithCredits){
+      const bal=getCreditBalance(S.creditType,credAmt,act.credits||['RP']);
+      noCredit=(bal-credAmt)<0;
+    }
+  }
+  document.getElementById('footNext').disabled=noVenue||noDateSlot||noCredit;
+}
+
+/* ── Step 0: Activities ── */
+function renderActivities(){
+  const chk='<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.getElementById('actList').innerHTML=ACTS.map((a,i)=>`
+    <div class="act-item${S.actIdx===i?' sel':''}" onclick="pickActivity(${i})">
+      <span class="act-ico">${a.type==='lesson'?ICON_LESSON:ICON_PRACTICE}</span>
+      <div style="flex:1"><div class="act-name">${a.name} <span class="tag tag-${a.type}" style="font-size:9.5px;vertical-align:middle">${a.type==='practice'?'Practice':'Lesson'}</span></div>${a.bow?`<div class="act-sub">${a.bow}</div>`:''}<div class="act-sub" style="margin-top:3px;font-size:11px;color:var(--color-text-disabled)">Requires ${a.credits.map(c=>CREDIT_LABELS[c]||c).join(' or ')} credits</div></div>
+      <div class="sel-ring">${S.actIdx===i?chk:''}</div>
+    </div>`).join('');
+}
+function pickActivity(i){
+  S.actIdx=i;
+  S.venueIdx=ACTS[i].defaultVenue;
+  renderActivities();
+  renderVenues();
+  const vs=document.getElementById('venueSection');
+  vs.style.maxHeight='600px';
+  vs.style.opacity='1';
+  vs.style.pointerEvents='auto';
+  updateNext();
+}
+
+/* ── Step 1: Venues ── */
+function renderVenues(){
+  const groups=ACTS[S.actIdx]&&ACTS[S.actIdx].type==='practice'?VENUES_P:VENUES_L;
+  let fi=0;
+  document.getElementById('venueContent').innerHTML=groups.map(g=>`
+    <div class="vg-label">${g.group}</div>
+    <div class="venue-grid">${g.items.map(v=>{const idx=fi++;return`<button class="venue-card${S.venueIdx===idx?' sel':''}" onclick="pickVenue(${idx})"><div class="vc-name">${v.name}</div>${v.sub?`<div class="vc-sub">${v.sub}</div>`:''}</button>`;}).join('')}</div>`).join('');
+}
+function pickVenue(i){S.venueIdx=i;renderVenues();updateNext();}
+
+/* ── Summary tile ── */
+function getVenueName(){
+  const act=ACTS[S.actIdx];
+  const groups=act.type==='practice'?VENUES_P:VENUES_L;
+  let fi=0,vname='';
+  groups.forEach(g=>g.items.forEach(v=>{if(fi===S.venueIdx)vname=v.sub?v.sub+' '+v.name.replace('Range ',''):v.name;fi++;}));
+  return vname||'—';
+}
+function revealSlots(){
+  const ss=document.getElementById('slotSection');
+  if(!ss)return;
+  ss.style.maxHeight='800px';ss.style.opacity='1';ss.style.pointerEvents='auto';
+}
+function renderSummaryTile(){
+  const act=ACTS[S.actIdx];
+  const vname=getVenueName();
+  const typeTag='<span class="tag tag-'+act.type+'" style="font-size:9.5px;vertical-align:middle">'+(act.type==='practice'?'Practice':'Lesson')+'</span>';
+  const bowPart=act.bow?' · '+act.bow:'';
+  document.getElementById('sumTitle').innerHTML=act.name+' '+typeTag+bowPart;
+  const hasDat=S.selDay>0;
+  const mon=document.getElementById('sumMon');
+  const day=document.getElementById('sumDay');
+  mon.textContent=hasDat?'Jun':'—';
+  mon.style.color=hasDat?'var(--color-primary)':'var(--color-text-disabled)';
+  day.textContent=hasDat?S.selDay:'—';
+  day.style.color=hasDat?'var(--color-text-primary)':'var(--color-text-disabled)';
+  const ss=[...S.slots].sort((a,b)=>a-b);
+  const timeStr=ss.length>0&&!S.slotErr?ht(ss[0])+' – '+ht(slotEndHour(ss[ss.length-1])):'Select timeslots';
+  document.getElementById('sumMeta').textContent=vname+(hasDat?' · '+timeStr:'');
+}
+/* ── Step 1: Calendar ── */
+const CAL_AVAIL=new Set([6,7,8,9,11,13,14,15,17,18,20,21,22,24,25,27,28]);
+const CAL_FULL=new Set([10,12,16,19,23,26]);
+function renderCalendar(){
+  // June 2026: June 1 = Monday → startDow = 0
+  let h='';
+  for(let i=0;i<30;i++){
+    const d=i+1,isPast=d<5,isToday=d===5,isFull=CAL_FULL.has(d),isAvail=CAL_AVAIL.has(d)||isToday,isSel=d===S.selDay;
+    let cls='cal-day';
+    if(isPast)cls+=' past';
+    else if(isSel)cls+=' sel avail';
+    else if(isFull)cls+=' full';
+    else if(isAvail)cls+=' avail';
+    else cls+=' na';
+    if(isToday&&!isSel)cls+=' today';
+    const onclick=(!isPast&&(isAvail||isFull))?`onclick="pickDay(${d})"`:'';
+    h+=`<div class="${cls}" ${onclick}><div class="dn">${d}</div></div>`;
+  }
+  document.getElementById('calGrid').innerHTML=h;
+}
+function pickDay(d){S.selDay=d;S.slots=[];S.slotErr=null;renderCalendar();renderSummaryTile();revealSlots();renderSlots();updateNext();}
+
+/* ── Step 3: Timeslots ── */
+function ht(h){const ap=h<12?'AM':'PM';const hh=h%12||12;return`${hh}:00 ${ap}`;}
+function slotEndHour(h){
+  const act=ACTS[S.actIdx];
+  if(act.type==='lesson'){const sl=SLOTS_L.find(s=>s.h===h);return h+(sl?sl.dur:1);}
+  return h+1;
+}
+function validateSlots(){
+  const act=ACTS[S.actIdx];
+  if(S.slotErr==='full')return;
+  if(act.type==='lesson'){S.slotErr=null;return;}
+  if(S.slotErr==='max')return;
+  if(S.slots.length<=1){S.slotErr=null;return;}
+  if(S.selDay===NOW_DAY){
+    const hasWalkin=S.slots.some(h=>SLOTS_P.some(s=>s.h===h&&s.rem===0));
+    const hasReserved=S.slots.some(h=>SLOTS_P.some(s=>s.h===h&&s.rem>0));
+    if(hasWalkin&&hasReserved){S.slotErr='mixed';return;}
+  }
+  const s=[...S.slots].sort((a,b)=>a-b);
+  for(let i=1;i<s.length;i++){if(s[i]-s[i-1]!==1){S.slotErr='consecutive';return;}}
+  S.slotErr=null;
+}
+function renderSlots(){
+  validateSlots();
+  const act=ACTS[S.actIdx];
+  const isLesson=act.type==='lesson';
+  const slots=isLesson?SLOTS_L:SLOTS_P;
+  const sorted=[...S.slots].sort((a,b)=>a-b);
+  const chk='<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const xm='<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>';
+  const isToday=S.selDay===NOW_DAY;
+  // Hide slots that have already ended today; future days show every slot.
+  const displaySlots=isToday?slots.filter(sl=>(sl.h+(sl.dur||1))>NOW_HOUR):slots;
+  let walkinSelected=false;
+  document.getElementById('slotList').innerHTML=displaySlots.map(sl=>{
+    const full=sl.rem===0;
+    const walkin=full&&isToday;       // any full slot today is bookable as a walk-in
+    const blockedFull=full&&!isToday; // full on a future day stays blocked
+    const si=sorted.indexOf(sl.h),isSel=si>=0,isErr=isSel&&(S.slotErr==='consecutive'||S.slotErr==='mixed');
+    if(walkin&&isSel)walkinSelected=true;
+    let rowCls='slot-row';
+    if(blockedFull)rowCls+=' s-full';
+    else if(isErr)rowCls+=' s-bad';
+    else if(walkin)rowCls+=' s-walkin'+(isSel?' s-sel':'');
+    else if(isSel)rowCls+=' s-sel';
+    let ring;
+    if(blockedFull)ring=`<div class="s-ring">${xm}</div>`;
+    else if(isSel)ring=`<div class="s-ring">${chk}</div>`;
+    else if(walkin)ring=`<div class="s-ring s-ring-walk"></div>`;
+    else ring=`<div class="s-ring"></div>`;
+    const fn=blockedFull?`showFullErr()`:`toggleSlot(${sl.h})`;
+    const endH=sl.h+(sl.dur||1);
+    const timeRange=`${ht(sl.h)} – ${ht(endH)}`;
+    let availLbl,availCls;
+    if(walkin){availLbl='Walk-in slots';availCls='lbl-walk';}
+    else if(full){availLbl='Full';availCls='lbl-full';}
+    else{availLbl=isLesson?`${sl.rem} slots`:`${sl.rem} left`;availCls=sl.rem<=4?'lbl-low':'';}
+    return`<div class="${rowCls}" onclick="${fn}"><span class="slot-time-range">${timeRange}</span><span class="slot-avail ${availCls}">${availLbl}</span>${ring}</div>`;
+  }).join('');
+
+  /* Error banner */
+  const w=document.getElementById('slotErrWrap');
+  const warn='<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  let banner='';
+  if(S.slotErr==='consecutive')banner=`<div class="slot-err err-cons"><span class="slot-err-icon">${warn}</span><div><strong>Slots must be consecutive.</strong> Remove the non-adjacent slot and try again.</div></div>`;
+  else if(S.slotErr==='max')banner=`<div class="slot-err err-max"><span class="slot-err-icon">${warn}</span><div><strong>Maximum 4 hourly slots</strong> per booking. Deselect a slot first.</div></div>`;
+  else if(S.slotErr==='full')banner=`<div class="slot-err err-full"><span class="slot-err-icon">${warn}</span><div><strong>No spaces left.</strong> This slot is fully booked — try an adjacent hour.</div></div>`;
+  else if(S.slotErr==='mixed')banner=`<div class="slot-err err-cons"><span class="slot-err-icon">${warn}</span><div><strong>Please book walk-in and reserved slots separately.</strong></div></div>`;
+  if(walkinSelected)banner+=`<div class="slot-note note-walkin"><span class="slot-err-icon">${warn}</span><div><div><strong>Walk-in — no guaranteed slots.</strong></div><div>Confirmed bookings take priority; you may be asked to leave if the range is full.</div></div></div>`;
+  w.innerHTML=banner;
+
+  updateNext();
+}
+function toggleSlot(h){
+  S.slotErr=null;
+  const act=ACTS[S.actIdx];
+  const idx=S.slots.indexOf(h);
+  if(idx>=0){S.slots.splice(idx,1);}
+  else{
+    if(act.type==='lesson'){S.slots=[h];}
+    else{
+      if(S.slots.length>=4){S.slotErr='max';renderSlots();return;}
+      S.slots.push(h);
+    }
+  }
+  validateSlots();renderSlots();renderSummaryTile();
+}
+function showFullErr(){S.slotErr='full';renderSlots();}
+
+/* ── Step 2: Equipment ── */
+const chkSvg='<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5 9-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function priceLabel(p){return p===0?'$0':'$'+p;}
+function renderGear(){
+  document.getElementById('gearList').innerHTML=GEAR.map((item,i)=>{
+    const sel=S.gearIdx===i;
+    const accHtml=item.fields.length&&sel?`
+      <div class="gear-accordion show">
+        <div class="gear-acc-inner">${renderFieldsHtml(item.fields)}</div>
+      </div>`:item.fields.length?`<div class="gear-accordion"></div>`:'';
+    return`<div class="gear-item${sel?' sel':''}" onclick="pickGear(${i})">
+      <div class="gear-header">
+        <span class="gear-ico">${priceLabel(item.price)}</span>
+        <div style="flex:1"><div class="gear-name">${item.name}</div></div>
+        <div class="gear-ring">${sel?chkSvg:''}</div>
+      </div>${accHtml}
+    </div>`;
+  }).join('');
+}
+function renderFieldsHtml(fields){
+  return fields.map(fk=>{
+    const fd=FIELD_DEFS[fk];
+    const val=S.gearFields[fk]!==undefined?S.gearFields[fk]:(fd.dflt||'');
+    if(fd.type==='seg'){
+      const btns=fd.options.map(o=>`<button class="f-seg-btn${val===o?' on':''}" onclick="event.stopPropagation();setGearSeg('${fk}','${o}')">${o}</button>`).join('');
+      return`<div><div class="f-label">${fd.label}</div><div class="f-seg">${btns}</div></div>`;
+    }
+    if(fd.type==='number'){
+      return`<div><div class="f-label">${fd.label}</div><input class="f-input" type="number" min="${fd.min}" max="${fd.max}" placeholder="${fd.placeholder}" value="${val}" onclick="event.stopPropagation()" oninput="setGearNum('${fk}',this.value)"></div>`;
+    }
+    if(fd.type==='bool'){
+      const on=val===true||val==='true';
+      return`<div class="f-bool"><span class="f-bool-lbl">${fd.label}</span><button class="f-toggle${on?' on':''}" onclick="event.stopPropagation();toggleGearBool('${fk}')"><div class="f-knob"></div></button></div>`;
+    }
+    return'';
+  }).join('');
+}
+function setGearSeg(fk,v){S.gearFields[fk]=v;renderGear();}
+function setGearNum(fk,v){S.gearFields[fk]=v;}
+function toggleGearBool(fk){S.gearFields[fk]=!S.gearFields[fk];renderGear();}
+function pickGear(i){S.gearIdx=i;renderGear();}
+
+function getCreditBalance(type,amount,allowedCredits){
+  if(!type||S.creditScenario==='none')return 0;
+  if(S.creditScenario==='insufficient'){
+    const first=allowedCredits[0];
+    return type===first?Math.max(0.5,amount-0.5):0;
+  }
+  return CREDIT_BAL[type]!=null?CREDIT_BAL[type]:0;
+}
+function getEligibleCredits(allowedCredits,amount){
+  return allowedCredits.filter(c=>getCreditBalance(c,amount,allowedCredits)>0);
+}
+function renderCreditScenarios(){
+  const wrap=document.getElementById('creditScenarioBtns');
+  if(!wrap)return;
+  wrap.innerHTML=CREDIT_SCENARIOS.map(s=>`<button class="credit-scenario-btn${S.creditScenario===s.id?' on':''}" onclick="setCreditScenario('${s.id}')">${s.label}</button>`).join('');
+}
+function setCreditScenario(id){
+  S.creditScenario=id;
+  S.creditType=null;
+  S.payWithCredits=id!=='none';
+  renderReview();
+  updateNext();
+}
+
+/* ── Step 4: Review ── */
+function renderReview(){
+  const act=ACTS[S.actIdx];
+  const isLesson=act.type==='lesson';
+  const allowedCredits=act.credits||['RP'];
+  const ss=[...S.slots].sort((a,b)=>a-b),hrs=ss.length;
+  const credAmt=Math.round(hrs*act.rate);
+  const eligibleCredits=getEligibleCredits(allowedCredits,credAmt);
+  const hasEligibleCredits=eligibleCredits.length>0;
+  if(!hasEligibleCredits){S.payWithCredits=isLesson;S.creditType=null;}
+  else if(!S.creditType||!eligibleCredits.includes(S.creditType))S.creditType=eligibleCredits[0];
+  const bal=getCreditBalance(S.creditType,credAmt,allowedCredits);
+  const after=bal-credAmt;
+  const displayCredit=S.creditType||allowedCredits[0];
+  const sufficient=after>=0;
+  const timeFmt=ss.length>0?`${ht(ss[0])} – ${ht(slotEndHour(ss[ss.length-1]))}`:'—';
+  const VNAMES=['Range 1','Range 2','Range 3','Range 1','West Coast','Chai Chee'];
+  const vname=VNAMES[S.venueIdx]||'Range 1';
+  const vloc=S.venueIdx<3?'West Coast':S.venueIdx<4?'Chai Chee':'';
+  /* Walk-in notice — carries the warning through to the final confirm step */
+  const slotData=act.type==='lesson'?SLOTS_L:SLOTS_P;
+  const hasWalkin=S.selDay===NOW_DAY&&ss.some(h=>slotData.some(s=>s.h===h&&s.rem===0));
+  const warnIco='<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.getElementById('rvWalkin').innerHTML=hasWalkin?`<div class="slot-note note-walkin" style="margin-bottom:12px"><span class="slot-err-icon">${warnIco}</span><div><div><strong>Walk-in — no guaranteed slots.</strong></div><div>Confirmed bookings take priority; you may be asked to leave if the range is full.</div></div></div>`:'';
+  document.getElementById('rvAct').textContent=act.name;
+  document.getElementById('rvVenue').textContent=vloc?`${vloc} ${vname.replace('Range ','')}`:vname;
+  document.getElementById('rvDate').textContent=`Sun, ${S.selDay} Jun 2026`;
+  document.getElementById('rvTime').textContent=timeFmt;
+  document.getElementById('rvGear').textContent=GEAR[S.gearIdx].name;
+  document.getElementById('credToggleRow').style.display=isLesson?'none':'flex';
+  /* Credit type selector */
+  document.getElementById('credTypeBtns').innerHTML=eligibleCredits.map(c=>{
+    const isSel=c===S.creditType;
+    const isInsuff=isSel&&!sufficient;
+    return`<button class="cred-type-btn${isSel?' sel':''}${isInsuff?' err':''}" onclick="pickCreditType('${c}')">${c}</button>`;
+  }).join('');
+  document.getElementById('rvDeduct').textContent=`−${credAmt} ${displayCredit}`;
+  document.getElementById('rvBal').textContent=`${bal} ${displayCredit}`;
+  document.getElementById('rvAfter').textContent=`${after} ${displayCredit}`;
+  document.getElementById('rvAfter').style.color=sufficient?'var(--color-primary)':'var(--color-error)';
+  document.getElementById('credInsufficientMsg').textContent=isLesson?'Top up MC credits in Shop before confirming.':'Insufficient balance. Select another credit type or top up in Shop.';
+  document.getElementById('credInsufficientErr').style.display=(hasEligibleCredits&&!sufficient)||isLesson&&!hasEligibleCredits?'flex':'none';
+  /* Toggle state */
+  document.getElementById('payCredToggle').classList.toggle('on',S.payWithCredits);
+  document.getElementById('payCredToggle').classList.toggle('disabled',isLesson||!hasEligibleCredits);
+  document.getElementById('payCredToggle').disabled=isLesson||!hasEligibleCredits;
+  document.getElementById('credWithSection').style.display=S.payWithCredits||isLesson?'':'none';
+  document.getElementById('credWithoutSection').style.display=S.payWithCredits||isLesson?'none':'';
+  document.getElementById('credNoEligibleNote').style.display=!isLesson&&!hasEligibleCredits?'':'none';
+  renderCreditScenarios();
+}
+
+function pickCreditType(c){S.creditType=c;renderReview();updateNext();}
+
+/* ── Credits toggle ── */
+function togglePayCredits(){
+  const act=ACTS[S.actIdx];
+  if(act.type==='lesson')return;
+  const credAmt=Math.round(S.slots.length*act.rate);
+  if(getEligibleCredits(act.credits||['RP'],credAmt).length===0)return;
+  S.payWithCredits=!S.payWithCredits;
+  document.getElementById('payCredToggle').classList.toggle('on',S.payWithCredits);
+  document.getElementById('credWithSection').style.display=S.payWithCredits?'':'none';
+  document.getElementById('credWithoutSection').style.display=S.payWithCredits?'none':'';
+  updateNext();
+}
+
+/* ── Confirm ── */
+function goToSignin(loc){
+  // localStorage carries the location across the nav (dev server drops query strings);
+  // the ?loc= param keeps it working on a real static host too.
+  localStorage.setItem('wf-signin-loc',loc);
+  location.href=`05%20Sign-in%20%2B%20Sign-out.html?loc=${encodeURIComponent(loc)}`;
+}
+function confirm(){
+  const act=ACTS[S.actIdx];
+  const ss=[...S.slots].sort((a,b)=>a-b),hrs=ss.length;
+  const credAmt=Math.round(hrs*act.rate);
+  const ct=S.payWithCredits?S.creditType:'';
+  const bal=ct?getCreditBalance(ct,credAmt,act.credits||['RP']):0;
+  const after=bal-credAmt;
+  const VNAMES=['Range 1','Range 2','Range 3','Range 1','West Coast','Chai Chee'];
+  const vname=VNAMES[S.venueIdx]||'Range 1';
+  const vloc=S.venueIdx<3?'West Coast':S.venueIdx<4?'Chai Chee':'';
+  document.getElementById('sucAct').textContent=act.name;
+  document.getElementById('sucVenue').textContent=vloc?`${vloc} ${vname.replace('Range ','')}`:vname;
+  document.getElementById('sucTime').textContent=`Sun ${S.selDay} Jun · ${ht(ss[0])}–${ht(slotEndHour(ss[ss.length-1]))}`;
+  document.getElementById('sucCreditLbl').textContent=S.payWithCredits?'Credit deducted':'Payment';
+  document.getElementById('sucCredit').textContent=S.payWithCredits?`−${credAmt} ${ct} · Balance: ${after} ${ct}`:'Settle at sign-out';
+  document.getElementById('sucCredit').style.color=S.payWithCredits?'var(--color-error)':'var(--color-text-secondary)';
+  document.getElementById('sucRef').textContent=S.payWithCredits?`Reference BK-20260607-042 · ${credAmt} ${ct} deducted`:'Reference BK-20260607-042';
+  /* Success actions. "Sign in to Range now" shows only inside the booking's sign-in window:
+     from 30 min before the start hour up to the end hour, and only for today's bookings. */
+  const startH=ss[0],endH=slotEndHour(ss[ss.length-1]);
+  const inSigninWindow=S.selDay===NOW_DAY&&NOW_HOUR>=startH-0.25&&NOW_HOUR<=endH;
+  const arrowIco='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const signinLoc=vloc||'West Coast';
+  document.getElementById('sucBtns').innerHTML=inSigninWindow
+    ?`<button class="btn btn-ghost" style="flex:1" onclick="closeBooking()">Done</button>
+      <button class="btn btn-primary" style="flex:1" onclick="goToSignin('${signinLoc}')">${arrowIco}Sign In to Range Now</button>`
+    :`<button class="btn btn-primary" style="flex:1" onclick="closeBooking()">Done</button>`;
+  document.getElementById('vStepper').style.display='none';
+  document.getElementById('vSuccess').style.display='block';
+  document.getElementById('main').style.overflow='auto';
+}
+
+/* ── Init: show bookings list ── */
+(function init(){
+  document.getElementById('vList').style.display='block';
+  document.getElementById('vStepper').style.display='none';
+  document.getElementById('vSuccess').style.display='none';
+  document.getElementById('main').style.overflow='auto';
+  const wantsNew=new URLSearchParams(location.search).get('new')==='1'||localStorage.getItem('wf-open-booking')==='1';
+  localStorage.removeItem('wf-open-booking');
+  if(wantsNew) openBooking();
+})();
+</script>
+<script>document.body.classList.add("lofi");</script>
+<script>
+/* wf-nav */
+(function(){var NAV={"Home":"01%20Nav%20%2B%20Home.html","Booking":"02%20Make%20a%20Booking.html","Wallet":"03%20Wallet.html","Shop":"04%20Shop.html","Me":"06%20Me.html"};document.querySelectorAll(".nav-item").forEach(function(btn){var label=btn.querySelector(".ni-label");if(!label)return;var dest=NAV[label.textContent.trim()];if(dest){btn.onclick=function(){location.href=dest;};}});})();
+</script>
+</body>
+</html>

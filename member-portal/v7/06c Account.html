@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1180px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:6px 14px;border-radius:var(--radius-full);transition:all var(--duration-fast);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+
+/* ── Device frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;flex-shrink:0;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+
+/* ── App grid (header + main only — drill-in page, no bottom nav) ── */
+.app{width:100%;height:100%;display:grid;grid-template-rows:auto 1fr;grid-template-areas:"header" "main";}
+.app-header{grid-area:header;}
+.app-main{grid-area:main;overflow-y:auto;overflow-x:hidden;}
+
+/* ── Status bar ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:var(--color-text-primary);background:var(--color-surface);}
+.statusbar .sbr{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+
+/* ── Page header (back + title) ── */
+.pg-hdr{display:flex;align-items:center;gap:10px;padding:10px 12px 12px;background:var(--color-surface);border-bottom:var(--border-subtle) solid var(--color-border-subtle);}
+.pg-back{width:36px;height:36px;border-radius:var(--radius-full);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);flex-shrink:0;text-decoration:none;}
+.pg-back:hover{background:var(--color-surface-variant);}
+.pg-title{font-size:16px;font-weight:800;letter-spacing:-.2px;color:var(--color-text-primary);}
+.pg-sub{font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-top:1px;}
+
+/* ── Account feed ── */
+.account-feed{padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-md);}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px;margin-top:4px;}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--color-text-secondary);}
+
+/* Avatar */
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);flex-shrink:0;}
+.avatar.sm{width:30px;height:30px;font-size:12px;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.avatar.slate{background:linear-gradient(135deg,#3d5168,#2E4055);}
+
+/* Card + rows */
+.scard{background:var(--color-surface);border:var(--border-hairline) solid var(--color-border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-1);overflow:hidden;}
+.irow{display:flex;align-items:center;gap:12px;padding:13px var(--space-md);min-height:52px;}
+.irow+.irow{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.ir-lbl{font-size:13px;font-weight:600;color:var(--color-text-secondary);flex-shrink:0;width:132px;}
+.ir-val{font-size:14px;font-weight:600;color:var(--color-text-primary);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.txt-btn{font-family:inherit;font-size:13px;font-weight:700;color:var(--color-primary);background:transparent;border:none;cursor:pointer;padding:5px 9px;border-radius:var(--radius-xs);transition:background var(--duration-fast);display:flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;}
+.txt-btn:hover{background:rgba(139,94,21,.09);}
+.txt-btn.danger{color:var(--color-error);}
+.txt-btn.danger:hover{background:rgba(139,26,26,.07);}
+.txt-btn.sm{font-size:12px;padding:4px 8px;}
+.pw-nav-row{display:flex;align-items:center;gap:12px;padding:13px var(--space-md);cursor:pointer;border-top:var(--border-hairline) solid var(--color-border-subtle);transition:background var(--duration-fast);}
+.pw-nav-row:hover{background:var(--color-surface-lowest);}
+.pw-nav-lbl{font-size:13px;font-weight:600;color:var(--color-text-secondary);width:132px;flex-shrink:0;}
+.pw-stars{font-size:15px;font-weight:600;color:var(--color-text-primary);flex:1;letter-spacing:4px;line-height:1;}
+.pw-chev{color:var(--color-text-disabled);flex-shrink:0;}
+.email-edit-panel{display:none;padding:14px var(--space-md) var(--space-md);border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.email-edit-panel.open{display:block;}
+
+/* Form fields */
+.fgroup{display:flex;flex-direction:column;gap:5px;}
+.flabel{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);}
+.ferr{font-size:12px;color:var(--color-error);font-weight:600;}
+.finput{font-family:inherit;font-size:14px;font-weight:600;color:var(--color-text-primary);background:var(--color-surface-variant);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:11px 13px;outline:none;transition:border-color var(--duration-fast),box-shadow var(--duration-fast);width:100%;}
+.finput:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(139,94,21,.14);}
+.finput.has-err{border-color:var(--color-error);box-shadow:0 0 0 3px rgba(139,26,26,.11);}
+
+/* Buttons */
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast),transform var(--duration-fast);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;transform:none;}
+.btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
+.btn-ghost:hover{background:rgba(139,94,21,.05);}
+.btn-err{background:transparent;color:var(--color-error);border:1.5px solid var(--color-error);}
+.btn-err:hover{background:rgba(139,26,26,.05);}
+.btn-err:disabled{opacity:.45;pointer-events:none;}
+.btn-duo{display:flex;gap:8px;}
+.btn-duo .btn{flex:1;width:auto;}
+
+/* Linked profiles */
+.prof-list{display:flex;flex-direction:column;}
+.prof-row{display:flex;align-items:center;gap:12px;padding:12px var(--space-md);background:transparent;width:100%;transition:background var(--duration-fast);}
+.prof-row+.prof-row{border-top:var(--border-hairline) solid var(--color-border-subtle);}
+.prof-row:hover{background:var(--color-surface-lowest);}
+.pr-text{flex:1;min-width:0;}
+.pr-name{font-size:14.5px;font-weight:700;color:var(--color-text-primary);}
+.pr-meta{font-size:12px;color:var(--color-text-secondary);margin-top:1px;}
+
+/* Password sheet fields */
+.pw-wrap{position:relative;}
+.pw-wrap .finput{padding-right:44px;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;color:var(--color-text-disabled);display:grid;place-items:center;width:26px;height:26px;border-radius:var(--radius-xs);}
+.pw-eye:hover{color:var(--color-text-secondary);}
+.pw-strength{display:flex;gap:4px;margin-top:8px;}
+.ps{flex:1;height:3px;border-radius:2px;background:var(--color-border-subtle);transition:background var(--duration-normal);}
+.ps.weak{background:var(--color-error);}
+.ps.med{background:var(--color-warning);}
+.ps.strong{background:var(--color-success);}
+.pw-str-lbl{font-size:11.5px;font-weight:600;margin-top:5px;color:var(--color-text-disabled);}
+
+/* Scrim + bottom sheet */
+.scrim{position:absolute;inset:0;background:rgba(28,22,17,.46);z-index:80;opacity:0;pointer-events:none;transition:opacity var(--duration-normal);}
+.scrim.open{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--color-surface);border-radius:var(--radius-xl) var(--radius-xl) 0 0;box-shadow:var(--shadow-5);padding:8px var(--space-md) calc(var(--space-md) + env(safe-area-inset-bottom));transform:translateY(102%);transition:transform var(--duration-slow) cubic-bezier(.4,0,.2,1);max-height:90%;overflow-y:auto;}
+.sheet.open{transform:translateY(0);}
+.sheet-grip{width:38px;height:4px;border-radius:99px;background:var(--color-border-emphasis);margin:8px auto 18px;}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.sheet-title{font-size:18px;font-weight:800;letter-spacing:-.2px;}
+.sheet-close{width:32px;height:32px;border-radius:var(--radius-full);border:none;background:var(--color-surface-variant);cursor:pointer;display:grid;place-items:center;color:var(--color-text-secondary);flex-shrink:0;}
+.sheet-close:hover{background:var(--color-surface-highest);}
+.sheet-sub{font-size:13px;color:var(--color-text-secondary);line-height:1.45;margin-bottom:var(--space-md);}
+.sheet-fields{display:flex;flex-direction:column;gap:14px;margin-bottom:var(--space-md);}
+
+/* Warning banner */
+.abanner{display:flex;gap:10px;padding:12px 13px;border-radius:var(--radius-sm);border-left:var(--border-accent) solid;margin-bottom:var(--space-md);}
+.abi{flex-shrink:0;width:26px;height:26px;border-radius:var(--radius-full);display:grid;place-items:center;}
+.abb{flex:1;font-size:13px;line-height:1.45;}
+.abt{font-weight:700;font-size:13.5px;margin-bottom:3px;}
+.ab-warn{background:var(--color-warning-container);border-color:var(--color-warning);color:var(--color-on-warning-container);}
+.ab-warn .abi{background:var(--color-warning);color:var(--color-on-warning);}
+
+/* Delink flow steps */
+.dl-step{display:none;}
+.dl-step.on{display:block;}
+.step-back{display:flex;align-items:center;gap:5px;font-family:inherit;font-size:13px;font-weight:700;color:var(--color-primary);background:transparent;border:none;cursor:pointer;padding:0;margin-bottom:var(--space-md);}
+.step-back:hover{opacity:.75;}
+.dl-prof{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--radius-md);border:1.5px solid transparent;cursor:pointer;font-family:inherit;width:100%;text-align:left;background:transparent;transition:all var(--duration-fast);margin-bottom:8px;}
+.dl-prof:hover{background:var(--color-surface-lowest);}
+.dl-prof.sel{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.dlp-text{flex:1;}
+.dlp-name{font-size:14.5px;font-weight:700;color:var(--color-text-primary);}
+.dlp-meta{font-size:12px;color:var(--color-text-secondary);margin-top:1px;}
+.dlp-ring{width:20px;height:20px;border-radius:50%;border:2px solid var(--color-border-emphasis);flex-shrink:0;display:grid;place-items:center;transition:all var(--duration-fast);}
+.dl-prof.sel .dlp-ring{border-color:var(--color-primary);background:var(--color-primary);}
+
+/* Outcome states */
+.outcome{display:flex;flex-direction:column;align-items:center;gap:14px;padding:var(--space-lg) 0 var(--space-md);text-align:center;}
+.out-ico{width:80px;height:80px;border-radius:var(--radius-full);display:grid;place-items:center;}
+.out-ico.success{background:rgba(42,107,62,.12);color:var(--color-success);}
+.out-ico.info{background:rgba(26,82,118,.10);color:var(--color-info);}
+.out-ico.error{background:rgba(139,26,26,.10);color:var(--color-error);}
+.out-title{font-size:19px;font-weight:800;letter-spacing:-.2px;color:var(--color-text-primary);}
+.out-body{font-size:13.5px;color:var(--color-text-secondary);line-height:1.5;max-width:270px;}
+.out-pill{font-size:13px;font-weight:700;background:var(--color-surface-variant);padding:6px 15px;border-radius:var(--radius-full);color:var(--color-text-secondary);}
+.out-note{font-size:11.5px;color:var(--color-text-disabled);margin-top:-4px;}
+
+/* Lofi toggle button */
+#wf-lofi-toggle{position:fixed;left:16px;bottom:16px;z-index:200;font-family:inherit;font-size:12px;font-weight:700;color:#E8DDD0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-full);padding:8px 14px;cursor:pointer;}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Step 6c · Account</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="11" height="14" viewBox="0 0 22 28" fill="none"><rect x="2" y="1" width="18" height="26" rx="3" stroke="currentColor" stroke-width="2"/><line x1="8" y1="23" x2="14" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="12" viewBox="0 0 26 20" fill="none"><rect x="1" y="1" width="24" height="14" rx="2" stroke="currentColor" stroke-width="2"/><line x1="7" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Desktop
+      </button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app">
+
+        <div class="app-header">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sbr">
+              <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5 1.5 4A9 9 0 0 1 14.5 4Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="8" cy="9.5" r="1.1" fill="currentColor"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+            </span>
+          </div>
+          <div class="pg-hdr">
+            <a class="pg-back" href="06 Me.html"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div>
+              <div class="pg-title">Account</div>
+              <div class="pg-sub">Email, password &amp; linked profiles</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-main">
+          <div class="account-feed">
+
+            <div class="scard">
+              <div id="emailViewRow" class="irow">
+                <span class="ir-lbl">Email</span>
+                <span class="ir-val" id="emailDisplay">caleb.tan@gmail.com</span>
+                <button class="txt-btn sm" id="emailEditBtn" onclick="startEmailEdit()">Edit</button>
+              </div>
+              <!-- Email edit panel (expands below) -->
+              <div class="email-edit-panel" id="emailEditPanel">
+                <div class="fgroup" style="margin-bottom:10px;">
+                  <label class="flabel">Email address</label>
+                  <input type="email" class="finput" id="emailInput" value="caleb.tan@gmail.com" autocomplete="email">
+                </div>
+                <div class="btn-duo">
+                  <button class="btn btn-ghost btn-sm" onclick="cancelEmailEdit()">Cancel</button>
+                  <button class="btn btn-primary btn-sm" onclick="saveEmail()">Save email</button>
+                </div>
+              </div>
+              <!-- Change password -->
+              <div class="pw-nav-row" onclick="openSheet('sheetPassword')">
+                <span class="pw-nav-lbl">Password</span>
+                <span class="pw-stars">••••••••••</span>
+                <span class="pw-chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+            </div>
+
+            <!-- ── Linked profiles ── -->
+            <div class="dev-note">💡 <strong>Profile delink</strong> — no verification email sent on delink. Member portal only allows linking to an email not already associated with any profile. Admin portal can link any profile to any existing account.</div>
+            <p style="font-size:12.5px;color:var(--color-text-secondary);padding:0 2px;margin-top:-6px;">All profiles linked to this account.</p>
+            <div class="scard">
+              <div class="prof-list">
+                <div class="prof-row">
+                  <span class="avatar sm olive">CT</span>
+                  <span class="pr-text">
+                    <div class="pr-name">Caleb Tan</div>
+                    <div class="pr-meta">Master Class · 16 yrs</div>
+                  </span>
+                  <button class="txt-btn sm danger" onclick="delinkProfile('CT','Caleb Tan','Master Class')">Delink</button>
+                </div>
+                <div class="prof-row" id="profRowML">
+                  <span class="avatar sm slate">ML</span>
+                  <span class="pr-text">
+                    <div class="pr-name">Mei Lin Tan</div>
+                    <div class="pr-meta">Master Class · 42 yrs</div>
+                  </span>
+                  <button class="txt-btn sm danger" onclick="delinkProfile('ML','Mei Lin Tan','Master Class')">Delink</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="scrim" id="scrim" onclick="closeAllSheets()"></div>
+
+      <!-- ══ Change Password Sheet ══ -->
+      <div class="sheet" id="sheetPassword">
+        <div class="sheet-grip"></div>
+        <div class="sheet-head">
+          <span class="sheet-title">Change password</span>
+          <button class="sheet-close" onclick="closeAllSheets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        </div>
+        <p class="sheet-sub">Verify your identity with your current password, then set a new one.</p>
+        <div class="sheet-fields">
+          <div class="fgroup">
+            <label class="flabel">Current password</label>
+            <div class="pw-wrap">
+              <input type="password" class="finput" id="pwCurrent" placeholder="Your current password" autocomplete="current-password" oninput="updatePwBtn()">
+              <button class="pw-eye" type="button" onclick="toggleEye('pwCurrent')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg></button>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">New password</label>
+            <div class="pw-wrap">
+              <input type="password" class="finput" id="pwNew" placeholder="Min. 8 characters" autocomplete="new-password" oninput="onPwNewInput();updatePwBtn()">
+              <button class="pw-eye" type="button" onclick="toggleEye('pwNew')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg></button>
+            </div>
+            <div class="pw-strength"><div class="ps" id="ps1"></div><div class="ps" id="ps2"></div><div class="ps" id="ps3"></div><div class="ps" id="ps4"></div></div>
+            <div class="pw-str-lbl" id="pwStrLbl">Min. 8 characters</div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Confirm new password</label>
+            <div class="pw-wrap">
+              <input type="password" class="finput" id="pwConfirm" placeholder="Re-enter new password" autocomplete="new-password" oninput="onPwConfirmInput();updatePwBtn()">
+              <button class="pw-eye" type="button" onclick="toggleEye('pwConfirm')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg></button>
+            </div>
+            <div class="ferr" id="pwMatchErr" style="display:none;">Passwords don't match.</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="pwSaveBtn" disabled>Update password</button>
+        <div style="height:6px;"></div>
+      </div>
+
+      <!-- ══ Delink Sheet ══ -->
+      <div class="sheet" id="sheetDelink">
+        <div class="sheet-grip"></div>
+
+        <!-- Step 1: Select profile -->
+        <div class="dl-step on" id="dlSelect">
+          <div class="sheet-head">
+            <span class="sheet-title">Delink a profile</span>
+            <button class="sheet-close" onclick="closeAllSheets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+          </div>
+          <p class="sheet-sub">Choose the profile to remove from this account. It will get its own standalone login.</p>
+          <button class="dl-prof" id="dlCT" onclick="selectDlProf('CT','Caleb Tan','Master Class',this)">
+            <span class="avatar sm olive">CT</span>
+            <span class="dlp-text"><div class="dlp-name">Caleb Tan</div><div class="dlp-meta">Master Class</div></span>
+            <span class="dlp-ring" id="dlRingCT"></span>
+          </button>
+          <button class="dl-prof" id="dlML" onclick="selectDlProf('ML','Mei Lin Tan','Master Class',this)">
+            <span class="avatar sm slate">ML</span>
+            <span class="dlp-text"><div class="dlp-name">Mei Lin Tan</div><div class="dlp-meta">Master Class</div></span>
+            <span class="dlp-ring" id="dlRingML"></span>
+          </button>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" id="dlSelectNext" disabled onclick="dlContinueFromSelect()">Continue</button>
+          </div>
+          <div style="height:4px;"></div>
+        </div>
+
+        <!-- Step 2: Warning + credentials form -->
+        <div class="dl-step" id="dlForm">
+          <button class="step-back" onclick="showDlStep('dlSelect')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <div class="sheet-head" style="margin-bottom:12px;">
+            <span class="sheet-title">Delink <span id="dlTargetName">Mei Lin Tan</span></span>
+            <button class="sheet-close" onclick="closeAllSheets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="abanner ab-warn">
+            <span class="abi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="abb">
+              <div class="abt">This cannot be reversed in-app</div>
+              The profile will move to its own account. To re-link it later, you must contact the range admin.
+            </div>
+          </div>
+          <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:16px;">Set the email and password the new standalone account will use to log in.</p>
+          <div class="sheet-fields">
+            <div class="fgroup">
+              <label class="flabel">Email for new account</label>
+              <input type="email" class="finput" id="dlEmail" value="caleb.tan@gmail.com" autocomplete="off" oninput="validateDlForm()">
+              <span class="fhint">Prefilled with your address — edit to use a different one.</span>
+            </div>
+            <div class="fgroup">
+              <label class="flabel">New password</label>
+              <div class="pw-wrap">
+                <input type="password" class="finput" id="dlPw1" placeholder="Choose a password" autocomplete="new-password" oninput="validateDlForm()">
+                <button class="pw-eye" type="button" onclick="toggleEye('dlPw1')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg></button>
+              </div>
+            </div>
+            <div class="fgroup">
+              <label class="flabel">Confirm password</label>
+              <div class="pw-wrap">
+                <input type="password" class="finput" id="dlPw2" placeholder="Re-enter password" autocomplete="new-password" oninput="validateDlForm()">
+                <button class="pw-eye" type="button" onclick="toggleEye('dlPw2')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg></button>
+              </div>
+              <div class="ferr" id="dlMismatch" style="display:none;">Passwords must match.</div>
+            </div>
+          </div>
+          <button class="btn btn-err" id="dlConfirmBtn" disabled onclick="submitDelink()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M9 17H7a5 5 0 0 1 0-10h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Confirm delink
+          </button>
+          <div style="height:4px;"></div>
+        </div>
+
+        <!-- Step 3a: Success (same-email path) -->
+        <div class="dl-step" id="dlSuccess">
+          <div style="display:flex;justify-content:flex-end;"><button class="sheet-close" onclick="closeAllSheets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+          <div class="outcome">
+            <div class="out-ico success"><svg width="36" height="36" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="m8 12 3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="out-title">Profile delinked</div>
+            <p class="out-body" id="dlSuccessBody">Mei Lin Tan now has a standalone account and can log in independently. Your session is unchanged.</p>
+          </div>
+          <button class="btn btn-primary" style="margin-top:8px;" onclick="closeAllSheets()">Done</button>
+          <div style="height:4px;"></div>
+        </div>
+
+        <!-- Step 3b: Check your email (different-email path) -->
+        <div class="dl-step" id="dlEmailSent">
+          <div style="display:flex;justify-content:flex-end;"><button class="sheet-close" onclick="closeAllSheets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+          <div class="outcome">
+            <div class="out-ico info"><svg width="36" height="36" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="m2 6 10 7 10-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="out-title">Check your email</div>
+            <p class="out-body">If the address is available, we've sent a link to finish setting up the new account. Follow it within 1 hour.</p>
+            <div class="out-pill" id="dlEmailRef">mei.lin@example.com</div>
+            <p class="out-note">Rate limits apply. The link is single-use and expires.</p>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:8px;" onclick="closeAllSheets()">Close</button>
+          <div style="height:4px;"></div>
+        </div>
+
+        <!-- Step 3c: Password collision -->
+        <div class="dl-step" id="dlCollision">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <button class="step-back" style="margin-bottom:0;" onclick="showDlStep('dlForm')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Back
+            </button>
+            <button class="sheet-close" onclick="closeAllSheets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="outcome">
+            <div class="out-ico error"><svg width="36" height="36" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="out-title">Password already in use</div>
+            <p class="out-body">This email + password combination already exists. Choose a different password — it must not match your current account credentials.</p>
+          </div>
+          <button class="btn btn-primary" style="margin-top:8px;" onclick="showDlStep('dlForm')">Choose a different password</button>
+          <div style="height:4px;"></div>
+        </div>
+
+      </div><!-- /sheetDelink -->
+
+    </div>
+  </div>
+</div>
+
+<script>
+function setForm(m){
+  document.getElementById('frame').classList.toggle('desktop',m==='desktop');
+  document.getElementById('segPhone').classList.toggle('on',m==='phone');
+  document.getElementById('segDesktop').classList.toggle('on',m==='desktop');
+  localStorage.setItem('wf-form',m);
+}
+
+/* ── Sheets ── */
+function openSheet(id){
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById(id).classList.add('open');
+}
+function closeAllSheets(){
+  document.getElementById('scrim').classList.remove('open');
+  document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));
+}
+
+/* ── Email edit ── */
+function startEmailEdit(){
+  const vr=document.getElementById('emailViewRow');
+  vr.querySelector('.ir-val').style.visibility='hidden';
+  document.getElementById('emailEditBtn').style.display='none';
+  document.getElementById('emailEditPanel').classList.add('open');
+}
+function cancelEmailEdit(){
+  const vr=document.getElementById('emailViewRow');
+  vr.querySelector('.ir-val').style.visibility='';
+  document.getElementById('emailEditBtn').style.display='';
+  document.getElementById('emailEditPanel').classList.remove('open');
+  document.getElementById('emailInput').value=document.getElementById('emailDisplay').textContent.trim();
+}
+function saveEmail(){
+  const v=document.getElementById('emailInput').value.trim();
+  if(v) document.getElementById('emailDisplay').textContent=v;
+  cancelEmailEdit();
+}
+
+/* ── Password (change pw sheet) ── */
+function toggleEye(id){
+  const f=document.getElementById(id);
+  f.type=f.type==='text'?'password':'text';
+}
+function onPwNewInput(){
+  const v=document.getElementById('pwNew').value;
+  const cls=v.length>=10?'strong':v.length>=8?'med':v.length>=4?'weak':'';
+  const fills={strong:4,med:3,weak:2,'':0};
+  const labels={strong:'Strong',med:'Good',weak:'Too short','':'Min. 8 characters'};
+  [1,2,3,4].forEach(i=>{
+    const el=document.getElementById('ps'+i);
+    el.className='ps';
+    if(cls && i<=fills[cls]) el.classList.add(cls);
+  });
+  document.getElementById('pwStrLbl').textContent=labels[cls];
+}
+function onPwConfirmInput(){
+  const n=document.getElementById('pwNew').value;
+  const c=document.getElementById('pwConfirm').value;
+  const mismatch=c&&n&&n!==c;
+  document.getElementById('pwMatchErr').style.display=mismatch?'':'none';
+  document.getElementById('pwConfirm').classList.toggle('has-err',!!mismatch);
+}
+function updatePwBtn(){
+  const cur=document.getElementById('pwCurrent').value;
+  const nw=document.getElementById('pwNew').value;
+  const cf=document.getElementById('pwConfirm').value;
+  document.getElementById('pwSaveBtn').disabled=!(cur&&nw.length>=8&&nw===cf);
+}
+
+/* ── Delink flow ── */
+function showDlStep(id){
+  document.querySelectorAll('.dl-step').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+let dlSelectedName='';
+function selectDlProf(init,name,group,el){
+  document.querySelectorAll('.dl-prof').forEach(p=>{p.classList.remove('sel');p.querySelector('.dlp-ring').innerHTML='';});
+  el.classList.add('sel');
+  el.querySelector('.dlp-ring').innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m4 12 5.5 5.5L20 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  dlSelectedName=name;
+  document.getElementById('dlSelectNext').disabled=false;
+}
+function dlContinueFromSelect(){
+  if(!dlSelectedName) return;
+  document.getElementById('dlTargetName').textContent=dlSelectedName;
+  document.getElementById('dlSuccessBody').textContent=dlSelectedName+' now has a standalone account and can log in independently. Your session is unchanged.';
+  showDlStep('dlForm');
+}
+function validateDlForm(){
+  const email=document.getElementById('dlEmail').value.trim();
+  const p1=document.getElementById('dlPw1').value;
+  const p2=document.getElementById('dlPw2').value;
+  const mismatch=p1&&p2&&p1!==p2;
+  document.getElementById('dlMismatch').style.display=mismatch?'':'none';
+  document.getElementById('dlPw2').classList.toggle('has-err',!!mismatch);
+  document.getElementById('dlConfirmBtn').disabled=!(email&&p1.length>=6&&p1===p2);
+}
+function delinkProfile(initials, name, group){
+  document.querySelectorAll('.dl-prof').forEach(p=>{p.classList.remove('sel');p.querySelector('.dlp-ring').innerHTML='';});
+  const el=document.getElementById('dl'+initials);
+  if(el){ el.classList.add('sel'); el.querySelector('.dlp-ring').innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m4 12 5.5 5.5L20 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+  dlSelectedName=name;
+  document.getElementById('dlSelectNext').disabled=false;
+  document.getElementById('dlTargetName').textContent=name;
+  document.getElementById('dlSuccessBody').textContent=name+' now has a standalone account and can log in independently. Your session is unchanged.';
+  openSheet('sheetDelink');
+  showDlStep('dlForm');
+}
+function submitDelink(){
+  const email=document.getElementById('dlEmail').value.trim();
+  if(email==='caleb.tan@gmail.com'){
+    showDlStep('dlSuccess');
+  } else {
+    document.getElementById('dlEmailRef').textContent=email;
+    showDlStep('dlEmailSent');
+  }
+}
+</script>
+<script>document.body.classList.add("lofi");</script>
+</body>
+</html>

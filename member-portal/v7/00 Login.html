@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x10s Member — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-primary);background:#211C16;background-image:radial-gradient(circle at 30% 0%,#33291f,#211C16 60%);min-height:100vh;-webkit-font-smoothing:antialiased;color:var(--color-text-primary);}
+svg{display:block;}
+
+/* ── Stage chrome ── */
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 64px;}
+.stage-bar{display:flex;align-items:center;gap:12px;width:100%;max-width:1180px;margin-bottom:14px;color:#E8DDD0;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--color-primary);display:grid;place-items:center;box-shadow:var(--shadow-2);}
+.crumb{font-size:12px;color:#A89880;font-weight:500;}
+.spacer{flex:1;}
+.seg{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:3px;}
+.seg button{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:transparent;border:none;cursor:pointer;padding:6px 14px;border-radius:var(--radius-full);transition:all var(--duration-fast);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.seg button.on{background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-1);}
+
+/* State pills row */
+.state-bar{display:flex;align-items:center;gap:10px;width:100%;max-width:1180px;margin-bottom:22px;flex-wrap:wrap;}
+.sb-lbl{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#A89880;flex-shrink:0;}
+.pills{display:flex;gap:6px;flex-wrap:wrap;}
+.pill-btn{font-family:inherit;font-size:12px;font-weight:600;color:#C9BBA8;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-full);padding:5px 13px;cursor:pointer;transition:all var(--duration-fast);white-space:nowrap;}
+.pill-btn.on{background:var(--color-primary);border-color:var(--color-primary);color:#fff;}
+
+/* ── Device frame ── */
+.frame{position:relative;background:#0f0d0b;border-radius:52px;padding:14px;box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.04);width:392px;height:836px;flex-shrink:0;}
+.frame.desktop{width:1180px;height:792px;border-radius:22px;padding:0;}
+.frame.desktop .notch{display:none;}
+.notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#0f0d0b;border-radius:0 0 18px 18px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:40px;background:var(--color-surface-lowest);container-type:inline-size;}
+.frame.desktop .screen{border-radius:22px;}
+
+/* ── Status bar (phone only) ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 28px 4px;font-size:13px;font-weight:700;color:#fff;background:transparent;position:relative;z-index:2;}
+.statusbar .sbr{display:flex;align-items:center;gap:6px;}
+.frame.desktop .statusbar{display:none;}
+
+/* ── Login root — full bleed photo ── */
+.login-root{width:100%;height:100%;display:flex;flex-direction:column;overflow-y:auto;background:url('../assets/images/wc2.jpg') center 30%/cover no-repeat;position:relative;}
+.login-root::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.52);pointer-events:none;z-index:0;}
+body.lofi .login-root{background:#c8c4bf;}
+body.lofi .login-root::before{display:none;}
+
+/* ── Hero band — hidden in Option C ── */
+.hero-band{display:none;}
+
+/* ── Logo ── */
+.login-logo{display:block;width:200px;height:auto;margin:0 auto 4px;}
+body.lofi .login-logo{opacity:.25;}
+
+/* ── Panels ── */
+.login-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px var(--space-md) 32px;width:100%;position:relative;z-index:1;}
+.login-inner{width:100%;max-width:360px;display:flex;flex-direction:column;gap:var(--space-lg);background:#fff;border-radius:var(--radius-lg);padding:28px 24px;box-shadow:0 24px 64px rgba(0,0,0,.4);}
+body.lofi .login-inner{background:#f5f3f0;border:1px solid #ccc;}
+
+/* Heading */
+.login-head{display:flex;flex-direction:column;gap:5px;}
+.lh-title{font-size:24px;font-weight:800;letter-spacing:-.3px;color:var(--color-text-primary);}
+.lh-sub{font-size:13.5px;color:var(--color-text-secondary);line-height:1.45;}
+
+/* Form fields */
+.fgroup{display:flex;flex-direction:column;gap:5px;}
+.flabel{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);}
+.finput{font-family:inherit;font-size:14px;font-weight:600;color:var(--color-text-primary);background:var(--color-surface-variant);border:1.5px solid var(--color-border-subtle);border-radius:var(--radius-sm);padding:11px 13px;outline:none;transition:border-color var(--duration-fast),box-shadow var(--duration-fast);width:100%;}
+.finput:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(139,94,21,.14);}
+.finput.has-err{border-color:var(--color-error);box-shadow:0 0 0 3px rgba(139,26,26,.11);}
+.ferr{font-size:12px;color:var(--color-error);font-weight:600;}
+.login-fields{display:flex;flex-direction:column;gap:14px;}
+
+/* Password eye */
+.pw-wrap{position:relative;}
+.pw-wrap .finput{padding-right:44px;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;color:var(--color-text-disabled);display:grid;place-items:center;width:26px;height:26px;border-radius:var(--radius-xs);}
+.pw-eye:hover{color:var(--color-text-secondary);}
+
+/* Password strength */
+.pw-strength{display:flex;gap:4px;margin-top:8px;}
+.ps-bar{flex:1;height:3px;border-radius:2px;background:var(--color-border-subtle);transition:background var(--duration-normal);}
+.ps-bar.weak{background:var(--color-error);}
+.ps-bar.med{background:var(--color-warning);}
+.ps-bar.strong{background:var(--color-success);}
+.pw-str-lbl{font-size:11.5px;font-weight:600;margin-top:5px;color:var(--color-text-disabled);}
+
+/* Forgot / back links */
+.forgot-row{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:-4px;}
+.txt-btn{font-family:inherit;font-size:13px;font-weight:700;color:var(--color-primary);background:transparent;border:none;cursor:pointer;padding:4px 0;transition:opacity var(--duration-fast);}
+.txt-btn:hover{opacity:.7;}
+.step-back{display:flex;align-items:center;gap:5px;font-family:inherit;font-size:13px;font-weight:700;color:var(--color-primary);background:transparent;border:none;cursor:pointer;padding:0 0 4px;transition:opacity var(--duration-fast);}
+.step-back:hover{opacity:.7;}
+
+/* Buttons */
+.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:var(--radius-sm);border:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background var(--duration-fast),transform var(--duration-fast);}
+.btn:active{transform:scale(.99);}
+.btn-primary{background:var(--color-primary);color:var(--color-on-primary);box-shadow:var(--shadow-1);}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-primary:disabled{background:var(--color-border-emphasis);color:var(--color-text-disabled);cursor:not-allowed;box-shadow:none;transform:none;}
+.btn-ghost{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);}
+.btn-ghost:hover{background:rgba(139,94,21,.05);}
+
+/* Outcome (success / info states) */
+.outcome{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:var(--space-sm) 0 var(--space-md);}
+.out-ico{width:72px;height:72px;border-radius:var(--radius-full);display:grid;place-items:center;}
+.out-ico.success{background:rgba(42,107,62,.12);color:var(--color-success);}
+.out-ico.info{background:rgba(26,82,118,.10);color:var(--color-info);}
+.out-title{font-size:20px;font-weight:800;letter-spacing:-.2px;color:var(--color-text-primary);}
+.out-body{font-size:13.5px;color:var(--color-text-secondary);line-height:1.5;}
+.out-pill{font-size:13px;font-weight:700;background:var(--color-surface-variant);padding:6px 15px;border-radius:var(--radius-full);color:var(--color-text-secondary);border:1px solid var(--color-border-subtle);}
+.out-note{font-size:11.5px;color:var(--color-text-disabled);margin-top:-4px;}
+
+/* Profile selector rows */
+.avatar{width:38px;height:38px;border-radius:var(--radius-full);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#8B5E15,#6D4810);border:1.5px solid rgba(255,255,255,.5);box-shadow:var(--shadow-1);flex-shrink:0;}
+.avatar.sm{width:30px;height:30px;font-size:12px;}
+.avatar.olive{background:linear-gradient(135deg,#6c7026,#454914);}
+.avatar.slate{background:linear-gradient(135deg,#3d5168,#2E4055);}
+.ps-prof-item{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;font-family:inherit;padding:12px;border-radius:var(--radius-md);background:var(--color-surface);border:1.5px solid var(--color-border-subtle);transition:all var(--duration-fast);margin-bottom:8px;}
+.ps-prof-item:hover{background:var(--color-surface-highest);border-color:var(--color-primary);}
+.psp-text{flex:1;min-width:0;}
+.psp-name{font-size:15px;font-weight:700;color:var(--color-text-primary);}
+.psp-meta{font-size:12px;color:var(--color-text-secondary);margin-top:1px;}
+.psp-chev{color:var(--color-text-disabled);flex-shrink:0;}
+
+/* ── Desktop override ── */
+@container (min-width:760px){
+  .login-wrap{justify-content:center;}
+  .login-inner{max-width:440px;padding:40px 36px;}
+  .login-logo{width:240px;}
+}
+</style>
+<link rel="stylesheet" href="../../assets/css/wireframe-skin.css">
+</head>
+<body>
+<div class="stage">
+
+  <!-- Stage bar -->
+  <div class="stage-bar">
+    <a href="./" style="display:flex;align-items:center;gap:6px;color:#A89880;font-size:12.5px;font-weight:600;text-decoration:none;flex-shrink:0;transition:color .15s ease;" onmouseover="this.style.color='#E8DDD0'" onmouseout="this.style.color='#A89880'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Index</a>
+    <div class="brand">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg></span>
+      x10s Member
+    </div>
+    <span class="crumb">Login · Forgot password · Profile selector</span>
+    <span class="spacer"></span>
+    <div class="seg">
+      <button id="segPhone" class="on" onclick="setForm('phone')">
+        <svg width="11" height="14" viewBox="0 0 22 28" fill="none"><rect x="2" y="1" width="18" height="26" rx="3" stroke="currentColor" stroke-width="2"/><line x1="8" y1="23" x2="14" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Phone
+      </button>
+      <button id="segDesktop" onclick="setForm('desktop')">
+        <svg width="15" height="12" viewBox="0 0 26 20" fill="none"><rect x="1" y="1" width="24" height="14" rx="2" stroke="currentColor" stroke-width="2"/><line x1="7" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Desktop
+      </button>
+    </div>
+  </div>
+
+  <!-- State pills -->
+  <div class="state-bar">
+    <span class="sb-lbl">State</span>
+    <div class="pills">
+      <button class="pill-btn on"  onclick="showPanel('loginPanel')">Login</button>
+      <button class="pill-btn"     onclick="showPanel('forgotPanel')">Forgot password</button>
+      <button class="pill-btn"     onclick="showPanel('resetSentPanel')">Reset link sent</button>
+      <button class="pill-btn"     onclick="showPanel('newPasswordPanel')">Set new password</button>
+      <button class="pill-btn"     onclick="showPanel('successPanel')">Reset success ✓</button>
+      <button class="pill-btn"     onclick="showPanel('profilePanel')">Profile selector</button>
+    </div>
+  </div>
+
+  <div class="frame" id="frame">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="login-root">
+
+        <!-- Status bar (phone only) -->
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="sbr">
+            <svg width="17" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".35"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5 1.5 4A9 9 0 0 1 14.5 4Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="8" cy="9.5" r="1.1" fill="currentColor"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+          </span>
+        </div>
+
+        <!-- ══ Hero band (shared) ══ -->
+        <div class="hero-band"></div>
+
+        <!-- ══ Panel 1: Login ══ -->
+        <div class="login-wrap" id="loginPanel">
+          <div class="login-inner">
+            <div class="login-head">
+              <img src="../../assets/images/sla_logo_transparent.png" alt="Salt & Light Archery" class="login-logo">
+              <h1 class="lh-title">Members Login</h1>
+              <p class="lh-sub">Welcome back. Enter your details to continue.</p>
+            </div>
+            <div class="login-fields">
+              <div class="fgroup">
+                <label class="flabel">Email</label>
+                <input type="email" class="finput" placeholder="your@email.com" autocomplete="email">
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Password</label>
+                <div class="pw-wrap">
+                  <input type="password" class="finput" id="loginPw" placeholder="Your password" autocomplete="current-password">
+                  <button class="pw-eye" type="button" onclick="toggleEye('loginPw')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="forgot-row">
+                <button class="txt-btn" type="button" onclick="showPanel('forgotPanel')">Forgot password?</button>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="signIn()">Log In</button>
+          </div>
+        </div>
+
+        <!-- ══ Panel 2: Forgot password — enter email ══ -->
+        <div class="login-wrap" id="forgotPanel" style="display:none;">
+          <div class="login-inner">
+            <button class="step-back" onclick="showPanel('loginPanel')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Back to login
+            </button>
+            <div class="login-head">
+              <h1 class="lh-title">Forgot password?</h1>
+              <p class="lh-sub">Enter your email and we'll send a reset link if an account exists.</p>
+            </div>
+            <div class="login-fields">
+              <div class="fgroup">
+                <label class="flabel">Email</label>
+                <input type="email" class="finput" id="forgotEmail" placeholder="your@email.com" autocomplete="email">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="sendResetLink()">Send Reset Link</button>
+          </div>
+        </div>
+
+        <!-- ══ Panel 3: Reset link sent ══ -->
+        <div class="login-wrap" id="resetSentPanel" style="display:none;">
+          <div class="login-inner">
+            <div class="outcome">
+              <div class="out-title">Check your email</div>
+              <p class="out-body">If an account exists for <strong id="resetEmailRef">your@email.com</strong>, we've sent a reset link.</p>
+              <div class="out-pill" id="resetEmailPill">your@email.com</div>
+              <p class="out-note">The link expires in 1 hour.</p>
+            </div>
+            <button class="btn btn-ghost" onclick="showPanel('loginPanel')">Back to Login</button>
+            <div class="dev-note">💡 <strong>Security</strong> — Response is identical whether or not the email exists (prevents account enumeration). Do not confirm or deny account existence.</div>
+          </div>
+        </div>
+
+        <!-- ══ Panel 4: Set new password (arrives via email link) ══ -->
+        <div class="login-wrap" id="newPasswordPanel" style="display:none;">
+          <div class="login-inner">
+            <div class="login-head">
+              <h1 class="lh-title">Set new password</h1>
+              <p class="lh-sub">Create a strong password for your account.</p>
+            </div>
+            <div class="login-fields">
+              <div class="fgroup">
+                <label class="flabel">New password</label>
+                <div class="pw-wrap">
+                  <input type="password" class="finput" id="newPw1" placeholder="Min. 6 characters" autocomplete="new-password" oninput="updateConfirmBtn()">
+                  <button class="pw-eye" type="button" onclick="toggleEye('newPw1')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Confirm password</label>
+                <div class="pw-wrap">
+                  <input type="password" class="finput" id="newPw2" placeholder="Re-enter password" autocomplete="new-password" oninput="onNewPwConfirm()">
+                  <button class="pw-eye" type="button" onclick="toggleEye('newPw2')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+                  </button>
+                </div>
+                <div class="ferr" id="newPwMatchErr" style="display:none;">Passwords don't match.</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="confirmPwBtn" disabled onclick="confirmPassword()">Confirm</button>
+            <div class="dev-note">💡 <strong>Entry point</strong> — User arrives here via a secure link in the reset email. URL contains a one-time token (e.g. <code>/reset?token=…</code>). Token is validated server-side before allowing submission. Token expires after 1 hour or first use.</div>
+          </div>
+        </div>
+
+        <!-- ══ Panel 5: Password reset success ══ -->
+        <div class="login-wrap" id="successPanel" style="display:none;">
+          <div class="login-inner">
+            <div class="outcome">
+              <div class="out-ico success">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="m7.5 12 3 3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="out-title">Password updated</div>
+              <p class="out-body">Your password has been changed successfully. Log in with your new password to continue.</p>
+            </div>
+            <button class="btn btn-primary" onclick="showPanel('loginPanel')">Back to Login</button>
+          </div>
+        </div>
+
+        <!-- ══ Panel 6: Profile selector ══ -->
+        <div class="login-wrap" id="profilePanel" style="display:none;">
+          <div class="login-inner">
+            <div class="login-head">
+              <h1 class="lh-title">Choose a profile</h1>
+              <p class="lh-sub">Select who's signing in today.</p>
+            </div>
+            <div>
+              <button class="ps-prof-item" onclick="selectProfile()">
+                <span class="avatar sm olive">CT</span>
+                <span class="psp-text">
+                  <div class="psp-name">Caleb Tan</div>
+                  <div class="psp-meta">Master Class &middot; 16 yrs</div>
+                </span>
+                <span class="psp-chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </button>
+              <button class="ps-prof-item" onclick="selectProfile()">
+                <span class="avatar sm slate">ML</span>
+                <span class="psp-text">
+                  <div class="psp-name">Mei Lin Tan</div>
+                  <div class="psp-meta">Master Class &middot; 42 yrs</div>
+                </span>
+                <span class="psp-chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </button>
+              <div class="dev-note">💡 <strong>Single profile</strong> — If the user has only 1 profile linked to their account, skip this screen entirely and navigate directly to Home after login.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /login-root -->
+    </div><!-- /screen -->
+  </div><!-- /frame -->
+
+</div><!-- /stage -->
+
+<script>
+const PANELS = ['loginPanel','forgotPanel','resetSentPanel','newPasswordPanel','successPanel','profilePanel'];
+
+function showPanel(id) {
+  PANELS.forEach(p => {
+    const el = document.getElementById(p);
+    if (el) el.style.display = (p === id) ? 'flex' : 'none';
+  });
+  const idx = PANELS.indexOf(id);
+  document.querySelectorAll('.pill-btn').forEach((b, i) => b.classList.toggle('on', i === idx));
+}
+
+/* Log In → profile selector */
+function signIn() {
+  showPanel('profilePanel');
+}
+
+/* Profile selected → Home */
+function selectProfile() {
+  location.href = '01%20Nav%20%2B%20Home.html';
+}
+
+/* Forgot password step 1 → step 2 */
+function sendResetLink() {
+  const email = document.getElementById('forgotEmail').value.trim() || 'your@email.com';
+  document.getElementById('resetEmailRef').textContent = email;
+  document.getElementById('resetEmailPill').textContent = email;
+  showPanel('resetSentPanel');
+}
+
+/* Set new password → success */
+function confirmPassword() {
+  showPanel('successPanel');
+}
+
+function onNewPwConfirm() {
+  const p1 = document.getElementById('newPw1').value;
+  const p2 = document.getElementById('newPw2').value;
+  const mismatch = p1 && p2 && p1 !== p2;
+  document.getElementById('newPwMatchErr').style.display = mismatch ? '' : 'none';
+  document.getElementById('newPw2').classList.toggle('has-err', !!mismatch);
+  updateConfirmBtn();
+}
+
+function updateConfirmBtn() {
+  const p1 = document.getElementById('newPw1').value;
+  const p2 = document.getElementById('newPw2').value;
+  document.getElementById('confirmPwBtn').disabled = !(p1.length >= 6 && p1 === p2);
+}
+
+/* Shared utilities */
+function toggleEye(id) {
+  const f = document.getElementById(id);
+  f.type = f.type === 'text' ? 'password' : 'text';
+}
+
+function setForm(m) {
+  document.getElementById('frame').classList.toggle('desktop', m === 'desktop');
+  document.getElementById('segPhone').classList.toggle('on', m === 'phone');
+  document.getElementById('segDesktop').classList.toggle('on', m === 'desktop');
+  localStorage.setItem('wf-form', m);
+}
+</script>
+<script>document.body.classList.add("lofi");</script>
+</body>
+</html>
